@@ -19,11 +19,32 @@ import com.sendmystatus.oeventapp.ui.WelcomeScreen
 
 import com.sendmystatus.oeventapp.ui.theme.OEventTheme
 
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.sendmystatus.oeventapp.ui.viewmodel.AuthState
+import com.sendmystatus.oeventapp.ui.viewmodel.AuthViewModel
+
 @Composable
 @Preview
 fun App() {
     OEventTheme {
         val navController = rememberNavController()
+        val authViewModel: AuthViewModel = viewModel { AuthViewModel() }
+        val authState by authViewModel.state.collectAsState()
+
+        LaunchedEffect(authState) {
+            when (authState) {
+                is AuthState.OtpSent -> {
+                    val mobile = (authState as AuthState.OtpSent).mobileNumber
+                    navController.navigate(Route.Otp(mobileNumber = mobile))
+                    authViewModel.resetState()
+                }
+                is AuthState.Success -> {
+                    navController.navigate(Route.Scanner)
+                    authViewModel.resetState()
+                }
+                else -> {}
+            }
+        }
 
         Surface(
             modifier = Modifier.fillMaxSize(),
@@ -42,17 +63,23 @@ fun App() {
                 composable<Route.Login> {
                     LoginScreen(
                         onSendOtpClick = { mobile ->
-                            navController.navigate(Route.Otp(mobileNumber = mobile))
+                            authViewModel.sendOtp(mobile)
                         },
-                        onBack = { navController.popBackStack() }
+                        onBack = { navController.popBackStack() },
+                        isLoading = authState is AuthState.Loading,
+                        errorMessage = (authState as? AuthState.Error)?.message
                     )
                 }
                 composable<Route.Otp> { backStackEntry ->
                     val otpRoute: Route.Otp = backStackEntry.toRoute()
                     OtpVerificationScreen(
                         mobileNumber = otpRoute.mobileNumber,
-                        onVerifyClick = { navController.navigate(Route.Scanner) },
-                        onBack = { navController.popBackStack() }
+                        onVerifyClick = { otp ->
+                            authViewModel.verifyOtp(otpRoute.mobileNumber, otp)
+                        },
+                        onBack = { navController.popBackStack() },
+                        isLoading = authState is AuthState.Loading,
+                        errorMessage = (authState as? AuthState.Error)?.message
                     )
                 }
                 composable<Route.Scanner> {

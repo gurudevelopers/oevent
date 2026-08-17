@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Event Token</string>
+    <string name="welcome_title">Welcome to\nEvent Token</string>
+    <string name="welcome_subtitle">Choose how you want\nto continue</string>
+    <string name="btn_attendee">I\\'m an Attendee</string>
+    <string name="btn_merchant">I\\'m a Merchant</string>
+    <string name="already_have_account">Already have an account? Login</string>
+    
+    <string name="login_title">Create your account</string>
+    <string name="label_mobile_number">Mobile Number</string>
+    <string name="placeholder_mobile">(555) 123-4567</string>
+    <string name="btn_send_otp">Send OTP</string>
+    <string name="terms_privacy_note">By continuing, you agree to\nTerms &amp; Conditions and Privacy Policy</string>
+    
+    <string name="verify_title">Verify your number</string>
+    <string name="verify_subtitle">Enter the 6-digit code sent to\n%s</string>
+    <string name="btn_verify">Verify</string>
+    <string name="resend_code">Resend code in 00:30</string>
+    
+    <string name="scan_qr_code">Scan QR Code</string>
+    <string name="back">Back</string>
+    <string name="align_qr_code">Align QR code within the frame</string>
+    <string name="your_reward">Your Reward</string>
+    <string name="show_qr_to_redeem">Show this QR code to redeem</string>
+    <string name="reward_qr_code">Reward QR Code</string>
+    <string name="reward_id">Reward ID: %s</string>
+    <string name="scanner_not_supported">Scanner not supported on this platform</string>
+</resources>

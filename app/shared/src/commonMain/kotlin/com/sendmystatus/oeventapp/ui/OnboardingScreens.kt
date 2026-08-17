@@ -93,6 +93,8 @@ fun WelcomeScreen(
 fun LoginScreen(
     onSendOtpClick: (String) -> Unit,
     onBack: () -> Unit,
+    isLoading: Boolean = false,
+    errorMessage: String? = null
 ) {
     var mobileNumber by remember { mutableStateOf("") }
     
@@ -124,7 +126,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(32.dp))
             
             // Tab-like selection (Mobile/Email) - Placeholder
-            Text(text = "Mobile          Email", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+            Text(text = "Mobile or Email", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
             HorizontalDivider(modifier = Modifier.width(60.dp), thickness = 2.dp, color = MaterialTheme.colorScheme.primary)
             
             Spacer(modifier = Modifier.height(32.dp))
@@ -144,12 +146,19 @@ fun LoginScreen(
                 onClick = { onSendOtpClick(mobileNumber) },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
                 shape = MaterialTheme.shapes.medium,
-                enabled = mobileNumber.isNotBlank()
+                enabled = mobileNumber.isNotBlank() && !isLoading
             ) {
-                Text(stringResource(Res.string.btn_send_otp))
+                if (isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary)
+                } else {
+                    Text(stringResource(Res.string.btn_send_otp))
+                }
             }
         
-            Spacer(modifier = Modifier.height(24.dp))
+            if (errorMessage != null) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(text = errorMessage, color = MaterialTheme.colorScheme.error, fontSize = 14.sp)
+            }
             
             Text(
                 text = stringResource(Res.string.terms_privacy_note),
@@ -167,6 +176,8 @@ fun OtpVerificationScreen(
     mobileNumber: String,
     onVerifyClick: (String) -> Unit,
     onBack: () -> Unit,
+    isLoading: Boolean = false,
+    errorMessage: String? = null
 ) {
     var otpCode by remember { mutableStateOf("") }
     
@@ -234,9 +245,18 @@ fun OtpVerificationScreen(
                 onClick = { onVerifyClick(otpCode) },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
                 shape = MaterialTheme.shapes.medium,
-                enabled = otpCode.length == 6
+                enabled = otpCode.length == 6 && !isLoading
             ) {
-                Text(stringResource(Res.string.btn_verify))
+                if (isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary)
+                } else {
+                    Text(stringResource(Res.string.btn_verify))
+                }
+            }
+
+            if (errorMessage != null) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(text = errorMessage, color = MaterialTheme.colorScheme.error, fontSize = 14.sp)
             }
         }
     }

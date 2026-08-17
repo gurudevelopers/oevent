@@ -66,16 +66,24 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.androidx.navigation.compose)
             implementation(libs.kotlinx.serialization.json)
+            
+            implementation(libs.ktor.clientCore)
+            implementation(libs.ktor.clientAuth)
+            implementation(libs.ktor.clientContentNegotiation)
+            implementation(libs.ktor.clientLogging)
+            implementation(libs.ktor.serializationKotlinxJson)
         }
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.compose.uiTooling)
             implementation(libs.qr.kit)
+            implementation(libs.ktor.clientOkHttp)
         }
         val iosMain = create("iosMain") {
             dependsOn(getByName("commonMain"))
             dependencies {
                 implementation(libs.qr.kit)
+                implementation(libs.ktor.clientDarwin)
             }
         }
         getByName("iosArm64Main").dependsOn(iosMain)
@@ -83,12 +91,15 @@ kotlin {
         
         getByName("jvmMain").dependencies {
             implementation(libs.qr.kit)
+            implementation(libs.ktor.clientJava)
         }
         getByName("wasmJsMain").dependencies {
             implementation(libs.qr.kit)
+            implementation(libs.ktor.clientJs)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutinesTest)
         }
         jsMain.dependencies {
             implementation(libs.wrappers.browser)
