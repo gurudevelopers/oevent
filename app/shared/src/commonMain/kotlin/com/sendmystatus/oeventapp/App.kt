@@ -6,37 +6,70 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.sendmystatus.oeventapp.ui.LoginScreen
 import com.sendmystatus.oeventapp.ui.OtpVerificationScreen
+import com.sendmystatus.oeventapp.ui.RewardScreen
+import com.sendmystatus.oeventapp.ui.Route
+import com.sendmystatus.oeventapp.ui.ScannerScreen
 import com.sendmystatus.oeventapp.ui.WelcomeScreen
 
-enum class Screen {
-    Welcome, Login, Otp
-}
+import com.sendmystatus.oeventapp.ui.theme.OEventTheme
 
 @Composable
 @Preview
 fun App() {
-    MaterialTheme {
-        var currentScreen by remember { mutableStateOf(Screen.Welcome) }
+    OEventTheme {
+        val navController = rememberNavController()
 
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            when (currentScreen) {
-                Screen.Welcome -> WelcomeScreen(
-                    onAttendeeClick = { currentScreen = Screen.Login },
-                    onMerchantClick = { /* Handle Merchant flow */ }
-                )
-                Screen.Login -> LoginScreen(
-                    onSendOtpClick = { currentScreen = Screen.Otp },
-                    onBack = { currentScreen = Screen.Welcome }
-                )
-                Screen.Otp -> OtpVerificationScreen(
-                    onVerifyClick = { /* Complete onboarding */ },
-                    onBack = { currentScreen = Screen.Login }
-                )
+            NavHost(
+                navController = navController,
+                startDestination = Route.Welcome
+            ) {
+                composable<Route.Welcome> {
+                    WelcomeScreen(
+                        onAttendeeClick = { navController.navigate(Route.Login) },
+                        onMerchantClick = { /* Handle Merchant flow */ }
+                    )
+                }
+                composable<Route.Login> {
+                    LoginScreen(
+                        onSendOtpClick = { mobile ->
+                            navController.navigate(Route.Otp(mobileNumber = mobile))
+                        },
+                        onBack = { navController.popBackStack() }
+                    )
+                }
+                composable<Route.Otp> { backStackEntry ->
+                    val otpRoute: Route.Otp = backStackEntry.toRoute()
+                    OtpVerificationScreen(
+                        mobileNumber = otpRoute.mobileNumber,
+                        onVerifyClick = { navController.navigate(Route.Scanner) },
+                        onBack = { navController.popBackStack() }
+                    )
+                }
+                composable<Route.Scanner> {
+                    ScannerScreen(
+                        onScan = { data ->
+                            navController.navigate(Route.Reward(data = data))
+                        },
+                        onBack = { navController.popBackStack() }
+                    )
+                }
+                composable<Route.Reward> { backStackEntry ->
+                    val rewardRoute: Route.Reward = backStackEntry.toRoute()
+                    RewardScreen(
+                        rewardData = rewardRoute.data,
+                        onBack = { navController.popBackStack() }
+                    )
+                }
             }
         }
     }

@@ -15,9 +15,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sendmystatus.oeventapp.ui.theme.AppTheme
+import com.sendmystatus.oeventapp.ui.theme.bold
+import com.sendmystatus.oeventapp.ui.theme.italic
 import oeventapp.app.shared.generated.resources.Res
 import oeventapp.app.shared.generated.resources.compose_multiplatform
+import oeventapp.app.shared.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun WelcomeScreen(
@@ -40,9 +45,8 @@ fun WelcomeScreen(
         Spacer(modifier = Modifier.height(32.dp))
         
         Text(
-            text = "Welcome to\nEvent Token",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
+            text = stringResource(Res.string.welcome_title),
+            style = AppTheme.typography.extraLarge.bold(),
             textAlign = TextAlign.Center,
             lineHeight = 32.sp
         )
@@ -50,10 +54,10 @@ fun WelcomeScreen(
         Spacer(modifier = Modifier.height(16.dp))
         
         Text(
-            text = "Choose how you want\nto continue",
-            fontSize = 16.sp,
+            text = stringResource(Res.string.welcome_subtitle),
+            style = AppTheme.typography.medium.italic(),
             textAlign = TextAlign.Center,
-            color = Color.Gray
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         
         Spacer(modifier = Modifier.height(48.dp))
@@ -63,7 +67,7 @@ fun WelcomeScreen(
             modifier = Modifier.fillMaxWidth().height(56.dp),
             shape = MaterialTheme.shapes.medium
         ) {
-            Text("I'm an Attendee")
+            Text(stringResource(Res.string.btn_attendee))
         }
         
         Spacer(modifier = Modifier.height(12.dp))
@@ -73,13 +77,13 @@ fun WelcomeScreen(
             modifier = Modifier.fillMaxWidth().height(56.dp),
             shape = MaterialTheme.shapes.medium
         ) {
-            Text("I'm a Merchant")
+            Text(stringResource(Res.string.btn_merchant))
         }
         
         Spacer(modifier = Modifier.height(24.dp))
         
         TextButton(onClick = { /* TODO */ }) {
-            Text("Already have an account? Login", color = Color.Gray)
+            Text(stringResource(Res.string.already_have_account), color = Color.Gray)
         }
     }
 }
@@ -112,7 +116,7 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Create your account",
+                text = stringResource(Res.string.login_title),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -128,8 +132,8 @@ fun LoginScreen(
             OutlinedTextField(
                 value = mobileNumber,
                 onValueChange = { mobileNumber = it },
-                label = { Text("Mobile Number") },
-                placeholder = { Text("(555) 123-4567") },
+                label = { Text(stringResource(Res.string.label_mobile_number)) },
+                placeholder = { Text(stringResource(Res.string.placeholder_mobile)) },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
             )
@@ -142,13 +146,13 @@ fun LoginScreen(
                 shape = MaterialTheme.shapes.medium,
                 enabled = mobileNumber.isNotBlank()
             ) {
-                Text("Send OTP")
+                Text(stringResource(Res.string.btn_send_otp))
             }
-            
+        
             Spacer(modifier = Modifier.height(24.dp))
             
             Text(
-                text = "By continuing, you agree to\nTerms & Conditions and Privacy Policy",
+                text = stringResource(Res.string.terms_privacy_note),
                 fontSize = 12.sp,
                 textAlign = TextAlign.Center,
                 color = Color.Gray
@@ -160,6 +164,7 @@ fun LoginScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OtpVerificationScreen(
+    mobileNumber: String,
     onVerifyClick: (String) -> Unit,
     onBack: () -> Unit,
 ) {
@@ -185,7 +190,7 @@ fun OtpVerificationScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Verify your number",
+                text = stringResource(Res.string.verify_title),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -193,7 +198,7 @@ fun OtpVerificationScreen(
             Spacer(modifier = Modifier.height(16.dp))
             
             Text(
-                text = "Enter the 6-digit code sent to\n(555) 123-4567",
+                text = stringResource(Res.string.verify_subtitle, mobileNumber),
                 fontSize = 14.sp,
                 textAlign = TextAlign.Center,
                 color = Color.Gray
@@ -218,7 +223,7 @@ fun OtpVerificationScreen(
             Spacer(modifier = Modifier.height(24.dp))
             
             Text(
-                text = "Resend code in 00:30",
+                text = stringResource(Res.string.resend_code),
                 fontSize = 14.sp,
                 color = Color.Gray
             )
@@ -231,7 +236,7 @@ fun OtpVerificationScreen(
                 shape = MaterialTheme.shapes.medium,
                 enabled = otpCode.length == 6
             ) {
-                Text("Verify")
+                Text(stringResource(Res.string.btn_verify))
             }
         }
     }
