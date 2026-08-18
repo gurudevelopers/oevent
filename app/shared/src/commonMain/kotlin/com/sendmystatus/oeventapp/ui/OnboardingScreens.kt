@@ -211,7 +211,7 @@ fun LoginScreen(
             )
 
             Button(
-                onClick = { onSendOtpClick(mobileNumber.toString()+email.toString()) },
+                onClick = { onSendOtpClick("$mobileNumber, $email") },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
                 shape = MaterialTheme.shapes.medium,
                 enabled = isButtonEnabled && !isLoading

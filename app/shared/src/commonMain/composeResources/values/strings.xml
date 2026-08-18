@@ -15,8 +15,8 @@
     <string name="btn_send_otp">Send OTP</string>
     <string name="terms_privacy_note">By continuing, you agree to\nTerms &amp; Conditions and Privacy Policy</string>
     
-    <string name="verify_title">Verify your number</string>
-    <string name="verify_subtitle">Enter the 6-digit code sent to\n%s</string>
+    <string name="verify_title">Verify your Device</string>
+    <string name="verify_subtitle">Enter the 6-digit code sent to\n%1$s</string>
     <string name="btn_verify">Verify</string>
     <string name="resend_code">Resend code in 00:30</string>
     
