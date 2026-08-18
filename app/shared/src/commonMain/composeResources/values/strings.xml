@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Event Token</string>
-    <string name="welcome_title">Welcome to\nEvent Token</string>
+    <string name="welcome_title">Welcome to\nOpen Event Network</string>
     <string name="welcome_subtitle">Choose how you want\nto continue</string>
     <string name="btn_attendee">Attendee</string>
     <string name="btn_merchant">Merchant</string>
