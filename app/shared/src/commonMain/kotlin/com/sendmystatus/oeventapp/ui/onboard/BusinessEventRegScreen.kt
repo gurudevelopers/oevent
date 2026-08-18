@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -38,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import oeventapp.app.shared.generated.resources.Res
 import oeventapp.app.shared.generated.resources.btn_business_submit
+import oeventapp.app.shared.generated.resources.btn_continue
 import oeventapp.app.shared.generated.resources.business_detail_title
 import oeventapp.app.shared.generated.resources.business_event_setup_title
 import oeventapp.app.shared.generated.resources.label_booth_name
@@ -75,6 +78,25 @@ fun CreateBusinessRegScreen(
                     }
                 }
             )
+        },
+        bottomBar = {
+            Button(
+                onClick = { },
+                modifier = Modifier.fillMaxWidth().padding(16.dp)
+                    .imePadding()
+                    .navigationBarsPadding(),
+                shape = MaterialTheme.shapes.medium,
+                enabled = canSubmit && !isLoading
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                } else {
+                    Text(stringResource(Res.string.btn_continue))
+                }
+            }
         }
     ) { padding ->
         Column(
@@ -117,23 +139,6 @@ fun CreateBusinessRegScreen(
 
 
 
-            Spacer(modifier = Modifier.height(48.dp))
-
-            Button(
-                onClick = { },
-                modifier = Modifier.fillMaxWidth().height(56.dp),
-                shape = MaterialTheme.shapes.medium,
-                enabled = canSubmit && !isLoading
-            ) {
-                if (isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                } else {
-                    Text(stringResource(Res.string.btn_business_submit))
-                }
-            }
 
             /* if (errorMessage != null) {
                  Spacer(modifier = Modifier.height(16.dp))

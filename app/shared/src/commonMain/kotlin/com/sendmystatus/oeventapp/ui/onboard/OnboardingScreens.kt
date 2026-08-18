@@ -65,23 +65,29 @@ fun WelcomeScreen(
 
         Spacer(modifier = Modifier.height(48.dp))
 
+        ElevatedButton(
+            onClick = onMerchantClick,
+            modifier = Modifier.fillMaxWidth().height(56.dp),
+            shape = MaterialTheme.shapes.medium
+        ) {
+            Text(
+                text = stringResource(Res.string.btn_merchant),
+                style = AppTheme.typography.large.bold(),
+            )
+        }
+        Spacer(modifier = Modifier.height(12.dp))
         Button(
             onClick = onAttendeeClick,
             modifier = Modifier.fillMaxWidth().height(56.dp),
             shape = MaterialTheme.shapes.medium
         ) {
-            Text(stringResource(Res.string.btn_attendee))
+            Text(
+                text = stringResource(Res.string.btn_attendee),
+                style = AppTheme.typography.large.bold(),
+            )
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedButton(
-            onClick = onMerchantClick,
-            modifier = Modifier.fillMaxWidth().height(56.dp),
-            shape = MaterialTheme.shapes.medium
-        ) {
-            Text(stringResource(Res.string.btn_merchant))
-        }
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -104,7 +110,7 @@ fun LoginScreen(
     val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$".toRegex()
 
     val isPhoneValid by remember { derivedStateOf { isValidPhoneNumber(mobileNumber) && mobileNumber.isNotBlank() } }
-    val isEmailValid by remember { derivedStateOf { email.matches(emailRegex)  } }
+    val isEmailValid by remember { derivedStateOf { email.matches(emailRegex) } }
 
     val isPhoneError by remember { derivedStateOf { !isPhoneValid && mobileNumber.isNotBlank() } }
     val isEmailError by remember { derivedStateOf { !isEmailValid && email.isNotBlank() } }
@@ -193,8 +199,7 @@ fun LoginScreen(
                 label = { Text(stringResource(Res.string.label_email)) },
                 placeholder = { Text(stringResource(Res.string.placeholder_email)) },
                 isError = isEmailError,
-                modifier = Modifier.fillMaxWidth()
-                    ,
+                modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
                     imeAction = ImeAction.Done

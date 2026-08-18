@@ -2,10 +2,13 @@ package com.sendmystatus.oeventapp.ui.onboard
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -39,7 +42,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sendmystatus.oeventapp.ui.theme.AppTheme
+import com.sendmystatus.oeventapp.ui.theme.bold
 import oeventapp.app.shared.generated.resources.Res
+import oeventapp.app.shared.generated.resources.btn_continue
 import oeventapp.app.shared.generated.resources.btn_create_account
 import oeventapp.app.shared.generated.resources.btn_verify
 import oeventapp.app.shared.generated.resources.create_account_title
@@ -50,6 +56,7 @@ import oeventapp.app.shared.generated.resources.label_mobile_number
 import oeventapp.app.shared.generated.resources.resend_code
 import oeventapp.app.shared.generated.resources.verify_subtitle
 import oeventapp.app.shared.generated.resources.verify_title
+import oeventapp.app.shared.generated.resources.welcome_title
 import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,6 +86,26 @@ fun CreateMerchantAccountScreen(
                     }
                 }
             )
+        },
+        bottomBar = {
+            Button(
+                onClick = {onMerchantSubmitClick() },
+                modifier = Modifier.fillMaxWidth().padding(16.dp)
+                    .imePadding()
+                    .navigationBarsPadding()
+                    ,
+                shape = MaterialTheme.shapes.medium,
+                enabled = canSubmit && !isLoading
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                } else {
+                    Text(stringResource(Res.string.btn_continue))
+                }
+            }
         }
     ) { padding ->
         Column(
@@ -86,7 +113,9 @@ fun CreateMerchantAccountScreen(
                 .fillMaxSize()
                 .verticalScroll(scrollState)
                 .padding(padding)
-                .padding(24.dp),
+                .padding(16.dp)
+
+                ,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
@@ -97,6 +126,7 @@ fun CreateMerchantAccountScreen(
 
 
             Spacer(modifier = Modifier.height(48.dp))
+
 
             OutlinedTextField(
                 value = businessName,
@@ -140,27 +170,6 @@ fun CreateMerchantAccountScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
 
                 )
-
-
-
-            Spacer(modifier = Modifier.height(48.dp))
-
-            Button(
-                onClick = {onMerchantSubmitClick() },
-                modifier = Modifier.fillMaxWidth().height(56.dp),
-                shape = MaterialTheme.shapes.medium,
-                enabled = canSubmit && !isLoading
-            ) {
-                if (isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                } else {
-                    Text(stringResource(Res.string.btn_create_account))
-                }
-            }
-
            /* if (errorMessage != null) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(text = errorMessage, color = MaterialTheme.colorScheme.error, fontSize = 14.sp)

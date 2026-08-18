@@ -34,7 +34,7 @@ val LightSurface = Color(0xFFFFFFFF)
 val LightOnSurface = Color(0xFF202124)
 val LightSurfaceVariant = Color(0xFFF1F3F4)
 val LightOnSurfaceVariant = Color(0xFF5F6368)
-val LightOutline = Color(0xFFDADCE0)
+val LightOutline = Color(0xFF87CEF5)
 
 // Dark Theme Colors
 val DarkPrimary = Color(0xFF8AB4F8)

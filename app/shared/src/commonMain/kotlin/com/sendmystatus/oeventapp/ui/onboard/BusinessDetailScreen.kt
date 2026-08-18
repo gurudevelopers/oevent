@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -81,6 +83,25 @@ fun CreateBusinessDetailScreen(
                     }
                 }
             )
+        },
+        bottomBar = {
+            Button(
+                onClick = {onBusinessSubmitClick() },
+                modifier = Modifier.fillMaxWidth().padding(16.dp)
+                    .imePadding()
+                    .navigationBarsPadding(),
+                shape = MaterialTheme.shapes.medium,
+                enabled = canSubmit && !isLoading
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                } else {
+                    Text(stringResource(Res.string.btn_business_submit))
+                }
+            }
         }
     ) { padding ->
         Column(
@@ -164,21 +185,7 @@ fun CreateBusinessDetailScreen(
 
             Spacer(modifier = Modifier.height(48.dp))
 
-            Button(
-                onClick = {onBusinessSubmitClick() },
-                modifier = Modifier.fillMaxWidth().height(56.dp),
-                shape = MaterialTheme.shapes.medium,
-                enabled = canSubmit && !isLoading
-            ) {
-                if (isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                } else {
-                    Text(stringResource(Res.string.btn_business_submit))
-                }
-            }
+
 
             /* if (errorMessage != null) {
                  Spacer(modifier = Modifier.height(16.dp))
