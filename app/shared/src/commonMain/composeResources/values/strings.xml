@@ -6,7 +6,7 @@
     <string name="btn_attendee">Attendee</string>
     <string name="btn_merchant">Merchant</string>
     <string name="already_have_account">Already have an account? Login</string>
-    
+
     <string name="login_title">Create your account</string>
     <string name="label_mobile_number">Mobile Number</string>
     <string name="placeholder_mobile">(555) 123-4567</string>
@@ -14,12 +14,30 @@
     <string name="placeholder_email">xxx@xx.xxx</string>
     <string name="btn_send_otp">Send OTP</string>
     <string name="terms_privacy_note">By continuing, you agree to\nTerms &amp; Conditions and Privacy Policy</string>
-    
+
     <string name="verify_title">Verify your Device</string>
     <string name="verify_subtitle">Enter the 6-digit code sent to\n%1$s</string>
     <string name="btn_verify">Verify</string>
     <string name="resend_code">Resend code in 00:30</string>
-    
+
+    <string name="create_account_title">Create Merchant account</string>
+    <string name="label_business_name">Business or Organization Name</string>
+    <string name="label_contact_name">Contact Person Name</string>
+    <string name="btn_create_account">Create account</string>
+
+    <string name="business_detail_title">Business Details</string>
+    <string name="label_business_type">Business Type</string>
+    <string name="label_business_address">Address</string>
+    <string name="label_business_city">City</string>
+    <string name="label_business_state">State</string>
+    <string name="label_business_zip">Zip Code</string>
+    <string name="btn_business_submit">Submit</string>
+    <string name="btn_continue">Continue</string>
+
+    <string name="business_event_setup_title">Enroll to Event</string>
+    <string name="label_select_event">Select Event</string>
+    <string name="label_booth_name">Booth Name</string>
+
     <string name="scan_qr_code">Scan QR Code</string>
     <string name="back">Back</string>
     <string name="align_qr_code">Align QR code within the frame</string>

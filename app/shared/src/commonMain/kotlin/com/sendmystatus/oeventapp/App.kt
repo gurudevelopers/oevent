@@ -10,16 +10,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.sendmystatus.oeventapp.ui.LoginScreen
-import com.sendmystatus.oeventapp.ui.OtpVerificationScreen
+import com.sendmystatus.oeventapp.ui.onboard.LoginScreen
+import com.sendmystatus.oeventapp.ui.onboard.OtpVerificationScreen
 import com.sendmystatus.oeventapp.ui.RewardScreen
 import com.sendmystatus.oeventapp.ui.Route
 import com.sendmystatus.oeventapp.ui.ScannerScreen
-import com.sendmystatus.oeventapp.ui.WelcomeScreen
+import com.sendmystatus.oeventapp.ui.onboard.WelcomeScreen
 
 import com.sendmystatus.oeventapp.ui.theme.OEventTheme
 
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.sendmystatus.oeventapp.ui.onboard.CreateBusinessDetailScreen
+import com.sendmystatus.oeventapp.ui.onboard.CreateBusinessRegScreen
+import com.sendmystatus.oeventapp.ui.onboard.CreateMerchantAccountScreen
 import com.sendmystatus.oeventapp.ui.viewmodel.AuthState
 import com.sendmystatus.oeventapp.ui.viewmodel.AuthViewModel
 
@@ -57,7 +60,7 @@ fun App() {
                 composable<Route.Welcome> {
                     WelcomeScreen(
                         onAttendeeClick = { navController.navigate(Route.Login) },
-                        onMerchantClick = { /* Handle Merchant flow */ }
+                        onMerchantClick = { navController.navigate(Route.Merchant)}
                     )
                 }
                 composable<Route.Login> {
@@ -68,6 +71,38 @@ fun App() {
                         onBack = { navController.popBackStack() },
                         isLoading = authState is AuthState.Loading,
                         errorMessage = (authState as? AuthState.Error)?.message
+                    )
+                }
+
+                composable<Route.Merchant> {
+                    CreateMerchantAccountScreen(
+                        onMerchantSubmitClick = {
+                            navController.navigate(Route.BusinessDetail)
+                        },
+                        onBack = { navController.popBackStack() },
+//                        isLoading = authState is AuthState.Loading,
+//                        errorMessage = (authState as? AuthState.Error)?.message
+                    )
+                }
+
+                composable<Route.BusinessDetail> {
+                    CreateBusinessDetailScreen(
+                        onBusinessSubmitClick = {
+                            navController.navigate(Route.BusinessEventSetup)
+                        },
+                        onBack = { navController.popBackStack() },
+//                        isLoading = authState is AuthState.Loading,
+//                        errorMessage = (authState as? AuthState.Error)?.message
+                    )
+                }
+                composable<Route.BusinessEventSetup> {
+                    CreateBusinessRegScreen(
+                        onBusinessSubmitClick = {
+                            navController.navigate(Route.BusinessEventSetup)
+                        },
+                        onBack = { navController.popBackStack() },
+//                        isLoading = authState is AuthState.Loading,
+//                        errorMessage = (authState as? AuthState.Error)?.message
                     )
                 }
                 composable<Route.Otp> { backStackEntry ->

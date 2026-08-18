@@ -11,6 +11,15 @@ sealed interface Route {
     data object Login : Route
 
     @Serializable
+    data object Merchant : Route
+
+    @Serializable
+    data object BusinessDetail : Route
+
+    @Serializable
+    data object BusinessEventSetup : Route
+
+    @Serializable
     data class Otp(val mobileNumber: String) : Route
 
     @Serializable
