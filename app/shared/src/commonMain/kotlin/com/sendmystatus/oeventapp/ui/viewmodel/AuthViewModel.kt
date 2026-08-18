@@ -35,7 +35,7 @@ class AuthViewModel(
         viewModelScope.launch {
             _state.value = AuthState.Loading
             try {
-                val response = apiService.login(mobileNumber)
+                //val response = apiService.login(mobileNumber)
                 _state.value = AuthState.OtpSent(mobileNumber)
             } catch (e: Exception) {
                 _state.value = AuthState.Error(e.message ?: "Failed to send OTP")
