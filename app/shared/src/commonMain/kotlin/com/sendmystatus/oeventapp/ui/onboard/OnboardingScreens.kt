@@ -3,6 +3,7 @@ package com.sendmystatus.oeventapp.ui.onboard
 import androidx.compose.foundation.Image
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -15,9 +16,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sendmystatus.oeventapp.OUtil.isValidPhoneNumber
+import com.sendmystatus.oeventapp.ui.Route
+import com.sendmystatus.oeventapp.ui.UserType
 import com.sendmystatus.oeventapp.ui.theme.AppTheme
 import com.sendmystatus.oeventapp.ui.theme.bold
 import com.sendmystatus.oeventapp.ui.theme.italic
@@ -27,6 +31,84 @@ import oeventapp.app.shared.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
+@Composable
+@Preview
+fun AppPreview() {
+    DemoQuickAccess(
+        onNavigate = {}
+    )
+}
+
+@Composable
+fun DemoQuickAccess(onNavigate: (Route) -> Unit) {
+
+    val list = listOf("Guest Login","Merchant Login","Merchant Create Account","Business Details",
+        "Business Event setup","Merchant DashBoard", "Event creation", "Event Roles", "Event Dashboard"
+        )
+    val navigationList = listOf(Route.Login, Route.Merchant, Route.BusinessDetail, Route.BusinessEventSetup,
+        Route.Dashboard(UserType.ADMIN), Route.Dashboard(UserType.MERCHANT), Route.Dashboard(UserType.GUST)
+        , Route.Dashboard(UserType.SIGNED_IN_USER)
+        , Route.Profile, Route.Settings, Route.Scanner, Route.Reward,
+    )
+
+    val actionRouter = list.zip(navigationList)
+    println("actionRouter: ${actionRouter::class}")
+    println("actionRouter: $actionRouter")
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Quick Access",
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            )
+        }
+    ) { padding ->
+        LazyVerticalGrid(
+            columns = androidx.compose.foundation.lazy.grid.GridCells.Fixed(2),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp)
+        ){
+            actionRouter.forEach{
+                item {
+                    ElevatedButton(onClick = { println("got to ${it.second}")
+
+                        onNavigate(it.second as Route)
+
+                    }) {
+                        Text(text = it.first)
+                    }
+                }
+            }
+
+            navigationList.forEach {
+                    item {
+                        ElevatedButton(onClick = { println("got to ${it}")
+
+                            onNavigate(it as Route)
+
+                        }) {
+                            Text(text = it.toString())
+                        }
+                    }
+            }
+            /*list.forEach {
+                item {
+                    ElevatedButton(onClick = { *//*TODO*//* }) {
+                        Text(text = it)
+                    }
+                }
+            }*/
+        }
+
+    }
+
+
+}
 @Composable
 fun WelcomeScreen(
     onAttendeeClick: () -> Unit,

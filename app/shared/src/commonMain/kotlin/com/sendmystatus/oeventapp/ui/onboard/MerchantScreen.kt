@@ -46,6 +46,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sendmystatus.oeventapp.ui.InfoBanner
@@ -65,6 +66,15 @@ import oeventapp.app.shared.generated.resources.verify_subtitle
 import oeventapp.app.shared.generated.resources.verify_title
 import oeventapp.app.shared.generated.resources.welcome_title
 import org.jetbrains.compose.resources.stringResource
+
+@Preview
+@Composable
+fun CreateMerchantAccountScreenPreview() {
+    CreateMerchantAccountScreen(
+        onMerchantSubmitClick = {},
+        onBack = {}
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -112,6 +122,7 @@ fun CreateMerchantAccountScreen(
                 modifier = Modifier.fillMaxWidth().padding(16.dp)
                     .imePadding()
                     .navigationBarsPadding()
+                    .height(56.dp)
                     .focusRequester(focusRequester)
                     ,
                 shape = MaterialTheme.shapes.medium,
@@ -152,7 +163,7 @@ fun CreateMerchantAccountScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
 
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedTextField(
                 value = contactPersonName,
@@ -163,7 +174,7 @@ fun CreateMerchantAccountScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
 
                 )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(21.dp))
 
             OutlinedTextField(
                 value = mobileNumber,
@@ -174,7 +185,7 @@ fun CreateMerchantAccountScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
 
                 )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedTextField(
                 value = email,

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,8 +21,11 @@ import androidx.compose.ui.unit.sp
 fun InfoBanner(
     info: String,
     modifier: Modifier = Modifier,
-    bgColor: Color = Color(0xFFF4F9F5) ,
-    borderColor: Color = Color(0xFFD3E4D8)
+    bgColor: Color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
+    borderColor: Color = MaterialTheme.colorScheme.primary,
+    textColor: Color = MaterialTheme.colorScheme.onPrimaryContainer
+   /* bgColor: Color = Color(0xFFF4F9F5) ,
+    borderColor: Color = Color(0xFFD3E4D8)*/
 ) {
     Box(
         modifier = modifier
@@ -40,7 +44,7 @@ fun InfoBanner(
     ) {
         Text(
             text = info,
-            color = Color(0xFF4A6353), // Darker green/gray text color
+            color = textColor, // Darker green/gray text color
             textAlign = TextAlign.Center, // Centers the text lines
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium

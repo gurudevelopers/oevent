@@ -41,6 +41,7 @@ import androidx.compose.ui.input.key.Key.Companion.M
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sendmystatus.oeventapp.ui.InfoBanner
@@ -57,6 +58,15 @@ import oeventapp.app.shared.generated.resources.label_business_type
 import oeventapp.app.shared.generated.resources.label_business_zip
 import oeventapp.app.shared.generated.resources.label_select_event
 import org.jetbrains.compose.resources.stringResource
+
+@Preview
+@Composable
+fun BusinessEventSetupScreenPreview() {
+    CreateBusinessRegScreen(
+        onBusinessSubmitClick = {},
+        onBack = {}
+    )
+}
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -98,7 +108,8 @@ fun CreateBusinessRegScreen(
                 onClick = { },
                 modifier = Modifier.fillMaxWidth().padding(16.dp)
                     .imePadding()
-                    .navigationBarsPadding(),
+                    .navigationBarsPadding()
+                    .height(56.dp),
                 shape = MaterialTheme.shapes.medium,
                 enabled = canSubmit && !isLoading
             ) {

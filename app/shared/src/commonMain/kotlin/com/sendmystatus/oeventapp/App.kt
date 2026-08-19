@@ -23,6 +23,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sendmystatus.oeventapp.ui.onboard.CreateBusinessDetailScreen
 import com.sendmystatus.oeventapp.ui.onboard.CreateBusinessRegScreen
 import com.sendmystatus.oeventapp.ui.onboard.CreateMerchantAccountScreen
+import com.sendmystatus.oeventapp.ui.onboard.DemoQuickAccess
 import com.sendmystatus.oeventapp.ui.viewmodel.AuthState
 import com.sendmystatus.oeventapp.ui.viewmodel.AuthViewModel
 
@@ -41,10 +42,12 @@ fun App() {
                     navController.navigate(Route.Otp(mobileNumber = mobile))
                     authViewModel.resetState()
                 }
+
                 is AuthState.Success -> {
                     navController.navigate(Route.Scanner)
                     authViewModel.resetState()
                 }
+
                 else -> {}
             }
         }
@@ -55,12 +58,25 @@ fun App() {
         ) {
             NavHost(
                 navController = navController,
-                startDestination = Route.Welcome
+                startDestination = Route.Demo
             ) {
+                composable<Route.Demo> {
+                    DemoQuickAccess(
+                        onNavigate = { route ->
+                            try {
+
+                                navController.navigate(route)
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+
+                    )
+                }
                 composable<Route.Welcome> {
                     WelcomeScreen(
                         onAttendeeClick = { navController.navigate(Route.Login) },
-                        onMerchantClick = { navController.navigate(Route.Merchant)}
+                        onMerchantClick = { navController.navigate(Route.Merchant) }
                     )
                 }
                 composable<Route.Login> {
@@ -120,6 +136,7 @@ fun App() {
                 composable<Route.Scanner> {
                     ScannerScreen(
                         onScan = { data ->
+                            println("data: $data")
                             navController.navigate(Route.Reward(data = data))
                         },
                         onBack = { navController.popBackStack() }
