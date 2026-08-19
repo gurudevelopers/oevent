@@ -24,10 +24,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -36,12 +39,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sendmystatus.oeventapp.ui.InfoBanner
 import com.sendmystatus.oeventapp.ui.theme.AppTheme
 import com.sendmystatus.oeventapp.ui.theme.bold
 import oeventapp.app.shared.generated.resources.Res
@@ -72,14 +79,26 @@ fun CreateMerchantAccountScreen(
     var email by remember { mutableStateOf("") }
     var mobileNumber by remember { mutableStateOf("") }
     var contactPersonName by remember { mutableStateOf("") }
+    var focusRequester = remember { FocusRequester() }
 
     val canSubmit by remember { derivedStateOf { businessName.isNotBlank() && email.isNotBlank() && mobileNumber.isNotBlank() && contactPersonName.isNotBlank() }  }
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
 
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(
-                title = {},
+            MediumTopAppBar(
+                scrollBehavior = scrollBehavior,
+
+                title = {
+                    Text(
+                        text = stringResource(Res.string.create_account_title),
+                        fontSize = 22.sp,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -93,6 +112,7 @@ fun CreateMerchantAccountScreen(
                 modifier = Modifier.fillMaxWidth().padding(16.dp)
                     .imePadding()
                     .navigationBarsPadding()
+                    .focusRequester(focusRequester)
                     ,
                 shape = MaterialTheme.shapes.medium,
                 enabled = canSubmit && !isLoading
@@ -111,20 +131,15 @@ fun CreateMerchantAccountScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState)
                 .padding(padding)
+                .verticalScroll(scrollState)
                 .padding(16.dp)
-
+                .navigationBarsPadding()
                 ,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = stringResource(Res.string.create_account_title),
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold
-            )
 
-
+            InfoBanner("Provide Business and contact details.")
             Spacer(modifier = Modifier.height(48.dp))
 
 

@@ -22,10 +22,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -34,10 +37,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sendmystatus.oeventapp.ui.InfoBanner
 import oeventapp.app.shared.generated.resources.Res
 import oeventapp.app.shared.generated.resources.btn_business_submit
 import oeventapp.app.shared.generated.resources.btn_create_account
@@ -71,12 +78,20 @@ fun CreateBusinessDetailScreen(
     var state by remember { mutableStateOf("") }
 
     val canSubmit by remember { derivedStateOf { city.isNotBlank() && businessType.isNotBlank() && address.isNotBlank() && zipCode.isNotBlank() && state.isNotBlank() } }
-
-
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+    var focusRequester = remember { FocusRequester() }
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(
-                title = {},
+            MediumTopAppBar(
+                scrollBehavior = scrollBehavior,
+                title = {
+                    Text(
+                        text = stringResource(Res.string.business_detail_title),
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -89,7 +104,8 @@ fun CreateBusinessDetailScreen(
                 onClick = {onBusinessSubmitClick() },
                 modifier = Modifier.fillMaxWidth().padding(16.dp)
                     .imePadding()
-                    .navigationBarsPadding(),
+                    .navigationBarsPadding()
+                    .focusRequester(focusRequester),
                 shape = MaterialTheme.shapes.medium,
                 enabled = canSubmit && !isLoading
             ) {
@@ -107,19 +123,17 @@ fun CreateBusinessDetailScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState)
                 .padding(padding)
-                .padding(24.dp),
+                .verticalScroll(scrollState)
+                .padding(24.dp)
+                .navigationBarsPadding()
+            ,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = stringResource(Res.string.business_detail_title),
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold
-            )
 
+            InfoBanner("Provide Business type and details.")
 
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(28.dp))
 
             OutlinedTextField(
                 value = businessType,
