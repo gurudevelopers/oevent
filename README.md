@@ -45,6 +45,12 @@ Use the run button in your IDE's editor gutter, or run tests using Gradle tasks:
 - iOS tests: `./gradlew :app:shared:iosSimulatorArm64Test`
 
 ---
+### To-DO
+- Play intergity to be added for Android
+- App attestation for iOS
+
+
+---
 
 Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html),
 [Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform),

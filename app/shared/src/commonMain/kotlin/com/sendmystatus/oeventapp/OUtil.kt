@@ -7,3 +7,11 @@ object OUtil {
         return phone.matches(phoneRegex)
     }
 }
+
+enum class EventsType{
+    CONFERENCE,
+    NETWORK,
+    FESTIVAL,
+    WORKSHOP
+
+}

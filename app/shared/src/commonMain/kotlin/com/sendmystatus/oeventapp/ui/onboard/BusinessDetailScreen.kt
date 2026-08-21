@@ -1,5 +1,6 @@
 package com.sendmystatus.oeventapp.ui.onboard
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,11 +12,17 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.visible
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Business
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.LocationCity
+import androidx.compose.material.icons.filled.Storefront
+import androidx.compose.material.icons.filled.Stroller
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -111,7 +118,7 @@ fun CreateBusinessDetailScreen(
         },
         bottomBar = {
             Button(
-                onClick = {onBusinessSubmitClick() },
+                onClick = { onBusinessSubmitClick() },
                 modifier = Modifier.fillMaxWidth().padding(16.dp)
                     .imePadding()
                     .navigationBarsPadding()
@@ -137,8 +144,7 @@ fun CreateBusinessDetailScreen(
                 .padding(padding)
                 .verticalScroll(scrollState)
                 .padding(24.dp)
-                .navigationBarsPadding()
-            ,
+                .navigationBarsPadding(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
@@ -153,8 +159,22 @@ fun CreateBusinessDetailScreen(
                 label = { Text(stringResource(Res.string.label_business_type)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Storefront,
+                        contentDescription = "Business"
+                    )
+                },
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Business",
+                        modifier = Modifier.clickable { businessType = "" }
+                            .visible(businessType.isNotBlank())
+                    )
+                }
 
-                )
+            )
             Spacer(modifier = Modifier.height(8.dp))
 
             OutlinedTextField(
@@ -164,8 +184,21 @@ fun CreateBusinessDetailScreen(
                 label = { Text(stringResource(Res.string.label_business_address)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.LocationCity,
+                        contentDescription = "Business"
+                    )
+                },
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Business",
+                        modifier = Modifier.clickable { address = "" }.visible(address.isNotBlank())
+                    )
+                }
 
-                )
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -180,8 +213,14 @@ fun CreateBusinessDetailScreen(
                     label = { Text(stringResource(Res.string.label_business_city)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-
-                    )
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = "Business",
+                            modifier = Modifier.clickable { city = "" }.visible(city.isNotBlank())
+                        )
+                    }
+                )
                 OutlinedTextField(
                     value = zipCode,
                     onValueChange = { zipCode = it },
@@ -189,8 +228,15 @@ fun CreateBusinessDetailScreen(
                     label = { Text(stringResource(Res.string.label_business_zip)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-
-                    )
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = "Business",
+                            modifier = Modifier.clickable { zipCode = "" }
+                                .visible(zipCode.isNotBlank())
+                        )
+                    }
+                )
             }
 
 
@@ -203,13 +249,19 @@ fun CreateBusinessDetailScreen(
                 label = { Text(stringResource(Res.string.label_business_state)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Business",
+                        modifier = Modifier.clickable { state = "" }.visible(state.isNotBlank())
+                    )
+                }
 
-                )
+            )
 
 
 
             Spacer(modifier = Modifier.height(48.dp))
-
 
 
             /* if (errorMessage != null) {

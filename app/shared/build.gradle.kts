@@ -7,6 +7,12 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.ksp)                  // <-- Add KSP plugin here for Room
+    alias(libs.plugins.androidx.room)
+}
+// Required for Room schema export configuration
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 kotlin {
@@ -53,6 +59,14 @@ kotlin {
     }
     
     sourceSets {
+        val nonWebMain by creating {
+            dependsOn(commonMain.get())
+            dependencies {
+                implementation(libs.androidx.room.runtime)
+                implementation(libs.androidx.sqlite.bundled)
+            }
+        }
+
         commonMain.dependencies {
             api(project(":core"))
             implementation(libs.compose.runtime)
@@ -72,15 +86,20 @@ kotlin {
             implementation(libs.ktor.clientContentNegotiation)
             implementation(libs.ktor.clientLogging)
             implementation(libs.ktor.serializationKotlinxJson)
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.serialization.json)
         }
-        androidMain.dependencies {
-            implementation(libs.compose.uiToolingPreview)
-            implementation(libs.compose.uiTooling)
-            implementation(libs.qr.kit)
-            implementation(libs.ktor.clientOkHttp)
+        androidMain.apply {
+            get().dependsOn(nonWebMain)
+            dependencies {
+                implementation(libs.compose.uiToolingPreview)
+                implementation(libs.compose.uiTooling)
+                implementation(libs.qr.kit)
+                implementation(libs.ktor.clientOkHttp)
+            }
         }
         val iosMain = create("iosMain") {
-            dependsOn(getByName("commonMain"))
+            dependsOn(nonWebMain)
             dependencies {
                 implementation(libs.qr.kit)
                 implementation(libs.ktor.clientDarwin)
@@ -89,9 +108,12 @@ kotlin {
         getByName("iosArm64Main").dependsOn(iosMain)
         getByName("iosSimulatorArm64Main").dependsOn(iosMain)
         
-        getByName("jvmMain").dependencies {
-            implementation(libs.qr.kit)
-            implementation(libs.ktor.clientJava)
+        getByName("jvmMain").apply {
+            dependsOn(nonWebMain)
+            dependencies {
+                implementation(libs.qr.kit)
+                implementation(libs.ktor.clientJava)
+            }
         }
         getByName("wasmJsMain").dependencies {
             implementation(libs.qr.kit)

@@ -1,12 +1,19 @@
 package com.sendmystatus.oeventapp.ui.onboard
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.AssistantDirection
+import androidx.compose.material.icons.automirrored.filled.SendToMobile
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.MobileOff
+import androidx.compose.material.icons.filled.Smartphone
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -42,13 +49,30 @@ fun AppPreview() {
 @Composable
 fun DemoQuickAccess(onNavigate: (Route) -> Unit) {
 
-    val list = listOf("Guest Login","Merchant Login","Merchant Create Account","Business Details",
-        "Business Event setup","Merchant DashBoard", "Event creation", "Event Roles", "Event Dashboard"
-        )
-    val navigationList = listOf(Route.Login, Route.Merchant, Route.BusinessDetail, Route.BusinessEventSetup,
-        Route.Dashboard(UserType.ADMIN), Route.Dashboard(UserType.MERCHANT), Route.Dashboard(UserType.GUST)
-        , Route.Dashboard(UserType.SIGNED_IN_USER)
-        , Route.Profile, Route.Settings, Route.Scanner, Route.Reward,
+    val list = listOf(
+        "Guest Login",
+        "Merchant Login",
+        "Merchant Create Account",
+        "Business Details",
+        "Business Event setup",
+        "Merchant DashBoard",
+        "Event creation",
+        "Event Roles",
+        "Event Dashboard"
+    )
+    val navigationList = listOf(
+        Route.Login,
+        Route.Merchant,
+        Route.BusinessDetail,
+        Route.BusinessEventSetup,
+        Route.Dashboard(UserType.ADMIN),
+        Route.Dashboard(UserType.MERCHANT),
+        Route.Dashboard(UserType.GUST),
+        Route.Dashboard(UserType.SIGNED_IN_USER),
+        Route.Profile,
+        Route.Settings,
+        Route.Scanner,
+        Route.Reward,
     )
 
     val actionRouter = list.zip(navigationList)
@@ -72,10 +96,11 @@ fun DemoQuickAccess(onNavigate: (Route) -> Unit) {
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp)
-        ){
-            actionRouter.forEach{
+        ) {
+            actionRouter.forEach {
                 item {
-                    ElevatedButton(onClick = { println("got to ${it.second}")
+                    ElevatedButton(onClick = {
+                        println("got to ${it.second}")
 
                         onNavigate(it.second as Route)
 
@@ -86,15 +111,16 @@ fun DemoQuickAccess(onNavigate: (Route) -> Unit) {
             }
 
             navigationList.forEach {
-                    item {
-                        ElevatedButton(onClick = { println("got to ${it}")
+                item {
+                    ElevatedButton(onClick = {
+                        println("got to ${it}")
 
-                            onNavigate(it as Route)
+                        onNavigate(it as Route)
 
-                        }) {
-                            Text(text = it.toString())
-                        }
+                    }) {
+                        Text(text = it.toString())
                     }
+                }
             }
             /*list.forEach {
                 item {
@@ -109,6 +135,7 @@ fun DemoQuickAccess(onNavigate: (Route) -> Unit) {
 
 
 }
+
 @Composable
 fun WelcomeScreen(
     onAttendeeClick: () -> Unit,
@@ -179,6 +206,24 @@ fun WelcomeScreen(
     }
 }
 
+@Composable
+@Preview
+fun WelcomeScreenPreview() {
+    WelcomeScreen(
+        onAttendeeClick = {},
+        onMerchantClick = {}
+    )
+}
+
+@Composable
+@Preview
+fun LoginScreenPreview() {
+    LoginScreen(
+        onSendOtpClick = {},
+        onBack = {}
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
@@ -236,11 +281,11 @@ fun LoginScreen(
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold
             )
-            HorizontalDivider(
-                modifier = Modifier.width(60.dp),
-                thickness = 2.dp,
-                color = MaterialTheme.colorScheme.primary
-            )
+            /* HorizontalDivider(
+                 modifier = Modifier.width(60.dp),
+                 thickness = 2.dp,
+                 color = MaterialTheme.colorScheme.primary
+             )*/
 
             Spacer(modifier = Modifier.height(32.dp))
 
@@ -269,6 +314,23 @@ fun LoginScreen(
                         )
                     }
                 },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Smartphone,
+                        contentDescription = "Mobile"
+                    )
+                },
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Error",
+                        tint = if (isPhoneError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+
+                        modifier = Modifier.clickable { mobileNumber = "" }
+                            .visible(mobileNumber.isNotBlank())
+
+                    )
+                }
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -294,6 +356,22 @@ fun LoginScreen(
                         )
                     }
                 },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Email,
+                        contentDescription = "Email"
+                    )
+                },
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Error",
+                        tint = if (isEmailError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.clickable { email = "" }
+                            .visible(email.isNotBlank())
+
+                    )
+                }
             )
 
             Button(

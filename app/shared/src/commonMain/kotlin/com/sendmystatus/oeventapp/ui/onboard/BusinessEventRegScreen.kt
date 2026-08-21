@@ -16,6 +16,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Business
+import androidx.compose.material.icons.filled.Event
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -143,6 +145,12 @@ fun CreateBusinessRegScreen(
                 label = { Text(stringResource(Res.string.label_select_event)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Event,
+                        contentDescription = "Business"
+                    )
+                }
 
                 )
             Spacer(modifier = Modifier.height(8.dp))

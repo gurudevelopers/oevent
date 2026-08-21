@@ -1,5 +1,6 @@
 package com.sendmystatus.oeventapp.ui.onboard
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,12 +12,24 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.visible
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation.Companion.keyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.AddToHomeScreen
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.AssistantDirection
+import androidx.compose.material.icons.automirrored.rounded.List
+import androidx.compose.material.icons.filled.AssistantDirection
+import androidx.compose.material.icons.filled.Business
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.InstallMobile
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.Smartphone
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -91,7 +104,7 @@ fun CreateMerchantAccountScreen(
     var contactPersonName by remember { mutableStateOf("") }
     var focusRequester = remember { FocusRequester() }
 
-    val canSubmit by remember { derivedStateOf { businessName.isNotBlank() && email.isNotBlank() && mobileNumber.isNotBlank() && contactPersonName.isNotBlank() }  }
+    val canSubmit by remember { derivedStateOf { businessName.isNotBlank() && email.isNotBlank() && mobileNumber.isNotBlank() && contactPersonName.isNotBlank() } }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
 
@@ -123,11 +136,11 @@ fun CreateMerchantAccountScreen(
                     .imePadding()
                     .navigationBarsPadding()
                     .height(56.dp)
-                    .focusRequester(focusRequester)
-                    ,
+                    .focusRequester(focusRequester),
                 shape = MaterialTheme.shapes.medium,
-                enabled = canSubmit && !isLoading
-            ) {
+                enabled = canSubmit && !isLoading,
+
+                ) {
                 if (isLoading) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(24.dp),
@@ -145,8 +158,7 @@ fun CreateMerchantAccountScreen(
                 .padding(padding)
                 .verticalScroll(scrollState)
                 .padding(16.dp)
-                .navigationBarsPadding()
-                ,
+                .navigationBarsPadding(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
@@ -161,6 +173,23 @@ fun CreateMerchantAccountScreen(
                 label = { Text(stringResource(Res.string.label_business_name)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Business,
+                        contentDescription = "Business"
+                    )
+                },
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Error",
+                        //  tint = if (isPhoneError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+
+                        modifier = Modifier.clickable { businessName = "" }
+                            .visible(businessName.isNotBlank())
+
+                    )
+                }
 
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -172,8 +201,25 @@ fun CreateMerchantAccountScreen(
                 label = { Text(stringResource(Res.string.label_contact_name)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Person,
+                        contentDescription = "Person"
+                    )
+                },
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Error",
+                        //  tint = if (isPhoneError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
 
-                )
+                        modifier = Modifier.clickable { contactPersonName = "" }
+                            .visible(contactPersonName.isNotBlank())
+
+                    )
+                }
+
+            )
             Spacer(modifier = Modifier.height(21.dp))
 
             OutlinedTextField(
@@ -183,8 +229,25 @@ fun CreateMerchantAccountScreen(
                 label = { Text(stringResource(Res.string.label_mobile_number)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Phone,
+                        contentDescription = "Phone"
+                    )
+                },
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Error",
+                        //  tint = if (isPhoneError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
 
-                )
+                        modifier = Modifier.clickable { mobileNumber = "" }
+                            .visible(mobileNumber.isNotBlank())
+
+                    )
+                }
+
+            )
             Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedTextField(
@@ -194,12 +257,30 @@ fun CreateMerchantAccountScreen(
                 label = { Text(stringResource(Res.string.label_email)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Email,
+                        contentDescription = "Email"
+                    )
+                },
 
-                )
-           /* if (errorMessage != null) {
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(text = errorMessage, color = MaterialTheme.colorScheme.error, fontSize = 14.sp)
-            }*/
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Error",
+                      //  tint = if (isPhoneError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+
+                        modifier = Modifier.clickable { email = "" }
+                            .visible(email.isNotBlank())
+
+                    )
+                }
+
+            )
+            /* if (errorMessage != null) {
+                 Spacer(modifier = Modifier.height(16.dp))
+                 Text(text = errorMessage, color = MaterialTheme.colorScheme.error, fontSize = 14.sp)
+             }*/
         }
     }
 }
