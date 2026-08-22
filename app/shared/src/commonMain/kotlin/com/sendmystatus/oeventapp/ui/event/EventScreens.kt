@@ -38,6 +38,8 @@ import androidx.compose.material.icons.filled.Workspaces
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -49,8 +51,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -66,6 +70,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sendmystatus.oeventapp.ui.DateSelector
+import com.sendmystatus.oeventapp.ui.TimeSelector
 import oeventapp.app.shared.generated.resources.Res
 import oeventapp.app.shared.generated.resources.btn_continue
 import oeventapp.app.shared.generated.resources.label_event_date
@@ -125,8 +131,8 @@ fun CreateEventScreen(
                 modifier = Modifier.fillMaxWidth()
                     .imePadding()
                     .navigationBarsPadding()
-                    .height(56.dp)
-                ,
+                    .padding(16.dp)
+                    .height(56.dp),
                 shape = MaterialTheme.shapes.medium,
 //                enabled = isButtonEnabled
 
@@ -142,7 +148,7 @@ fun CreateEventScreen(
             MediumTopAppBar(
                 title = {
                     Text(
-                        text =  "Create Event for $templateName",
+                        text = "Create Event for $templateName",
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -152,7 +158,7 @@ fun CreateEventScreen(
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
-                        scrollBehavior = scrollBehavior
+                scrollBehavior = scrollBehavior
             )
         }
     ) { padding ->
@@ -162,11 +168,9 @@ fun CreateEventScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .verticalScroll(scrollState)
-                .padding(16.dp)
-            ,
+                .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
 
 
             OutlinedTextField(
@@ -303,30 +307,6 @@ fun CreateEventScreen(
                 }
             )
 
-
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Is this event public?",
-                    modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.bodyLarge
-
-                )
-
-                Switch(checked = isPublic, onCheckedChange = { isPublic = it })
-
-            }
-
-
-            Spacer(modifier = Modifier.height(16.dp))
-            HorizontalDivider(
-                modifier = Modifier.fillMaxWidth(),
-                thickness = 2.dp,
-                color = MaterialTheme.colorScheme.primary
-            )
             Spacer(modifier = Modifier.height(16.dp))
 
 
@@ -344,34 +324,29 @@ fun CreateEventScreen(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    OutlinedTextField(
-                        value = "",
-                        onValueChange = { },
-                        modifier = Modifier.weight(1f),
-                        label = { Text(stringResource(Res.string.label_event_date)) },
-                        singleLine = true,
-                        trailingIcon = {
-                            Icon(
-                                imageVector = Icons.Filled.EditCalendar,
-                                contentDescription = "Error",
-                            )
 
-                        }
+                    DateSelector(
+                        onSelectDate = { date ->
+                            eventDate = date
+                        },
+                        onDismiss = { },
+                        label = stringResource(Res.string.label_event_date),
+                        placeHolderName = "Select Date",
+                        modifier = Modifier.weight(1f)
+
+
+
                     )
-                    Spacer(modifier = Modifier.weight(.1f))
-                    OutlinedTextField(
-                        value = "",
-                        onValueChange = { },
-                        modifier = Modifier.weight(1f),
-                        label = { Text(stringResource(Res.string.label_event_time)) },
-                        singleLine = true,
-                        trailingIcon = {
-                            Icon(
-                                imageVector = Icons.Filled.EditCalendar,
-                                contentDescription = "Error",
-                            )
 
-                        }
+                    Spacer(modifier = Modifier.weight(.1f))
+                    TimeSelector(
+                        onSelectTime = { hour, minute ->
+                            eventTime = "$hour:$minute"
+                        },
+                        onDismiss = { },
+                        label = stringResource(Res.string.label_event_time),
+                        placeHolderName = "Select Time",
+                        modifier = Modifier.weight(1f)
                     )
 
 
@@ -394,39 +369,56 @@ fun CreateEventScreen(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    OutlinedTextField(
-                        value = "",
-                        onValueChange = { },
-                        modifier = Modifier.weight(1f),
-                        label = { Text(stringResource(Res.string.label_event_date)) },
-                        singleLine = true,
-                        trailingIcon = {
-                            Icon(
-                                imageVector = Icons.Filled.EditCalendar,
-                                contentDescription = "Error",
-                            )
+                    DateSelector(
+                        onSelectDate = { date ->
+                            eventDate = date
+                        },
+                        onDismiss = { },
+                        label = stringResource(Res.string.label_event_date),
+                        placeHolderName = "Select Date",
+                        modifier = Modifier.weight(1f)
 
-                        }
+
+
                     )
+
                     Spacer(modifier = Modifier.weight(.1f))
-                    OutlinedTextField(
-                        value = "",
-                        onValueChange = { },
-                        modifier = Modifier.weight(1f),
-                        label = { Text(stringResource(Res.string.label_event_time)) },
-                        singleLine = true,
-                        trailingIcon = {
-                            Icon(
-                                imageVector = Icons.Filled.EditCalendar,
-                                contentDescription = "Error",
-                            )
-
-                        }
+                    TimeSelector(
+                        onSelectTime = { hour, minute ->
+                            eventTime = "$hour:$minute"
+                        },
+                        onDismiss = { },
+                        label = stringResource(Res.string.label_event_time),
+                        placeHolderName = "Select Time",
+                        modifier = Modifier.weight(1f)
                     )
+
 
 
                 }
             }
+            Spacer(modifier = Modifier.height(32.dp))
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth(),
+                thickness = 2.dp,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Is this event public?",
+                    modifier = Modifier.weight(1f),
+                    style = MaterialTheme.typography.bodyLarge
+
+                )
+
+                Switch(checked = isPublic, onCheckedChange = { isPublic = it })
+
+            }
+
+
 
 
         }
@@ -606,6 +598,33 @@ fun EventTemplateScreen(onSelected: (String) -> Unit) {
         }
 
 
+    }
+
+    @Composable
+    fun DatePickerModal(
+        onDateSelected: (Long?) -> Unit,
+        onDismiss: () -> Unit
+    ) {
+        val datePickerState = rememberDatePickerState()
+
+        DatePickerDialog(
+            onDismissRequest = onDismiss,
+            confirmButton = {
+                TextButton(onClick = {
+                    onDateSelected(datePickerState.selectedDateMillis)
+                    onDismiss()
+                }) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismiss) {
+                    Text("Cancel")
+                }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
     }
 }
 

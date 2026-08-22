@@ -166,7 +166,6 @@ fun CreateMerchantAccountScreen(
             InfoBanner("Provide Business and contact details.")
             Spacer(modifier = Modifier.height(48.dp))
 
-
             OutlinedTextField(
                 value = businessName,
                 onValueChange = { businessName = it },
