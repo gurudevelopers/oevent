@@ -6,6 +6,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -20,6 +21,8 @@ import com.sendmystatus.oeventapp.ui.onboard.WelcomeScreen
 import com.sendmystatus.oeventapp.ui.theme.OEventTheme
 
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.sendmystatus.oeventapp.ui.event.CreateEventScreen
+import com.sendmystatus.oeventapp.ui.event.EventTemplateScreen
 import com.sendmystatus.oeventapp.ui.onboard.CreateBusinessDetailScreen
 import com.sendmystatus.oeventapp.ui.onboard.CreateBusinessRegScreen
 import com.sendmystatus.oeventapp.ui.onboard.CreateMerchantAccountScreen
@@ -110,6 +113,19 @@ fun App() {
 //                        isLoading = authState is AuthState.Loading,
 //                        errorMessage = (authState as? AuthState.Error)?.message
                     )
+                }
+                composable<Route.EventTemplate> {
+
+                    EventTemplateScreen(onSelected = { name ->
+                        navController.navigate(Route.EventCreate(name))
+
+                    })
+                }
+
+                composable<Route.EventCreate> { backEntyr ->
+                    val eventTemp: Route.EventCreate = backEntyr.toRoute()
+
+                    CreateEventScreen(eventTemp.selectedTemplateName)
                 }
                 composable<Route.BusinessEventSetup> {
                     CreateBusinessRegScreen(

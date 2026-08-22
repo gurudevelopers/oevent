@@ -56,6 +56,7 @@ fun DemoQuickAccess(onNavigate: (Route) -> Unit) {
         "Business Details",
         "Business Event setup",
         "Merchant DashBoard",
+        "Event Template",
         "Event creation",
         "Event Roles",
         "Event Dashboard"
@@ -65,12 +66,10 @@ fun DemoQuickAccess(onNavigate: (Route) -> Unit) {
         Route.Merchant,
         Route.BusinessDetail,
         Route.BusinessEventSetup,
-        Route.Dashboard(UserType.ADMIN),
         Route.Dashboard(UserType.MERCHANT),
-        Route.Dashboard(UserType.GUST),
-        Route.Dashboard(UserType.SIGNED_IN_USER),
-        Route.Profile,
-        Route.Settings,
+        Route.EventTemplate,
+        Route.EventTemplate,
+        Route.EventTemplate,
         Route.Scanner,
         Route.Reward,
     )
@@ -110,7 +109,7 @@ fun DemoQuickAccess(onNavigate: (Route) -> Unit) {
                 }
             }
 
-            navigationList.forEach {
+           /* navigationList.forEach {
                 item {
                     ElevatedButton(onClick = {
                         println("got to ${it}")
@@ -121,7 +120,7 @@ fun DemoQuickAccess(onNavigate: (Route) -> Unit) {
                         Text(text = it.toString())
                     }
                 }
-            }
+            }*/
             /*list.forEach {
                 item {
                     ElevatedButton(onClick = { *//*TODO*//* }) {
