@@ -1,5 +1,6 @@
 package com.sendmystatus.oeventapp.ui.onboard
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -105,7 +106,7 @@ fun CreateMerchantAccountScreen(
     var focusRequester = remember { FocusRequester() }
 
     val canSubmit by remember { derivedStateOf { businessName.isNotBlank() && email.isNotBlank() && mobileNumber.isNotBlank() && contactPersonName.isNotBlank() } }
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
 
     Scaffold(
@@ -158,7 +159,7 @@ fun CreateMerchantAccountScreen(
                 .padding(padding)
                 .verticalScroll(scrollState)
                 .padding(16.dp)
-                .navigationBarsPadding(),
+                ,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 

@@ -8,11 +8,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.AssistantDirection
-import androidx.compose.material.icons.automirrored.filled.SendToMobile
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.MobileOff
 import androidx.compose.material.icons.filled.Smartphone
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -69,7 +66,7 @@ fun DemoQuickAccess(onNavigate: (Route) -> Unit) {
         Route.Dashboard(UserType.MERCHANT),
         Route.EventTemplate,
         Route.EventTemplate,
-        Route.EventTemplate,
+        Route.EventCreate("Event Template 1"),
         Route.Scanner,
         Route.Reward,
     )
@@ -98,13 +95,19 @@ fun DemoQuickAccess(onNavigate: (Route) -> Unit) {
         ) {
             actionRouter.forEach {
                 item {
-                    ElevatedButton(onClick = {
+                    Card(
+                        modifier = Modifier.size(128.dp, 120.dp)
+
+                        ,
+                        onClick = {
                         println("got to ${it.second}")
 
                         onNavigate(it.second as Route)
 
                     }) {
-                        Text(text = it.first)
+                        Text(text = it.first,
+                            modifier = Modifier.fillMaxSize().padding(20.dp),
+                            textAlign = TextAlign.Center)
                     }
                 }
             }

@@ -117,6 +117,10 @@ fun App() {
                 composable<Route.EventTemplate> {
 
                     EventTemplateScreen(onSelected = { name ->
+                        if (name.isEmpty()) {
+                            navController.popBackStack()
+                            return@EventTemplateScreen
+                        }
                         navController.navigate(Route.EventCreate(name))
 
                     })
