@@ -131,7 +131,7 @@ fun CreateEventSetupScreenPreview() {
 @Preview
 fun CreateEventScreenPreview() {
     CreateEventScreen(
-        templateName = TODO()
+        templateName = "Conference"
     )
 }
 
@@ -139,7 +139,7 @@ fun CreateEventScreenPreview() {
 @Preview
 fun EventTemplateScreenPreview() {
     EventTemplateScreen(
-        onSelected = TODO()
+        onSelected = {  }
     )
 }
 
@@ -233,7 +233,11 @@ fun EventTemplateScreen(onSelected: (String) -> Unit) {
                                     width = 2.dp,
                                     color = MaterialTheme.colorScheme.primary,
                                     shape = CardDefaults.elevatedShape
-                                ) else Modifier
+                                ) else Modifier.border(
+                                    width = 2.dp,
+                                    color = MaterialTheme.colorScheme.primaryFixed,
+                                    shape = CardDefaults.elevatedShape
+                                )
                             ),
                             colors = CardDefaults.elevatedCardColors(
                                 containerColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface,
