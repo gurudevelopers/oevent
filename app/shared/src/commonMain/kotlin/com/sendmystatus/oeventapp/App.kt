@@ -21,7 +21,9 @@ import com.sendmystatus.oeventapp.ui.onboard.WelcomeScreen
 import com.sendmystatus.oeventapp.ui.theme.OEventTheme
 
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.sendmystatus.oeventapp.ui.event.AddProgramScreen
 import com.sendmystatus.oeventapp.ui.event.CreateEventScreen
+import com.sendmystatus.oeventapp.ui.event.EventProgramScreen
 import com.sendmystatus.oeventapp.ui.event.EventTemplateScreen
 import com.sendmystatus.oeventapp.ui.onboard.CreateBusinessDetailScreen
 import com.sendmystatus.oeventapp.ui.onboard.CreateBusinessRegScreen
@@ -76,6 +78,25 @@ fun App() {
 
                     )
                 }
+
+                composable<Route.EventProgram> {
+                    EventProgramScreen(
+                        onBack = { navController.popBackStack() },
+                        onEventAdded = {
+                            navController.navigate(Route.EventProgramAdd)
+                        }
+                    )
+                }
+
+                composable<Route.EventProgramAdd> {
+                    AddProgramScreen(
+                        onBack = { navController.popBackStack() },
+                        onEventAdded = {
+                            navController.navigate(Route.EventProgramAdd)
+                        }
+                    )
+                }
+
                 composable<Route.Welcome> {
                     WelcomeScreen(
                         onAttendeeClick = { navController.navigate(Route.Login) },
@@ -129,7 +150,12 @@ fun App() {
                 composable<Route.EventCreate> { backEntyr ->
                     val eventTemp: Route.EventCreate = backEntyr.toRoute()
 
-                    CreateEventScreen(eventTemp.selectedTemplateName)
+                    CreateEventScreen(
+                        eventTemp.selectedTemplateName,
+                        onBack = {
+                            navController.popBackStack()
+                        }
+                    )
                 }
                 composable<Route.BusinessEventSetup> {
                     CreateBusinessRegScreen(

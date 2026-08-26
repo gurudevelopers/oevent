@@ -3,7 +3,10 @@ package com.sendmystatus.oeventapp.data.model.event
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.Serializable
+import kotlin.time.Instant
 
 @Serializable
 data class Event(
@@ -13,13 +16,18 @@ data class Event(
     val type: String,
     val icon: String? = null,
     val isPublic: Boolean = true,
-    val startDate: LocalDate,
-    val endDate: LocalDate,
-    val startTime: LocalTime,
-    val endTime: LocalTime,
+    val startTimestamp: Long,
+    val endTimestamp: Long,
     val location: String,
     val venueName: String,
-)
+) {
+    val startDateAndTime: LocalDateTime
+        get() = Instant.fromEpochMilliseconds(startTimestamp)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+    val endDateAndTime: LocalDateTime
+        get() = Instant.fromEpochMilliseconds(endTimestamp)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+}
 
 @Serializable
 data class EventInvite(
@@ -28,9 +36,16 @@ data class EventInvite(
     val contact: List<EventInviteContact>,//mobile or app or email
     val message: String,
     val status: String,
-    val createdDate: LocalDateTime,
-    val modifiedDate: LocalDateTime,
-)
+    val createdTimestamp: Long,
+    val modifiedTimestamp: Long,
+) {
+    val createDateAndTime: LocalDateTime
+        get() = Instant.fromEpochMilliseconds(createdTimestamp)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+    val modifyDateAndTime: LocalDateTime
+        get() = Instant.fromEpochMilliseconds(modifiedTimestamp)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+}
 
 @Serializable
 data class EventInviteContact(
@@ -46,9 +61,16 @@ data class EventInviteContactAcknowledge(
     val contactId: String,//EventInviteContact id
     val message: String,
     val acknowledge: String, //yes or no or may be or pending
-    val createdDate: LocalDateTime,
-    val modifiedDate: LocalDateTime,
-)
+    val createdTimestamp: Long,
+    val modifiedTimestamp: Long,
+) {
+    val createDateAndTime: LocalDateTime
+        get() = Instant.fromEpochMilliseconds(createdTimestamp)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+    val modifyDateAndTime: LocalDateTime
+        get() = Instant.fromEpochMilliseconds(modifiedTimestamp)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+}
 
 
 @Serializable
@@ -67,8 +89,13 @@ data class EventFeedback(
     val comment: String,
     val userId: String,
     val eventId: String,
-    val timestamp: String,
-)
+    val timestamp: Long,
+) {
+    val feedbackDateAndTime: LocalDateTime
+        get() = Instant.fromEpochMilliseconds(timestamp)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+
+}
 
 @Serializable
 data class EventSetting(
@@ -76,14 +103,22 @@ data class EventSetting(
     val eventId: String,
     val isFree: Boolean = true,
     val price: Map<String, Double> = mapOf("default" to 0.0),
-    val isOnline: Boolean,
-    val currency: String,
-    val tokenPrefix: String,
+    val isOnline: Boolean = false,
+    val currency: String = "USD",
+    val tokenPrefix: String = "OPEN_",
     val capacity: Int = 100,
     val status: String = "active",
     val images: List<String>,
-    val modifyDate: LocalDate,
-)
+    val modifyTimestamp: Long,
+    val createdTimestamp: Long,
+) {
+    val createDateAndTime: LocalDateTime
+        get() = Instant.fromEpochMilliseconds(createdTimestamp)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+    val modifyDateAndTime: LocalDateTime
+        get() = Instant.fromEpochMilliseconds(modifyTimestamp)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+}
 
 @Serializable
 data class EventAttendance(
@@ -91,8 +126,38 @@ data class EventAttendance(
     val userId: String,
     val eventId: String,
     val status: String,
-    val checkedInDate: LocalDateTime,
-)
+    val checkedInTimestamp: Long,
+    val checkedOutTimestamp: Long,
+) {
+    val checkedInDateAndTime: LocalDateTime
+        get() = Instant.fromEpochMilliseconds(checkedInTimestamp)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+    val checkedOutDateAndTime: LocalDateTime
+        get() = Instant.fromEpochMilliseconds(checkedOutTimestamp)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+}
+
+@Serializable
+data class EventProgram(
+    val id: String,
+    val eventId: String,
+    val title: String,
+    val description: String,
+    val startDate: LocalDate,
+    val endDate: LocalDate,
+    val startTime: LocalTime,
+    val endTime: LocalTime,
+    val status: String,
+    val createdTimestamp: Long,
+    val modifiedTimestamp: Long,
+) {
+    val createdDateAndTime: LocalDateTime
+        get() = Instant.fromEpochMilliseconds(createdTimestamp)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+    val modifiedDateAndTime: LocalDateTime
+        get() = Instant.fromEpochMilliseconds(modifiedTimestamp)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+}
 
 
 

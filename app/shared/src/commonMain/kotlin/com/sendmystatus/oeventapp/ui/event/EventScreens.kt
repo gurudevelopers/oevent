@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.visible
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
@@ -21,40 +20,29 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.EventNote
-import androidx.compose.material.icons.filled.AddReaction
 import androidx.compose.material.icons.filled.Celebration
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.EditCalendar
 import androidx.compose.material.icons.filled.Event
-import androidx.compose.material.icons.filled.EventNote
 import androidx.compose.material.icons.filled.EventSeat
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.LocationCity
 import androidx.compose.material.icons.filled.MeetingRoom
-import androidx.compose.material.icons.filled.Smartphone
 import androidx.compose.material.icons.filled.Theaters
 import androidx.compose.material.icons.filled.Workspaces
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MediumFlexibleTopAppBar
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -63,62 +51,77 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sendmystatus.oeventapp.ui.DateSelector
-import com.sendmystatus.oeventapp.ui.TimeSelector
+import com.sendmystatus.oeventapp.data.model.event.Event
+import com.sendmystatus.oeventapp.ui.DateAndTimeRow
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 import oeventapp.app.shared.generated.resources.Res
 import oeventapp.app.shared.generated.resources.btn_continue
-import oeventapp.app.shared.generated.resources.label_event_date
+import oeventapp.app.shared.generated.resources.clear
+import oeventapp.app.shared.generated.resources.error_event_date_start_greater_than_end
+import oeventapp.app.shared.generated.resources.event_template_title
+import oeventapp.app.shared.generated.resources.label_end
 import oeventapp.app.shared.generated.resources.label_event_description
-import oeventapp.app.shared.generated.resources.label_event_end_date
 import oeventapp.app.shared.generated.resources.label_event_location
 import oeventapp.app.shared.generated.resources.label_event_name
 import oeventapp.app.shared.generated.resources.label_event_start_date
-import oeventapp.app.shared.generated.resources.label_event_time
 import oeventapp.app.shared.generated.resources.label_event_venue_name
-import oeventapp.app.shared.generated.resources.label_select_event
+import oeventapp.app.shared.generated.resources.label_start
 import org.jetbrains.compose.resources.stringResource
-import kotlin.collections.mutableMapOf
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.hours
+import kotlin.uuid.Uuid
 
 @Composable
 fun CreateEventScreen(
     templateName: String,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+    eventObj: Event? = null
+) {
+    val currentTime = remember {
+        Clock.System.now()
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+    }
 
-    ) {
-    /**
-     * @Serializable
-     * data class Event(
-     *     val id: String,
-     *     val name: String,
-     *     val description: String,
-     *     val type: String,
-     *     val icon: String? = null,
-     *     val isPublic: Boolean = true,
-     *     val startDate: LocalDate,
-     *     val endDate: LocalDate,
-     *     val startTime: LocalTime,
-     *     val endTime: LocalTime,
-     *     val location: String,
-     *     val venueName: String,
-     * )
-     */
+    val defaultEndTime = remember {
+        (Clock.System.now().plus(1.hours)).toLocalDateTime(TimeZone.currentSystemDefault())
+    }
 
-    var eventDate by remember { mutableStateOf("") }
-    var eventTime by remember { mutableStateOf("") }
-    var eventLocation by remember { mutableStateOf("") }
+    var eventStartTime by remember { mutableStateOf(eventObj?.startDateAndTime ?: currentTime) }
+    var eventEndTime by remember { mutableStateOf(eventObj?.endDateAndTime ?: defaultEndTime) }
+    var eventLocation by remember { mutableStateOf(eventObj?.location ?: "") }
     var eventVenue by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var isPublic by remember { mutableStateOf(true) }
+    var name by remember { mutableStateOf(eventObj?.name ?: "") }
+    var description by remember { mutableStateOf(eventObj?.description ?: "") }
+    var isEventPublic by remember { mutableStateOf(eventObj?.isPublic ?: true) }
 
-    val isButtonEnabled by remember { derivedStateOf { } }
+    val isDateError by remember {
+        derivedStateOf {
+            val start = eventStartTime
+            val end = eventEndTime
+            (end < start).also {
+                println(" date issue")
+            }
+
+        }
+    }
+
+    val isButtonEnabled by remember {
+        derivedStateOf {
+            isDateError.not()
+                    && (name.isNotBlank().and(name.length > 5))
+
+        }
+    }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
     val scrollState = rememberScrollState()
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -126,6 +129,46 @@ fun CreateEventScreen(
         bottomBar = {
             Button(
                 onClick = {
+                    val startTs = eventStartTime.toInstant(TimeZone.currentSystemDefault())
+                        .toEpochMilliseconds()
+                    val endTs = eventEndTime.toInstant(TimeZone.currentSystemDefault())
+                        .toEpochMilliseconds()
+
+                    val event = if (eventObj != null) {
+                        // UPDATE CASE:
+                        // .copy() reuses the existing ID, Type, and Icon automatically.
+                        // It ONLY changes the fields you list below.
+                        eventObj.copy(
+                            name = name,
+                            description = description,
+                            location = eventLocation,
+                            venueName = eventVenue,
+                            startTimestamp = startTs,
+                            endTimestamp = endTs,
+                            isPublic = isEventPublic
+                        )
+                    } else {
+                        // CREATE CASE:
+                        // We create a brand new Event with a new UUID.
+                        Event(
+                            id = Uuid.random().toString(),
+                            type = templateName,
+                            name = name,
+                            description = description,
+                            location = eventLocation,
+                            venueName = eventVenue,
+                            startTimestamp = startTs,
+                            endTimestamp = endTs,
+                            isPublic = isEventPublic,
+                            icon = "default_icon" // Provide your default icon
+                        )
+                    }
+
+
+
+                    // Now do something with 'event' (e.g., save to DB or pass to callback)
+                    println("Event saved: $event")
+
 
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -134,8 +177,7 @@ fun CreateEventScreen(
                     .padding(16.dp)
                     .height(56.dp),
                 shape = MaterialTheme.shapes.medium,
-//                enabled = isButtonEnabled
-
+                enabled = isButtonEnabled
 
             ) {
 
@@ -154,7 +196,7 @@ fun CreateEventScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
@@ -174,8 +216,8 @@ fun CreateEventScreen(
 
 
             OutlinedTextField(
-                value = "",
-                onValueChange = { },
+                value = name,
+                onValueChange = { name = it },
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(stringResource(Res.string.label_event_name)) },
                 singleLine = true,
@@ -196,11 +238,9 @@ fun CreateEventScreen(
                 trailingIcon = {
                     Icon(
                         imageVector = Icons.Filled.Close,
-                        contentDescription = "Error",
-                        //  tint = if (isPhoneError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-
-//                        modifier = Modifier.clickable { mobileNumber = "" }
-//                            .visible(mobileNumber.isNotBlank())
+                        contentDescription = stringResource(Res.string.clear),
+                        modifier = Modifier.clickable { name = "" }
+                            .visible(name.isNotBlank())
 
                     )
                 }
@@ -209,11 +249,14 @@ fun CreateEventScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
-                value = "",
-                onValueChange = { },
+                value = description,
+                onValueChange = {
+                    description = it
+                },
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(stringResource(Res.string.label_event_description)) },
-                singleLine = true,
+                minLines = 2,
+                maxLines = 4,
                 supportingText = {
                     /*if (isPhoneError) {
                         Text(
@@ -221,6 +264,7 @@ fun CreateEventScreen(
                             color = MaterialTheme.colorScheme.error
                         )
                     }*/
+
                 },
                 leadingIcon = {
                     Icon(
@@ -231,11 +275,9 @@ fun CreateEventScreen(
                 trailingIcon = {
                     Icon(
                         imageVector = Icons.Filled.Close,
-                        contentDescription = "Error",
-                        //  tint = if (isPhoneError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-
-//                        modifier = Modifier.clickable { mobileNumber = "" }
-//                            .visible(mobileNumber.isNotBlank())
+                        contentDescription = stringResource(Res.string.clear),
+                        modifier = Modifier.clickable { description = "" }
+                            .visible(description.isNotBlank())
 
                     )
                 }
@@ -243,8 +285,10 @@ fun CreateEventScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
-                value = "",
-                onValueChange = { },
+                value = eventLocation,
+                onValueChange = {
+                    eventLocation = it
+                },
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(stringResource(Res.string.label_event_location)) },
                 singleLine = true,
@@ -265,10 +309,9 @@ fun CreateEventScreen(
                 trailingIcon = {
                     Icon(
                         imageVector = Icons.Filled.Close,
-                        contentDescription = "Error",
-                        //  tint = if (isPhoneError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.clickable { }
-                            .visible(true)
+                        contentDescription = stringResource(Res.string.clear),
+                        modifier = Modifier.clickable { eventLocation = "" }
+                            .visible(eventLocation.isNotBlank())
 
                     )
                 }
@@ -276,8 +319,10 @@ fun CreateEventScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
-                value = "",
-                onValueChange = { },
+                value = eventVenue,
+                onValueChange = {
+                    eventVenue = it
+                },
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(stringResource(Res.string.label_event_venue_name)) },
                 singleLine = true,
@@ -298,17 +343,16 @@ fun CreateEventScreen(
                 trailingIcon = {
                     Icon(
                         imageVector = Icons.Filled.Close,
-                        contentDescription = "Error",
-                        //  tint = if (isPhoneError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.clickable { }
-                            .visible(true)
+                        contentDescription = stringResource(Res.string.clear),
+                        modifier = Modifier.clickable { eventVenue = "" }
+                            .visible(eventVenue.isNotBlank())
+
 
                     )
                 }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -319,85 +363,32 @@ fun CreateEventScreen(
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-
-                    DateSelector(
-                        onSelectDate = { date ->
-                            eventDate = date
-                        },
-                        onDismiss = { },
-                        label = stringResource(Res.string.label_event_date),
-                        placeHolderName = "Select Date",
-                        modifier = Modifier.weight(1f)
-
-
-
-                    )
-
-                    Spacer(modifier = Modifier.weight(.1f))
-                    TimeSelector(
-                        onSelectTime = { hour, minute ->
-                            eventTime = "$hour:$minute"
-                        },
-                        onDismiss = { },
-                        label = stringResource(Res.string.label_event_time),
-                        placeHolderName = "Select Time",
-                        modifier = Modifier.weight(1f)
-                    )
-
-
-                }
-            }
-
-
-            Spacer(modifier = Modifier.height(16.dp))
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(
-                    text = stringResource(Res.string.label_event_end_date),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+                DateAndTimeRow(
+                    label = stringResource(Res.string.label_start),
+                    onDateTimeClick = {
+                        eventStartTime = it
+                    },
+                    timeStamp = eventStartTime.toInstant(TimeZone.currentSystemDefault())
+                        .toEpochMilliseconds()
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                DateAndTimeRow(
+                    label = stringResource(Res.string.label_end),
+                    onDateTimeClick = {
+                        eventEndTime = it
+                    },
+                    timeStamp = eventEndTime.toInstant(TimeZone.currentSystemDefault())
+                        .toEpochMilliseconds()
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    DateSelector(
-                        onSelectDate = { date ->
-                            eventDate = date
-                        },
-                        onDismiss = { },
-                        label = stringResource(Res.string.label_event_date),
-                        placeHolderName = "Select Date",
-                        modifier = Modifier.weight(1f)
+                )
+                Text(
+                    text = if (isDateError) stringResource(Res.string.error_event_date_start_greater_than_end) else "",
+                    color = MaterialTheme.colorScheme.error,
+                )
 
-
-
-                    )
-
-                    Spacer(modifier = Modifier.weight(.1f))
-                    TimeSelector(
-                        onSelectTime = { hour, minute ->
-                            eventTime = "$hour:$minute"
-                        },
-                        onDismiss = { },
-                        label = stringResource(Res.string.label_event_time),
-                        placeHolderName = "Select Time",
-                        modifier = Modifier.weight(1f)
-                    )
-
-
-
-                }
             }
-            Spacer(modifier = Modifier.height(32.dp))
+
+
+            Spacer(modifier = Modifier.height(12.dp))
             HorizontalDivider(
                 modifier = Modifier.fillMaxWidth(),
                 thickness = 2.dp,
@@ -414,11 +405,9 @@ fun CreateEventScreen(
 
                 )
 
-                Switch(checked = isPublic, onCheckedChange = { isPublic = it })
+                Switch(checked = isEventPublic, onCheckedChange = { isEventPublic = it })
 
             }
-
-
 
 
         }
@@ -445,7 +434,8 @@ fun CreateEventSetupScreenPreview() {
 @Preview
 fun CreateEventScreenPreview() {
     CreateEventScreen(
-        templateName = "Conference"
+        templateName = "Conference",
+        onBack = {}
     )
 }
 
@@ -480,17 +470,20 @@ fun EventTemplateScreen(onSelected: (String) -> Unit) {
 
     var selectedTemplate by remember { mutableStateOf("") }
     val isButtonEnabled by remember { derivedStateOf { selectedTemplate.isNotBlank() } }
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         bottomBar = {
             Button(
                 onClick = {
                     println("selectedTemplate: $selectedTemplate")
                     onSelected(selectedTemplate)
                 },
-                modifier = Modifier.fillMaxWidth().padding(16.dp)
+                modifier = Modifier.fillMaxWidth()
                     .imePadding()
                     .navigationBarsPadding()
+                    .padding(16.dp)
                     .height(56.dp),
                 shape = MaterialTheme.shapes.medium,
                 enabled = isButtonEnabled
@@ -504,10 +497,10 @@ fun EventTemplateScreen(onSelected: (String) -> Unit) {
 
         },
         topBar = {
-            TopAppBar(
+            MediumTopAppBar(
                 title = {
                     Text(
-                        text = "Create Event",
+                        text = stringResource(Res.string.event_template_title),
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -516,115 +509,76 @@ fun EventTemplateScreen(onSelected: (String) -> Unit) {
                     IconButton(onClick = { onSelected("") }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
-                }
+                },
+                scrollBehavior = scrollBehavior
             )
         }
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp)
         ) {
-            Text(
-                text = "Select Event Template",
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(32.dp))
 
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.fillMaxSize().padding(16.dp)
-            ) {
+            list.forEach { template ->
+                item {
+                    val isSelected = selectedTemplate == template.key
+                    val isCardEnabled = selectedTemplate.isEmpty() || isSelected
 
-                list.forEach { template ->
-                    item {
-                        val isSelected = selectedTemplate == template.key
-                        val isCardEnabled = selectedTemplate.isEmpty() || isSelected
+                    ElevatedCard(
+                        modifier = Modifier.then(
+                            if (isSelected) Modifier.border(
+                                width = 2.dp,
+                                color = MaterialTheme.colorScheme.primary,
+                                shape = CardDefaults.elevatedShape
+                            ) else Modifier.border(
+                                width = 2.dp,
+                                color = MaterialTheme.colorScheme.primaryFixed,
+                                shape = CardDefaults.elevatedShape
+                            )
+                        ),
+                        colors = CardDefaults.elevatedCardColors(
+                            containerColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface,
+                            contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
+                        ),
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 6.dp
+                        ),
+                        enabled = isCardEnabled,
+                        onClick = {
+                            selectedTemplate = if (isSelected) "" else template.key
+                        }
+                    ) {
 
-                        ElevatedCard(
-                            modifier = Modifier.then(
-                                if (isSelected) Modifier.border(
-                                    width = 2.dp,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    shape = CardDefaults.elevatedShape
-                                ) else Modifier.border(
-                                    width = 2.dp,
-                                    color = MaterialTheme.colorScheme.primaryFixed,
-                                    shape = CardDefaults.elevatedShape
-                                )
-                            ),
-                            colors = CardDefaults.elevatedCardColors(
-                                containerColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface,
-                                contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
-                            ),
-                            elevation = CardDefaults.cardElevation(
-                                defaultElevation = 6.dp
-                            ),
-                            enabled = isCardEnabled,
-                            onClick = {
-                                selectedTemplate = if (isSelected) "" else template.key
-                            }
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(24.dp), // Padding inside the card
+                            horizontalAlignment = Alignment.CenterHorizontally, // Centers items horizontally
+                            verticalArrangement = Arrangement.Center // Centers items vertically if height is constrained
                         ) {
+                            Icon(
+                                imageVector = template.value,
+                                contentDescription = null,
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
 
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(24.dp), // Padding inside the card
-                                horizontalAlignment = Alignment.CenterHorizontally, // Centers items horizontally
-                                verticalArrangement = Arrangement.Center // Centers items vertically if height is constrained
-                            ) {
-                                Icon(
-                                    imageVector = template.value,
-                                    contentDescription = null,
+                            Text(
+                                text = template.key,
+
                                 )
-                                Spacer(modifier = Modifier.height(16.dp))
-
-                                Text(
-                                    text = template.key,
-
-                                    )
-                            }
                         }
                     }
                 }
-
-
             }
+
+
         }
 
 
     }
 
-    @Composable
-    fun DatePickerModal(
-        onDateSelected: (Long?) -> Unit,
-        onDismiss: () -> Unit
-    ) {
-        val datePickerState = rememberDatePickerState()
-
-        DatePickerDialog(
-            onDismissRequest = onDismiss,
-            confirmButton = {
-                TextButton(onClick = {
-                    onDateSelected(datePickerState.selectedDateMillis)
-                    onDismiss()
-                }) {
-                    Text("OK")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = onDismiss) {
-                    Text("Cancel")
-                }
-            }
-        ) {
-            DatePicker(state = datePickerState)
-        }
-    }
 }
 

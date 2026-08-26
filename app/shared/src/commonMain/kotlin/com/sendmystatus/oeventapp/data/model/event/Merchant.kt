@@ -1,7 +1,10 @@
 package com.sendmystatus.oeventapp.data.model.event
 
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.Serializable
+import kotlin.time.Instant
 
 @Serializable
 data class Merchant(
@@ -15,9 +18,16 @@ data class Merchant(
     val address: String,
     val website: String,
     val status: String = "default",
-    val createdDate: LocalDateTime,
-    val modifiedDate: LocalDateTime,
-)
+    val createdTimestamp: Long,
+    val modifiedTimestamp: Long,
+) {
+    val createdDateAndTime: LocalDateTime
+        get() = Instant.fromEpochMilliseconds(createdTimestamp)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+    val cancelledDate: LocalDateTime
+        get() = Instant.fromEpochMilliseconds(modifiedTimestamp)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+}
 
 @Serializable
 data class MerchantEventCatalog(
@@ -28,9 +38,16 @@ data class MerchantEventCatalog(
     val description: String,
     val price: Double,
     val status: String = "available",
-    val createdDate: LocalDateTime,
-    val modifiedDate: LocalDateTime,
-)
+    val createdTimestamp: Long,
+    val modifiedTimestamp: Long,
+) {
+    val createdDateAndTime: LocalDateTime
+        get() = Instant.fromEpochMilliseconds(createdTimestamp)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+    val cancelledDate: LocalDateTime
+        get() = Instant.fromEpochMilliseconds(modifiedTimestamp)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+}
 
 @Serializable
 data class MerchantEventStaff(
@@ -41,9 +58,16 @@ data class MerchantEventStaff(
     val phone: String,
     val role: String,
     val status: String = "available",
-    val createdDate: LocalDateTime,
-    val modifiedDate: LocalDateTime,
-)
+    val createdTimestamp: Long,
+    val modifiedTimestamp: Long,
+) {
+    val createdDateAndTime: LocalDateTime
+        get() = Instant.fromEpochMilliseconds(createdTimestamp)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+    val cancelledDate: LocalDateTime
+        get() = Instant.fromEpochMilliseconds(modifiedTimestamp)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+}
 
 @Serializable
 data class MerchantRegistrationToEvent(
@@ -51,10 +75,14 @@ data class MerchantRegistrationToEvent(
     val merchantId: String,
     val eventId: String,
     val price: Double = 0.0,
-    val timestamp: LocalDateTime,
+    val timestamp: Long,
     val status: String = "pending",
     val paymentType: String, // cash on delivery, online: credit card, debitcard, ach
-)
+) {
+    val registeredDateAndTime: LocalDateTime
+        get() = Instant.fromEpochMilliseconds(timestamp)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+}
 
 @Serializable
 data class CustomerTransaction(
@@ -63,5 +91,10 @@ data class CustomerTransaction(
     val merchantId: String,
     val eventId: String,
     val tokenRedeemed: Int,
-    val tokenRedeemedDate: LocalDateTime
-)
+    val tokenRedeemedTimestamp: Long
+) {
+    val redeemedDateAndTime: LocalDateTime
+        get() = Instant.fromEpochMilliseconds(tokenRedeemedTimestamp)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+
+}

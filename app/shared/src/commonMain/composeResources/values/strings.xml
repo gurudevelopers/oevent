@@ -40,17 +40,27 @@
 
     <string name="event_template_title">Select Event Template</string>
     <string name="label_event_name">Event Name</string>
-    <string name="label_event_description">Event Description</string>">
+    <string name="label_event_description">Event Description</string>
     <string name="label_event_location">Event Location</string>
-    <string name="label_event_start_date">Event Start Date</string>
+    <string name="label_event_start_date">Event Date</string>
     <string name="label_event_date">Date</string>
     <string name="label_event_time">Time</string>
-    <string name="label_event_end_date">Event End Date</string>
-    <string name="label_event_is_public">Event is public</string>">
-    <string name="label_event_venue_name">Event Venu Name</string>">
+    <string name="label_start">Start</string>
+    <string name="label_end">End</string>
+    <string name="label_event_is_public">Event is public</string>
+    <string name="label_event_venue_name">Event Venu Name</string>
 
+    <string name="label_event_program_name">Program Name</string>
+    <string name="event_program_name_title">Add program to event</string>
+    <string name="label_event_program_name_start_time">Program Time</string>
+    <string name="label_event_program_name_end_time">Program End Time</string>
+
+    <string name="error_event_date_start_greater_than_end">End date must be after the start date.</string>
     <string name="scan_qr_code">Scan QR Code</string>
     <string name="back">Back</string>
+    <string name="clear">Clear</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
     <string name="align_qr_code">Align QR code within the frame</string>
     <string name="your_reward">Your Reward</string>
     <string name="show_qr_to_redeem">Show this QR code to redeem</string>

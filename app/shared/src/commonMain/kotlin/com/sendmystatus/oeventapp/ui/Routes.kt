@@ -17,6 +17,13 @@ sealed interface Route {
     data object EventTemplate : Route
 
     @Serializable
+    data object EventProgramAdd : Route
+
+    @Serializable
+    data object EventProgram : Route
+
+
+    @Serializable
     data class EventCreate(val selectedTemplateName: String) : Route
 
     @Serializable
