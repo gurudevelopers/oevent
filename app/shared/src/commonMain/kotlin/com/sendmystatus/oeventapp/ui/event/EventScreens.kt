@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.visible
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -31,6 +32,7 @@ import androidx.compose.material.icons.filled.MeetingRoom
 import androidx.compose.material.icons.filled.Theaters
 import androidx.compose.material.icons.filled.Workspaces
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
@@ -54,11 +56,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sendmystatus.oeventapp.data.model.event.Event
 import com.sendmystatus.oeventapp.ui.DateAndTimeRow
+import com.sendmystatus.oeventapp.ui.SingleChoiceSegmentedButton
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
@@ -96,8 +100,16 @@ fun CreateEventScreen(
         (Clock.System.now().plus(1.hours)).toLocalDateTime(TimeZone.currentSystemDefault())
     }
 
-    var eventStartTime by rememberSaveable { mutableStateOf(eventObj?.startDateAndTime ?: currentTime) }
-    var eventEndTime by rememberSaveable { mutableStateOf(eventObj?.endDateAndTime ?: defaultEndTime) }
+    var eventStartTime by rememberSaveable {
+        mutableStateOf(
+            eventObj?.startDateAndTime ?: currentTime
+        )
+    }
+    var eventEndTime by rememberSaveable {
+        mutableStateOf(
+            eventObj?.endDateAndTime ?: defaultEndTime
+        )
+    }
     var eventLocation by rememberSaveable { mutableStateOf(eventObj?.location ?: "") }
     var eventVenue by rememberSaveable { mutableStateOf("") }
     var name by rememberSaveable { mutableStateOf(eventObj?.name ?: "") }
@@ -167,7 +179,6 @@ fun CreateEventScreen(
                     }
 
 
-
                     // Now do something with 'event' (e.g., save to DB or pass to callback)
                     println("Event saved: $event")
                     onEventAdded(event)
@@ -212,204 +223,229 @@ fun CreateEventScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .verticalScroll(scrollState)
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(18.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(18.dp)
         ) {
 
+            ElevatedCard(
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 6.dp
+                ),
+                colors = CardDefaults.elevatedCardColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ){
+                Column(
+                    // 1. Adds 12.dp of space inside the Card's outer edges
+                    modifier = Modifier.padding(12.dp),
 
-            OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text(stringResource(Res.string.label_event_name)) },
-                singleLine = true,
-                supportingText = {
-                    /*if (isPhoneError) {
+                    // 2. Adds 12.dp of space vertically between each TextField
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    OutlinedTextField(
+                        value = name,
+                        onValueChange = { name = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text(stringResource(Res.string.label_event_name)) },
+                        singleLine = true,
+                        supportingText = {
+                            /*if (isPhoneError) {
                         Text(
                             text = "Please enter a valid phone number",
                             color = MaterialTheme.colorScheme.error
                         )
                     }*/
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.EventNote,
-                        contentDescription = "Mobile"
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.EventNote,
+                                contentDescription = "Mobile"
+                            )
+                        },
+                        trailingIcon = {
+                            Icon(
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = stringResource(Res.string.clear),
+                                modifier = Modifier.clickable { name = "" }
+                                    .visible(name.isNotBlank())
+
+                            )
+                        }
                     )
-                },
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = stringResource(Res.string.clear),
-                        modifier = Modifier.clickable { name = "" }
-                            .visible(name.isNotBlank())
 
-                    )
-                }
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = description,
-                onValueChange = {
-                    description = it
-                },
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text(stringResource(Res.string.label_event_description)) },
-                minLines = 2,
-                maxLines = 4,
-                supportingText = {
-                    /*if (isPhoneError) {
+                    OutlinedTextField(
+                        value = description,
+                        onValueChange = {
+                            description = it
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text(stringResource(Res.string.label_event_description)) },
+                        minLines = 2,
+                        maxLines = 4,
+                        supportingText = {
+                            /*if (isPhoneError) {
                         Text(
                             text = "Please enter a valid phone number",
                             color = MaterialTheme.colorScheme.error
                         )
                     }*/
 
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.Description,
-                        contentDescription = "Mobile"
-                    )
-                },
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = stringResource(Res.string.clear),
-                        modifier = Modifier.clickable { description = "" }
-                            .visible(description.isNotBlank())
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Filled.Description,
+                                contentDescription = "Mobile"
+                            )
+                        },
+                        trailingIcon = {
+                            Icon(
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = stringResource(Res.string.clear),
+                                modifier = Modifier.clickable { description = "" }
+                                    .visible(description.isNotBlank())
 
+                            )
+                        }
                     )
-                }
-            )
 
-            Spacer(modifier = Modifier.height(16.dp))
-            OutlinedTextField(
-                value = eventLocation,
-                onValueChange = {
-                    eventLocation = it
-                },
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text(stringResource(Res.string.label_event_location)) },
-                singleLine = true,
-                supportingText = {
-                    /*if (isPhoneError) {
+                    OutlinedTextField(
+                        value = eventLocation,
+                        onValueChange = {
+                            eventLocation = it
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text(stringResource(Res.string.label_event_location)) },
+                        singleLine = true,
+                        supportingText = {
+                            /*if (isPhoneError) {
                         Text(
                             text = "Please enter a valid phone number",
                             color = MaterialTheme.colorScheme.error
                         )
                     }*/
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.LocationCity,
-                        contentDescription = "Mobile"
-                    )
-                },
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = stringResource(Res.string.clear),
-                        modifier = Modifier.clickable { eventLocation = "" }
-                            .visible(eventLocation.isNotBlank())
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Filled.LocationCity,
+                                contentDescription = "Mobile"
+                            )
+                        },
+                        trailingIcon = {
+                            Icon(
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = stringResource(Res.string.clear),
+                                modifier = Modifier.clickable { eventLocation = "" }
+                                    .visible(eventLocation.isNotBlank())
 
+                            )
+                        }
                     )
-                }
-            )
 
-            Spacer(modifier = Modifier.height(16.dp))
-            OutlinedTextField(
-                value = eventVenue,
-                onValueChange = {
-                    eventVenue = it
-                },
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text(stringResource(Res.string.label_event_venue_name)) },
-                singleLine = true,
-                supportingText = {
-                    /*if (isPhoneError) {
+                    OutlinedTextField(
+                        value = eventVenue,
+                        onValueChange = {
+                            eventVenue = it
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text(stringResource(Res.string.label_event_venue_name)) },
+                        singleLine = true,
+                        supportingText = {
+                            /*if (isPhoneError) {
                         Text(
                             text = "Please enter a valid phone number",
                             color = MaterialTheme.colorScheme.error
                         )
                     }*/
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.EventSeat,
-                        contentDescription = "Mobile"
-                    )
-                },
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = stringResource(Res.string.clear),
-                        modifier = Modifier.clickable { eventVenue = "" }
-                            .visible(eventVenue.isNotBlank())
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Filled.EventSeat,
+                                contentDescription = "Mobile"
+                            )
+                        },
+                        trailingIcon = {
+                            Icon(
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = stringResource(Res.string.clear),
+                                modifier = Modifier.clickable { eventVenue = "" }
+                                    .visible(eventVenue.isNotBlank())
 
 
+                            )
+                        }
                     )
                 }
-            )
 
-            Spacer(modifier = Modifier.height(16.dp))
+        }
 
-            Column(
+            Text(
+                text = stringResource(Res.string.label_event_start_date),
                 modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(
-                    text = stringResource(Res.string.label_event_start_date),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                DateAndTimeRow(
-                    label = stringResource(Res.string.label_start),
-                    onDateTimeClick = {
-                        eventStartTime = it
-                    },
-                    timeStamp = eventStartTime.toInstant(TimeZone.currentSystemDefault())
-                        .toEpochMilliseconds()
-                )
-                DateAndTimeRow(
-                    label = stringResource(Res.string.label_end),
-                    onDateTimeClick = {
-                        eventEndTime = it
-                    },
-                    timeStamp = eventEndTime.toInstant(TimeZone.currentSystemDefault())
-                        .toEpochMilliseconds()
-
-                )
-                Text(
-                    text = if (isDateError) stringResource(Res.string.error_event_date_start_greater_than_end) else "",
-                    color = MaterialTheme.colorScheme.error,
-                )
-
-            }
-
-
-            Spacer(modifier = Modifier.height(12.dp))
+                style = MaterialTheme.typography.titleLarge,
+            )
             HorizontalDivider(
                 modifier = Modifier.fillMaxWidth(),
-                thickness = 2.dp,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+                thickness = 1.dp,
             )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+            ElevatedCard(
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 6.dp
+                ),
+                colors = CardDefaults.elevatedCardColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface
+                ),
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = "Is this event public?",
-                    modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.bodyLarge
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(start = 12.dp,
+                        end = 12.dp,),
+                ) {
+
+                    DateAndTimeRow(
+                        label = stringResource(Res.string.label_start),
+                        onDateTimeClick = {
+                            eventStartTime = it
+                        },
+                        timeStamp = eventStartTime.toInstant(TimeZone.currentSystemDefault())
+                            .toEpochMilliseconds()
+                    )
+                    DateAndTimeRow(
+                        label = stringResource(Res.string.label_end),
+                        onDateTimeClick = {
+                            eventEndTime = it
+                        },
+                        timeStamp = eventEndTime.toInstant(TimeZone.currentSystemDefault())
+                            .toEpochMilliseconds()
+
+                    )
+                    Text(
+                        text = if (isDateError) stringResource(Res.string.error_event_date_start_greater_than_end) else "",
+                        color = MaterialTheme.colorScheme.error,
+                    )
+
+                }
+            }
+            Text(
+                text = "Event Visibility",
+                modifier = Modifier.fillMaxWidth(),
+                style = MaterialTheme.typography.titleLarge,
 
                 )
-
-                Switch(checked = isEventPublic, onCheckedChange = { isEventPublic = it })
-
-            }
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth(),
+                thickness = 1.dp,
+            )
+            SingleChoiceSegmentedButton(
+                options = listOf("Public", "Private"),
+                modifier = Modifier.fillMaxWidth(),
+                onSelected = { label, index ->
+                    println("label: $label, index: $index")
+                }
+            )
 
 
         }

@@ -24,7 +24,9 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -57,8 +59,10 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.sendmystatus.oeventapp.ui.SingleChoiceSegmentedButton
 import com.sendmystatus.oeventapp.ui.StatusDropdown
 import io.ktor.client.request.invoke
 import kotlin.random.Random
@@ -143,79 +147,120 @@ fun CreateSettingEventScreen(eventId: String, eventName: String, onBack: () -> U
                 .padding(padding)
                 .verticalScroll(scrollState)
                 .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Is this event online?",
-                    modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.titleLarge,
-                )
-                Switch(checked = isOnline, onCheckedChange = { isOnline = it })
-            }
-            HorizontalDivider(
-                modifier = Modifier.fillMaxWidth().padding(
-                    bottom = 16.dp,
-                    top = 16.dp
-                ),
-                thickness = 2.dp,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+            Text(
+                text = "Event Type",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.fillMaxWidth()
             )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Is this event free?",
-                    modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.titleLarge,
-                )
-                Switch(checked = isFree, onCheckedChange = { isFree = it })
-            }
-//            if (isFree.not()) {
-            AnimatedVisibility(visible = isFree.not()) {
-                Column(Modifier.fillMaxWidth()) {
-                    HorizontalDivider(
-                        modifier = Modifier.fillMaxWidth().padding(
-                            bottom = 16.dp,
-                            top = 16.dp
-                        ),
-                        thickness = 2.dp,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
-                    )
-                    Text(
-                        text = "Add price",
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
-                            .padding(bottom = 8.dp)
-                    )
-                    DynamicPriceForm(modifier = Modifier.fillMaxWidth())
-                    Text(
-                        text = "Choose Currency",
-                        modifier = Modifier.padding(bottom = 8.dp)
-                            .fillMaxWidth(),
-                    )
+            SingleChoiceSegmentedButton(Modifier.fillMaxWidth())
 
-                    OutlinedTextField(
-                        value = currency,
-                        onValueChange = { currency = it },
-                        label = { Text("Currency") },
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
-                    )
+            Text(
+                text = "Event Registration Type",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            SingleChoiceSegmentedButton(
+                Modifier.fillMaxWidth(),
+                onSelected = { label, index ->
+                    println("label: $label, index: $index")
+                    isFree = label == "Free"
+                },
+                options = listOf("Free", "Paid")
+            )
+            /*
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Is this event online?",
+                                modifier = Modifier.weight(1f),
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+                            Switch(checked = isOnline, onCheckedChange = { isOnline = it })
+                        }
+                        HorizontalDivider(
+                            modifier = Modifier.fillMaxWidth().padding(
+                                bottom = 16.dp,
+                                top = 16.dp
+                            ),
+                            thickness = 2.dp,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Is this event free?",
+                                modifier = Modifier.weight(1f),
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+                            Switch(checked = isFree, onCheckedChange = { isFree = it })
+                        }*/
+//            if (isFree.not()) {
+
+            if (isFree.not()) {
+                Text(
+                    text = "Price by Category",
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                HorizontalDivider(
+                    modifier = Modifier.fillMaxWidth(),
+                    thickness = 2.dp,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+                )
+            }
+            AnimatedVisibility(visible = isFree.not()) {
+
+                ElevatedCard(
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 6.dp
+                    ),
+                    colors = CardDefaults.elevatedCardColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        contentColor = MaterialTheme.colorScheme.onSurface
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+
+                        modifier = Modifier.padding(12.dp),
+
+                        // 2. Adds 12.dp of space vertically between each TextField
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+
+
+                        DynamicPriceForm(modifier = Modifier.fillMaxWidth().padding(8.dp))
+                        Text(
+                            text = "Choose Currency",
+                            modifier = Modifier.padding(bottom = 8.dp)
+                                .fillMaxWidth(),
+                        )
+
+                        OutlinedTextField(
+                            value = currency,
+                            onValueChange = { currency = it },
+                            label = { Text("Currency") },
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                        )
+                    }
                 }
             }
-            HorizontalDivider(
-                modifier = Modifier.fillMaxWidth().padding(
-                    bottom = 16.dp,
-                    top = 16.dp
-                ),
-                thickness = 2.dp,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
-            )
+            /* HorizontalDivider(
+                 modifier = Modifier.fillMaxWidth().padding(
+                     bottom = 16.dp,
+                     top = 16.dp
+                 ),
+                 thickness = 2.dp,
+                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+             )*/
 
             Text(
                 text = "Choose Token Prefix",
@@ -225,40 +270,68 @@ fun CreateSettingEventScreen(eventId: String, eventName: String, onBack: () -> U
                 value = tokenPrefix,
                 onValueChange = { tokenPrefix = it },
                 label = { Text("Token Prefix") },
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                modifier = Modifier.fillMaxWidth()
+            )
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth(),
+                thickness = 2.dp,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
             )
             Text(
                 text = "Choose Capacity",
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                modifier = Modifier.fillMaxWidth()
             )
+            ElevatedCard(
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 6.dp
+                ),
+                colors = CardDefaults.elevatedCardColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
 
+                    modifier = Modifier.padding(
+                        start = 24.dp,
+                        end = 24.dp,
+                        top = 12.dp,
+                        bottom = 12.dp
+                    ),
 
-//            Slider(state = sliderState)
-            Slider(value = sliderPosition, onValueChange = {
-                sliderPosition = it
-                capacity = (sliderPosition * 100_000).toInt()
-            })
-            Text(text = "(Slide to set capacity or enter value)",
-                style = MaterialTheme.typography.labelSmall,
-            )
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    // 2. Adds 12.dp of space vertically between each TextField
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
 
-            Spacer(modifier = Modifier.height(16.dp))
-            OutlinedTextField(
-                value = capacity.toString(),
-                onValueChange = {
-                    val newValue = it.toIntOrNull() ?: 0
-                    capacity = newValue
+                    Slider(value = sliderPosition, onValueChange = {
+                        sliderPosition = it
+                        capacity = (sliderPosition * 100_000).toInt()
+                    })
+                    Text(
+                        text = "(Slide to set capacity or enter value)",
+                        style = MaterialTheme.typography.labelSmall,
+                    )
 
-                },
-                label = { Text("Capacity") },
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
-            )
+                    OutlinedTextField(
+                        value = capacity.toString(),
+                        onValueChange = {
+                            val newValue = it.toIntOrNull() ?: 0
+                            capacity = newValue
+
+                        },
+                        label = { Text("Capacity") },
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                    )
+                }
+            }
 
             Text(
                 text = "Choose Status",
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp).padding(bottom = 8.dp)
+                modifier = Modifier.fillMaxWidth()
             )
 
             StatusDropdown(
@@ -266,16 +339,6 @@ fun CreateSettingEventScreen(eventId: String, eventName: String, onBack: () -> U
                     status = it
                 }
             )
-
-
-            HorizontalDivider(
-                modifier = Modifier.fillMaxWidth().padding(
-                    bottom = 16.dp,
-                    top = 16.dp
-                ),
-                thickness = 2.dp,
-            )
-
 
 
         }
@@ -293,7 +356,6 @@ fun CreateSettingEventScreenPreview() {
 fun CreatePricePerPersonScreenPreview() {
     CreatePricePerPersonScreen()
 }
-
 
 
 @Composable
@@ -338,17 +400,6 @@ fun DynamicPriceForm(modifier: Modifier) {
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        /*Text(
-            text = "Contact Details",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        // 3. Display the items in a scrollable list
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {*/
         priceItems.forEachIndexed { index, item ->
             key(item.id) {
                 Row(
@@ -408,7 +459,7 @@ fun DynamicPriceForm(modifier: Modifier) {
                 priceItems.add(PriceItem())
             },
             modifier = Modifier
-                .fillMaxWidth()
+//                .fillMaxWidth()
                 .padding(top = 12.dp)
         ) {
             Icon(Icons.Default.Add, contentDescription = null)

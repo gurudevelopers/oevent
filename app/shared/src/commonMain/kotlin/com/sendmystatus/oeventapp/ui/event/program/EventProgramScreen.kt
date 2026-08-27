@@ -1,4 +1,4 @@
-package com.sendmystatus.oeventapp.ui.event
+package com.sendmystatus.oeventapp.ui.event.program
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -50,7 +51,7 @@ fun EventProgramScreen(onBack: () -> Unit, onEventAdded: (List<EventProgram>) ->
         floatingActionButton = {
 
         },
-        floatingActionButtonPosition = androidx.compose.material3.FabPosition.End,
+        floatingActionButtonPosition = FabPosition.End,
 
         ) { paddingValues ->
         Column(

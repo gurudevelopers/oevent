@@ -6,7 +6,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.Lifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -21,13 +20,12 @@ import com.sendmystatus.oeventapp.ui.onboard.WelcomeScreen
 import com.sendmystatus.oeventapp.ui.theme.OEventTheme
 
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.navigation
 import com.sendmystatus.oeventapp.data.model.event.Event
 import com.sendmystatus.oeventapp.ui.DemoQuickAccess
-import com.sendmystatus.oeventapp.ui.event.AddProgramScreen
+import com.sendmystatus.oeventapp.ui.event.program.AddProgramScreen
 import com.sendmystatus.oeventapp.ui.event.CreateEventScreen
 import com.sendmystatus.oeventapp.ui.event.CreateSettingEventScreen
-import com.sendmystatus.oeventapp.ui.event.EventProgramScreen
+import com.sendmystatus.oeventapp.ui.event.program.EventProgramScreen
 import com.sendmystatus.oeventapp.ui.event.EventTemplateScreen
 import com.sendmystatus.oeventapp.ui.onboard.CreateBusinessDetailScreen
 import com.sendmystatus.oeventapp.ui.onboard.CreateBusinessRegScreen
@@ -35,8 +33,6 @@ import com.sendmystatus.oeventapp.ui.onboard.CreateMerchantAccountScreen
 import com.sendmystatus.oeventapp.ui.user.ProfileScreen
 import com.sendmystatus.oeventapp.ui.viewmodel.AuthState
 import com.sendmystatus.oeventapp.ui.viewmodel.AuthViewModel
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 import kotlin.uuid.Uuid
 

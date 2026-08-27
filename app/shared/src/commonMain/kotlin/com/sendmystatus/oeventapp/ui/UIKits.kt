@@ -29,6 +29,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
@@ -37,6 +40,7 @@ import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -530,7 +534,12 @@ fun BetterStatusDropdown() {
                 )
             }
 
-            if (inputText.isNotBlank() && !options.any { it.equals(inputText, ignoreCase = true) }) {
+            if (inputText.isNotBlank() && !options.any {
+                    it.equals(
+                        inputText,
+                        ignoreCase = true
+                    )
+                }) {
                 DropdownMenuItem(
                     text = { Text("Add \"$inputText\"", fontWeight = FontWeight.Bold) },
                     leadingIcon = { Icon(Icons.Default.Add, contentDescription = null) },
@@ -547,8 +556,9 @@ fun BetterStatusDropdown() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StatusDropdown(onSelected: (String) -> Unit, modifier: Modifier = Modifier,
-                    options: List<String> = listOf("Active", "Live", "Canceled", "Suspended")
+fun StatusDropdown(
+    onSelected: (String) -> Unit, modifier: Modifier = Modifier,
+    options: List<String> = listOf("Active", "Live", "Canceled", "Suspended")
 ) {
 
     // 2. Track whether the dropdown is open (expanded) or closed
@@ -575,7 +585,8 @@ fun StatusDropdown(onSelected: (String) -> Unit, modifier: Modifier = Modifier,
             },
             colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
             // The menuAnchor() modifier is CRITICAL. It tells the menu where to attach.
-            modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable,true).fillMaxWidth()
+            modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable, true)
+                .fillMaxWidth()
         )
 
         // 6. The actual popup menu containing your options
@@ -593,6 +604,34 @@ fun StatusDropdown(onSelected: (String) -> Unit, modifier: Modifier = Modifier,
                     }
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun SingleChoiceSegmentedButton(
+    modifier: Modifier = Modifier,
+    onSelected: (String, Int) -> Unit = { _, _ -> },
+    options: List<String> = listOf("Online", "In-Person", "Hybrid")
+) {
+    var selectedIndex by remember { mutableIntStateOf(0) }
+
+    SingleChoiceSegmentedButtonRow(
+        modifier = modifier,
+    ) {
+        options.forEachIndexed { index, label ->
+            SegmentedButton(
+                shape = SegmentedButtonDefaults.itemShape(
+                    index = index,
+                    count = options.size
+                ),
+                onClick = {
+                    selectedIndex = index
+                    onSelected(label, index)
+                },
+                selected = index == selectedIndex,
+                label = { Text(label) }
+            )
         }
     }
 }
