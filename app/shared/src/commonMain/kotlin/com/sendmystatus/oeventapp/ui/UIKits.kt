@@ -612,7 +612,7 @@ fun StatusDropdown(
 fun SingleChoiceSegmentedButton(
     modifier: Modifier = Modifier,
     onSelected: (String, Int) -> Unit = { _, _ -> },
-    options: List<String> = listOf("Online", "In-Person", "Hybrid")
+    options: List<String> = listOf("In-Person", "Online", "Hybrid")
 ) {
     var selectedIndex by remember { mutableIntStateOf(0) }
 

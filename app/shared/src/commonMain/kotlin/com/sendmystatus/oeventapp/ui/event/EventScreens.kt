@@ -1,5 +1,6 @@
 package com.sendmystatus.oeventapp.ui.event
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -42,6 +43,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -50,6 +52,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -63,6 +66,8 @@ import androidx.compose.ui.unit.sp
 import com.sendmystatus.oeventapp.data.model.event.Event
 import com.sendmystatus.oeventapp.ui.DateAndTimeRow
 import com.sendmystatus.oeventapp.ui.SingleChoiceSegmentedButton
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
@@ -116,6 +121,9 @@ fun CreateEventScreen(
     var description by rememberSaveable { mutableStateOf(eventObj?.description ?: "") }
     var isEventPublic by rememberSaveable { mutableStateOf(eventObj?.isPublic ?: true) }
 
+    var eventTypeDes by rememberSaveable { mutableStateOf("") }
+
+    val coroutineScope = rememberCoroutineScope()
     val isDateError by remember {
         derivedStateOf {
             val start = eventStartTime
@@ -444,8 +452,21 @@ fun CreateEventScreen(
                 modifier = Modifier.fillMaxWidth(),
                 onSelected = { label, index ->
                     println("label: $label, index: $index")
+                    isEventPublic = index == 0
+                    coroutineScope.launch {
+                        // For an instant jump: scrollState.scrollTo(scrollState.maxValue)
+                        // For a smooth animation:
+                        delay(300)
+                        scrollState.animateScrollTo(scrollState.maxValue)
+                    }
                 }
             )
+            AnimatedVisibility(isEventPublic.not()){
+                SuggestionChip(
+                    onClick = { },
+                    label = { Text("Guest must be invited") }
+                )
+            }
 
 
         }

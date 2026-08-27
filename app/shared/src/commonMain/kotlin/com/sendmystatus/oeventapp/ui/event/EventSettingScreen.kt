@@ -72,7 +72,8 @@ fun CreateSettingEventScreen(eventId: String, eventName: String, onBack: () -> U
 
     val scrollState = rememberScrollState()
     var isFree by rememberSaveable { mutableStateOf(true) }
-    var isOnline by rememberSaveable { mutableStateOf(false) }
+    var isInPerson by rememberSaveable { mutableStateOf(false) }
+    var instructionToJoin by rememberSaveable { mutableStateOf("") }
     var currency by rememberSaveable { mutableStateOf("USD") }
     var tokenPrefix by rememberSaveable { mutableStateOf("OPEN_") }
     var capacity by rememberSaveable { mutableStateOf(100) }
@@ -156,7 +157,21 @@ fun CreateSettingEventScreen(eventId: String, eventName: String, onBack: () -> U
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.fillMaxWidth()
             )
-            SingleChoiceSegmentedButton(Modifier.fillMaxWidth())
+            SingleChoiceSegmentedButton(
+                Modifier.fillMaxWidth(),
+                onSelected = { label, index ->
+
+                }
+            )
+
+
+            OutlinedTextField(
+                value = instructionToJoin,
+                onValueChange = { instructionToJoin = it },
+                label = { Text("Instruction") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
 
             Text(
                 text = "Event Registration Type",
