@@ -46,11 +46,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -63,9 +62,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sendmystatus.oeventapp.ui.InfoBanner
 import com.sendmystatus.oeventapp.ui.theme.AppTheme
 import com.sendmystatus.oeventapp.ui.theme.bold
+import com.sendmystatus.oeventapp.ui.viewmodel.OnboardingViewModel
 import oeventapp.app.shared.generated.resources.Res
 import oeventapp.app.shared.generated.resources.btn_continue
 import oeventapp.app.shared.generated.resources.btn_create_account
@@ -96,16 +97,21 @@ fun CreateMerchantAccountScreen(
     onMerchantSubmitClick: () -> Unit,
     onBack: () -> Unit,
     isLoading: Boolean = false,
+    viewModel: OnboardingViewModel = viewModel { OnboardingViewModel() }
 //    errorMessage: String? = null
 ) {
+    val uiState by viewModel.merchantAccountState.collectAsState()
     val scrollState = rememberScrollState()
-    var businessName by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var mobileNumber by remember { mutableStateOf("") }
-    var contactPersonName by remember { mutableStateOf("") }
-    var focusRequester = remember { FocusRequester() }
+    val focusRequester = remember { FocusRequester() }
 
-    val canSubmit by remember { derivedStateOf { businessName.isNotBlank() && email.isNotBlank() && mobileNumber.isNotBlank() && contactPersonName.isNotBlank() } }
+    val canSubmit by remember { 
+        derivedStateOf { 
+            uiState.businessName.isNotBlank() && 
+            uiState.email.isNotBlank() && 
+            uiState.mobileNumber.isNotBlank() && 
+            uiState.contactName.isNotBlank() 
+        } 
+    }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
 
@@ -167,8 +173,8 @@ fun CreateMerchantAccountScreen(
             Spacer(modifier = Modifier.height(48.dp))
 
             OutlinedTextField(
-                value = businessName,
-                onValueChange = { businessName = it },
+                value = uiState.businessName,
+                onValueChange = { viewModel.updateBusinessName(it) },
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(stringResource(Res.string.label_business_name)) },
                 singleLine = true,
@@ -185,8 +191,8 @@ fun CreateMerchantAccountScreen(
                         contentDescription = "Error",
                         //  tint = if (isPhoneError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
 
-                        modifier = Modifier.clickable { businessName = "" }
-                            .visible(businessName.isNotBlank())
+                        modifier = Modifier.clickable { viewModel.updateBusinessName("") }
+                            .visible(uiState.businessName.isNotBlank())
 
                     )
                 }
@@ -195,8 +201,8 @@ fun CreateMerchantAccountScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedTextField(
-                value = contactPersonName,
-                onValueChange = { contactPersonName = it },
+                value = uiState.contactName,
+                onValueChange = { viewModel.updateContactName(it) },
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(stringResource(Res.string.label_contact_name)) },
                 singleLine = true,
@@ -213,8 +219,8 @@ fun CreateMerchantAccountScreen(
                         contentDescription = "Error",
                         //  tint = if (isPhoneError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
 
-                        modifier = Modifier.clickable { contactPersonName = "" }
-                            .visible(contactPersonName.isNotBlank())
+                        modifier = Modifier.clickable { viewModel.updateContactName("") }
+                            .visible(uiState.contactName.isNotBlank())
 
                     )
                 }
@@ -223,8 +229,8 @@ fun CreateMerchantAccountScreen(
             Spacer(modifier = Modifier.height(21.dp))
 
             OutlinedTextField(
-                value = mobileNumber,
-                onValueChange = { mobileNumber = it },
+                value = uiState.mobileNumber,
+                onValueChange = { viewModel.updateMerchantMobileNumber(it) },
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(stringResource(Res.string.label_mobile_number)) },
                 singleLine = true,
@@ -241,8 +247,8 @@ fun CreateMerchantAccountScreen(
                         contentDescription = "Error",
                         //  tint = if (isPhoneError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
 
-                        modifier = Modifier.clickable { mobileNumber = "" }
-                            .visible(mobileNumber.isNotBlank())
+                        modifier = Modifier.clickable { viewModel.updateMerchantMobileNumber("") }
+                            .visible(uiState.mobileNumber.isNotBlank())
 
                     )
                 }
@@ -251,8 +257,8 @@ fun CreateMerchantAccountScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
+                value = uiState.email,
+                onValueChange = { viewModel.updateMerchantEmail(it) },
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(stringResource(Res.string.label_email)) },
                 singleLine = true,
@@ -270,8 +276,8 @@ fun CreateMerchantAccountScreen(
                         contentDescription = "Error",
                       //  tint = if (isPhoneError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
 
-                        modifier = Modifier.clickable { email = "" }
-                            .visible(email.isNotBlank())
+                        modifier = Modifier.clickable { viewModel.updateMerchantEmail("") }
+                            .visible(uiState.email.isNotBlank())
 
                     )
                 }

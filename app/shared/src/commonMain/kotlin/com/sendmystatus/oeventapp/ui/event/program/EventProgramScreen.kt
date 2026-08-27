@@ -20,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,10 +31,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sendmystatus.oeventapp.data.model.event.EventProgram
 import com.sendmystatus.oeventapp.ui.DateAndTimeRow
 import com.sendmystatus.oeventapp.ui.SingleChoiceSegmentedButton
 import com.sendmystatus.oeventapp.ui.StatusDropdown
+import com.sendmystatus.oeventapp.ui.viewmodel.AddProgramViewModel
+import com.sendmystatus.oeventapp.ui.viewmodel.EventProgramViewModel
 import oeventapp.app.shared.generated.resources.Res
 import oeventapp.app.shared.generated.resources.event_program_name_title
 import oeventapp.app.shared.generated.resources.label_event_description
@@ -42,9 +46,13 @@ import org.jetbrains.compose.resources.stringResource
 
 
 @Composable
-fun EventProgramScreen(onBack: () -> Unit, onEventAdded: (List<EventProgram>) -> Unit) {
+fun EventProgramScreen(
+    onBack: () -> Unit,
+    onEventAdded: (List<EventProgram>) -> Unit,
+    viewModel: EventProgramViewModel = viewModel { EventProgramViewModel() }
+) {
 
-    var listOfPrograms by remember { mutableStateOf(listOf<EventProgram>()) }
+    val listOfPrograms by viewModel.listOfPrograms.collectAsState()
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val scrollState = rememberScrollState()
 
@@ -88,22 +96,14 @@ fun AddProgramScreenPreview() {
 
 @Composable
 fun AddProgramScreen(
-    onBack: () -> Unit, onEventAdded: (EventProgram) -> Unit,
+    onBack: () -> Unit,
+    onEventAdded: (EventProgram) -> Unit,
     eventProgram: EventProgram? = null,// is user want to view the program or edit it
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: AddProgramViewModel = viewModel { AddProgramViewModel() }
 ) {
 
-    var eventProgram by remember { mutableStateOf(null) }
-    var programName by remember { mutableStateOf("") }
-    var programDescriptor by remember { mutableStateOf("") }
-    var programStartDate by remember { mutableStateOf("") }
-    var programEndDate by remember { mutableStateOf("") }
-    var programStartTime by remember { mutableStateOf("") }
-    var programEndTime by remember { mutableStateOf("") }
-    var status by remember { mutableStateOf("") }
-    var location by remember { mutableStateOf("") }
-    var isRequired by remember { mutableStateOf(false) }
-    var isPaid by remember { mutableStateOf(false) }
+    val uiState by viewModel.uiState.collectAsState()
 
     Column(
         modifier = modifier.fillMaxSize()
@@ -121,22 +121,22 @@ fun AddProgramScreen(
 
             )
         OutlinedTextField(
-            value = programName,
+            value = uiState.programName,
             modifier = Modifier.fillMaxWidth(),
-            onValueChange = { programName = it },
+            onValueChange = { viewModel.updateName(it) },
             label = { Text(stringResource(Res.string.event_program_name_title)) }
         )
         OutlinedTextField(
-            value = programDescriptor,
+            value = uiState.programDescriptor,
             modifier = Modifier.fillMaxWidth(),
-            onValueChange = { programDescriptor = it },
+            onValueChange = { viewModel.updateDescriptor(it) },
             label = { Text(stringResource(Res.string.label_event_description)) }
         )
 
         OutlinedTextField(
-            value = programDescriptor,
+            value = uiState.location,
             modifier = Modifier.fillMaxWidth(),
-            onValueChange = { programDescriptor = it },
+            onValueChange = { viewModel.updateLocation(it) },
             label = { Text("Location") }
         )
 
@@ -204,7 +204,7 @@ fun AddProgramScreen(
         )
         StatusDropdown(
             onSelected = {
-                status = it
+                viewModel.updateStatus(it)
             },
             options = listOf("Published", "Draft", "Canceled")
         )
@@ -246,16 +246,16 @@ fun AddProgramScreen(
 
                 SingleChoiceSegmentedButton(
                     onSelected = { label, index ->
-                        isRequired = index == 1
+                        viewModel.updateIsRequired(index == 1)
                     },
                     modifier = Modifier.fillMaxWidth(),
                     options = listOf("Not Required", "Required")
                 )
 
-                AnimatedVisibility(isRequired) {
+                AnimatedVisibility(uiState.isRequired) {
                     SingleChoiceSegmentedButton(
                         onSelected = { label, index ->
-                            isPaid = index == 1
+                            viewModel.updateIsPaid(index == 1)
                         },
                         modifier = Modifier.fillMaxWidth(),
                         options = listOf("Free", "Paid")
@@ -263,10 +263,10 @@ fun AddProgramScreen(
 
 
                 }
-                AnimatedVisibility(isPaid) {
+                AnimatedVisibility(uiState.isPaid) {
                     OutlinedTextField(
-                        value = "",
-                        onValueChange = { },
+                        value = uiState.price,
+                        onValueChange = { viewModel.updatePrice(it) },
                         modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
                         label = { Text("Price") },
                         singleLine = true

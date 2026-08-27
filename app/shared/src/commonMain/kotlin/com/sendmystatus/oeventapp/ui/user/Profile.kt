@@ -32,22 +32,22 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.sendmystatus.oeventapp.ui.viewmodel.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(onSave: () -> Unit, onBack: () -> Unit) {
-    var firstName by rememberSaveable { mutableStateOf("") }
-    var lastName by rememberSaveable { mutableStateOf("") }
-    var email by rememberSaveable { mutableStateOf("") }
-    var contact by rememberSaveable { mutableStateOf("") }
-    var canContact by rememberSaveable { mutableStateOf(true) }
+fun ProfileScreen(
+    onSave: () -> Unit,
+    onBack: () -> Unit,
+    viewModel: ProfileViewModel = viewModel { ProfileViewModel() }
+) {
+    val uiState by viewModel.uiState.collectAsState()
 
     val scrollState = rememberScrollState()
 
@@ -64,7 +64,10 @@ fun ProfileScreen(onSave: () -> Unit, onBack: () -> Unit) {
         },
         bottomBar = {
             Button(
-                onClick = onSave,
+                onClick = {
+                    viewModel.saveProfile()
+                    onSave()
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .imePadding()
@@ -102,8 +105,8 @@ fun ProfileScreen(onSave: () -> Unit, onBack: () -> Unit) {
 
             // 1. First Name
             OutlinedTextField(
-                value = firstName,
-                onValueChange = { firstName = it },
+                value = uiState.firstName,
+                onValueChange = { viewModel.updateFirstName(it) },
                 label = { Text("First Name") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
@@ -113,8 +116,8 @@ fun ProfileScreen(onSave: () -> Unit, onBack: () -> Unit) {
 
             // 2. Last Name
             OutlinedTextField(
-                value = lastName,
-                onValueChange = { lastName = it },
+                value = uiState.lastName,
+                onValueChange = { viewModel.updateLastName(it) },
                 label = { Text("Last Name") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
@@ -124,8 +127,8 @@ fun ProfileScreen(onSave: () -> Unit, onBack: () -> Unit) {
 
             // 3. Email
             OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
+                value = uiState.email,
+                onValueChange = { viewModel.updateEmail(it) },
                 label = { Text("Email") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
@@ -135,8 +138,8 @@ fun ProfileScreen(onSave: () -> Unit, onBack: () -> Unit) {
 
             // 5. Contact
             OutlinedTextField(
-                value = contact,
-                onValueChange = { contact = it },
+                value = uiState.mobileNumber,
+                onValueChange = { viewModel.updateMobileNumber(it) },
                 label = { Text("Mobile Number") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
@@ -154,7 +157,7 @@ fun ProfileScreen(onSave: () -> Unit, onBack: () -> Unit) {
                     modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.bodyLarge
                 )
-                Switch(checked = canContact, onCheckedChange = { canContact = it })
+                Switch(checked = uiState.canContact, onCheckedChange = { viewModel.updateCanContact(it) })
             }
 
             Spacer(modifier = Modifier.height(32.dp))

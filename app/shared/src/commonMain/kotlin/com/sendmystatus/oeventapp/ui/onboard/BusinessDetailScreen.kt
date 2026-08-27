@@ -37,11 +37,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -68,6 +67,8 @@ import oeventapp.app.shared.generated.resources.label_contact_name
 import oeventapp.app.shared.generated.resources.label_email
 import oeventapp.app.shared.generated.resources.label_mobile_number
 import org.jetbrains.compose.resources.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.sendmystatus.oeventapp.ui.viewmodel.OnboardingViewModel
 
 
 @Preview
@@ -85,16 +86,21 @@ fun CreateBusinessDetailScreen(
     onBusinessSubmitClick: () -> Unit,
     onBack: () -> Unit,
     isLoading: Boolean = false,
+    viewModel: OnboardingViewModel = viewModel { OnboardingViewModel() }
 //    errorMessage: String? = null
 ) {
+    val uiState by viewModel.businessDetailState.collectAsState()
     val scrollState = rememberScrollState()
-    var businessType by remember { mutableStateOf("") }
-    var address by remember { mutableStateOf("") }
-    var zipCode by remember { mutableStateOf("") }
-    var city by remember { mutableStateOf("") }
-    var state by remember { mutableStateOf("") }
 
-    val canSubmit by remember { derivedStateOf { city.isNotBlank() && businessType.isNotBlank() && address.isNotBlank() && zipCode.isNotBlank() && state.isNotBlank() } }
+    val canSubmit by remember { 
+        derivedStateOf { 
+            uiState.city.isNotBlank() && 
+            uiState.businessType.isNotBlank() && 
+            uiState.address.isNotBlank() && 
+            uiState.zipCode.isNotBlank() && 
+            uiState.state.isNotBlank() 
+        } 
+    }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     var focusRequester = remember { FocusRequester() }
     Scaffold(
@@ -153,8 +159,8 @@ fun CreateBusinessDetailScreen(
             Spacer(modifier = Modifier.height(28.dp))
 
             OutlinedTextField(
-                value = businessType,
-                onValueChange = { businessType = it },
+                value = uiState.businessType,
+                onValueChange = { viewModel.updateBusinessType(it) },
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(stringResource(Res.string.label_business_type)) },
                 singleLine = true,
@@ -169,8 +175,8 @@ fun CreateBusinessDetailScreen(
                     Icon(
                         imageVector = Icons.Filled.Close,
                         contentDescription = "Business",
-                        modifier = Modifier.clickable { businessType = "" }
-                            .visible(businessType.isNotBlank())
+                        modifier = Modifier.clickable { viewModel.updateBusinessType("") }
+                            .visible(uiState.businessType.isNotBlank())
                     )
                 }
 
@@ -178,8 +184,8 @@ fun CreateBusinessDetailScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             OutlinedTextField(
-                value = address,
-                onValueChange = { address = it },
+                value = uiState.address,
+                onValueChange = { viewModel.updateAddress(it) },
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text(stringResource(Res.string.label_business_address)) },
                 singleLine = true,
@@ -194,7 +200,7 @@ fun CreateBusinessDetailScreen(
                     Icon(
                         imageVector = Icons.Filled.Close,
                         contentDescription = "Business",
-                        modifier = Modifier.clickable { address = "" }.visible(address.isNotBlank())
+                        modifier = Modifier.clickable { viewModel.updateAddress("") }.visible(uiState.address.isNotBlank())
                     )
                 }
 
@@ -207,8 +213,8 @@ fun CreateBusinessDetailScreen(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 OutlinedTextField(
-                    value = city,
-                    onValueChange = { city = it },
+                    value = uiState.city,
+                    onValueChange = { viewModel.updateCity(it) },
                     modifier = Modifier.weight(1f),
                     label = { Text(stringResource(Res.string.label_business_city)) },
                     singleLine = true,
@@ -217,13 +223,13 @@ fun CreateBusinessDetailScreen(
                         Icon(
                             imageVector = Icons.Filled.Close,
                             contentDescription = "Business",
-                            modifier = Modifier.clickable { city = "" }.visible(city.isNotBlank())
+                            modifier = Modifier.clickable { viewModel.updateCity("") }.visible(uiState.city.isNotBlank())
                         )
                     }
                 )
                 OutlinedTextField(
-                    value = zipCode,
-                    onValueChange = { zipCode = it },
+                    value = uiState.zipCode,
+                    onValueChange = { viewModel.updateZipCode(it) },
                     modifier = Modifier.weight(1f),
                     label = { Text(stringResource(Res.string.label_business_zip)) },
                     singleLine = true,
@@ -232,8 +238,8 @@ fun CreateBusinessDetailScreen(
                         Icon(
                             imageVector = Icons.Filled.Close,
                             contentDescription = "Business",
-                            modifier = Modifier.clickable { zipCode = "" }
-                                .visible(zipCode.isNotBlank())
+                            modifier = Modifier.clickable { viewModel.updateZipCode("") }
+                                .visible(uiState.zipCode.isNotBlank())
                         )
                     }
                 )
@@ -243,9 +249,9 @@ fun CreateBusinessDetailScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             OutlinedTextField(
-                value = state,
+                value = uiState.state,
                 modifier = Modifier.fillMaxWidth(),
-                onValueChange = { state = it },
+                onValueChange = { viewModel.updateState(it) },
                 label = { Text(stringResource(Res.string.label_business_state)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
@@ -253,7 +259,7 @@ fun CreateBusinessDetailScreen(
                     Icon(
                         imageVector = Icons.Filled.Close,
                         contentDescription = "Business",
-                        modifier = Modifier.clickable { state = "" }.visible(state.isNotBlank())
+                        modifier = Modifier.clickable { viewModel.updateState("") }.visible(uiState.state.isNotBlank())
                     )
                 }
 

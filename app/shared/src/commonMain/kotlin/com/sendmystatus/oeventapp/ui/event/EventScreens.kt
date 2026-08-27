@@ -48,6 +48,8 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -63,9 +65,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sendmystatus.oeventapp.data.model.event.Event
 import com.sendmystatus.oeventapp.ui.DateAndTimeRow
 import com.sendmystatus.oeventapp.ui.SingleChoiceSegmentedButton
+import com.sendmystatus.oeventapp.ui.viewmodel.CreateEventViewModel
+import com.sendmystatus.oeventapp.ui.viewmodel.EventTemplateViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
@@ -94,40 +99,20 @@ fun CreateEventScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     eventObj: Event? = null,
+    viewModel: CreateEventViewModel = viewModel { CreateEventViewModel() },
     onEventAdded: (Event) -> Unit
 ) {
-    val currentTime = rememberSaveable {
-        Clock.System.now()
-            .toLocalDateTime(TimeZone.currentSystemDefault())
-    }
+    val uiState by viewModel.uiState.collectAsState()
 
-    val defaultEndTime = rememberSaveable {
-        (Clock.System.now().plus(1.hours)).toLocalDateTime(TimeZone.currentSystemDefault())
+    LaunchedEffect(eventObj) {
+        eventObj?.let { viewModel.initFromEvent(it) }
     }
-
-    var eventStartTime by rememberSaveable {
-        mutableStateOf(
-            eventObj?.startDateAndTime ?: currentTime
-        )
-    }
-    var eventEndTime by rememberSaveable {
-        mutableStateOf(
-            eventObj?.endDateAndTime ?: defaultEndTime
-        )
-    }
-    var eventLocation by rememberSaveable { mutableStateOf(eventObj?.location ?: "") }
-    var eventVenue by rememberSaveable { mutableStateOf("") }
-    var name by rememberSaveable { mutableStateOf(eventObj?.name ?: "") }
-    var description by rememberSaveable { mutableStateOf(eventObj?.description ?: "") }
-    var isEventPublic by rememberSaveable { mutableStateOf(eventObj?.isPublic ?: true) }
-
-    var eventTypeDes by rememberSaveable { mutableStateOf("") }
 
     val coroutineScope = rememberCoroutineScope()
     val isDateError by remember {
         derivedStateOf {
-            val start = eventStartTime
-            val end = eventEndTime
+            val start = uiState.eventStartTime
+            val end = uiState.eventEndTime
             (end < start).also {
                 println(" date issue")
             }
@@ -138,7 +123,7 @@ fun CreateEventScreen(
     val isButtonEnabled by remember {
         derivedStateOf {
             isDateError.not()
-                    && (name.isNotBlank().and(name.length > 5))
+                    && (uiState.name.isNotBlank().and(uiState.name.length > 5))
 
         }
     }
@@ -151,9 +136,9 @@ fun CreateEventScreen(
         bottomBar = {
             Button(
                 onClick = {
-                    val startTs = eventStartTime.toInstant(TimeZone.currentSystemDefault())
+                    val startTs = uiState.eventStartTime.toInstant(TimeZone.currentSystemDefault())
                         .toEpochMilliseconds()
-                    val endTs = eventEndTime.toInstant(TimeZone.currentSystemDefault())
+                    val endTs = uiState.eventEndTime.toInstant(TimeZone.currentSystemDefault())
                         .toEpochMilliseconds()
 
                     val event = if (eventObj != null) {
@@ -161,13 +146,13 @@ fun CreateEventScreen(
                         // .copy() reuses the existing ID, Type, and Icon automatically.
                         // It ONLY changes the fields you list below.
                         eventObj.copy(
-                            name = name,
-                            description = description,
-                            location = eventLocation,
-                            venueName = eventVenue,
+                            name = uiState.name,
+                            description = uiState.description,
+                            location = uiState.eventLocation,
+                            venueName = uiState.eventVenue,
                             startTimestamp = startTs,
                             endTimestamp = endTs,
-                            isPublic = isEventPublic
+                            isPublic = uiState.isEventPublic
                         )
                     } else {
                         // CREATE CASE:
@@ -175,13 +160,13 @@ fun CreateEventScreen(
                         Event(
                             id = Uuid.random().toString(),
                             type = templateName,
-                            name = name,
-                            description = description,
-                            location = eventLocation,
-                            venueName = eventVenue,
+                            name = uiState.name,
+                            description = uiState.description,
+                            location = uiState.eventLocation,
+                            venueName = uiState.eventVenue,
                             startTimestamp = startTs,
                             endTimestamp = endTs,
-                            isPublic = isEventPublic,
+                            isPublic = uiState.isEventPublic,
                             icon = "default_icon" // Provide your default icon
                         )
                     }
@@ -254,8 +239,8 @@ fun CreateEventScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     OutlinedTextField(
-                        value = name,
-                        onValueChange = { name = it },
+                        value = uiState.name,
+                        onValueChange = { viewModel.updateName(it) },
                         modifier = Modifier.fillMaxWidth(),
                         label = { Text(stringResource(Res.string.label_event_name)) },
                         singleLine = true,
@@ -277,17 +262,17 @@ fun CreateEventScreen(
                             Icon(
                                 imageVector = Icons.Filled.Close,
                                 contentDescription = stringResource(Res.string.clear),
-                                modifier = Modifier.clickable { name = "" }
-                                    .visible(name.isNotBlank())
+                                modifier = Modifier.clickable { viewModel.updateName("") }
+                                    .visible(uiState.name.isNotBlank())
 
                             )
                         }
                     )
 
                     OutlinedTextField(
-                        value = description,
+                        value = uiState.description,
                         onValueChange = {
-                            description = it
+                            viewModel.updateDescription(it)
                         },
                         modifier = Modifier.fillMaxWidth(),
                         label = { Text(stringResource(Res.string.label_event_description)) },
@@ -312,17 +297,17 @@ fun CreateEventScreen(
                             Icon(
                                 imageVector = Icons.Filled.Close,
                                 contentDescription = stringResource(Res.string.clear),
-                                modifier = Modifier.clickable { description = "" }
-                                    .visible(description.isNotBlank())
+                                modifier = Modifier.clickable { viewModel.updateDescription("") }
+                                    .visible(uiState.description.isNotBlank())
 
                             )
                         }
                     )
 
                     OutlinedTextField(
-                        value = eventLocation,
+                        value = uiState.eventLocation,
                         onValueChange = {
-                            eventLocation = it
+                            viewModel.updateLocation(it)
                         },
                         modifier = Modifier.fillMaxWidth(),
                         label = { Text(stringResource(Res.string.label_event_location)) },
@@ -345,17 +330,17 @@ fun CreateEventScreen(
                             Icon(
                                 imageVector = Icons.Filled.Close,
                                 contentDescription = stringResource(Res.string.clear),
-                                modifier = Modifier.clickable { eventLocation = "" }
-                                    .visible(eventLocation.isNotBlank())
+                                modifier = Modifier.clickable { viewModel.updateLocation("") }
+                                    .visible(uiState.eventLocation.isNotBlank())
 
                             )
                         }
                     )
 
                     OutlinedTextField(
-                        value = eventVenue,
+                        value = uiState.eventVenue,
                         onValueChange = {
-                            eventVenue = it
+                            viewModel.updateVenue(it)
                         },
                         modifier = Modifier.fillMaxWidth(),
                         label = { Text(stringResource(Res.string.label_event_venue_name)) },
@@ -378,8 +363,8 @@ fun CreateEventScreen(
                             Icon(
                                 imageVector = Icons.Filled.Close,
                                 contentDescription = stringResource(Res.string.clear),
-                                modifier = Modifier.clickable { eventVenue = "" }
-                                    .visible(eventVenue.isNotBlank())
+                                modifier = Modifier.clickable { viewModel.updateVenue("") }
+                                    .visible(uiState.eventVenue.isNotBlank())
 
 
                             )
@@ -416,17 +401,17 @@ fun CreateEventScreen(
                     DateAndTimeRow(
                         label = stringResource(Res.string.label_start),
                         onDateTimeClick = {
-                            eventStartTime = it
+                            viewModel.updateStartTime(it)
                         },
-                        timeStamp = eventStartTime.toInstant(TimeZone.currentSystemDefault())
+                        timeStamp = uiState.eventStartTime.toInstant(TimeZone.currentSystemDefault())
                             .toEpochMilliseconds()
                     )
                     DateAndTimeRow(
                         label = stringResource(Res.string.label_end),
                         onDateTimeClick = {
-                            eventEndTime = it
+                            viewModel.updateEndTime(it)
                         },
-                        timeStamp = eventEndTime.toInstant(TimeZone.currentSystemDefault())
+                        timeStamp = uiState.eventEndTime.toInstant(TimeZone.currentSystemDefault())
                             .toEpochMilliseconds()
 
                     )
@@ -452,7 +437,7 @@ fun CreateEventScreen(
                 modifier = Modifier.fillMaxWidth(),
                 onSelected = { label, index ->
                     println("label: $label, index: $index")
-                    isEventPublic = index == 0
+                    viewModel.updateVisibility(index == 0)
                     coroutineScope.launch {
                         // For an instant jump: scrollState.scrollTo(scrollState.maxValue)
                         // For a smooth animation:
@@ -461,7 +446,7 @@ fun CreateEventScreen(
                     }
                 }
             )
-            AnimatedVisibility(isEventPublic.not()){
+            AnimatedVisibility(uiState.isEventPublic.not()){
                 SuggestionChip(
                     onClick = { },
                     label = { Text("Guest must be invited") }
@@ -509,7 +494,11 @@ fun EventTemplateScreenPreview() {
 }
 
 @Composable
-fun EventTemplateScreen(onSelected: (String) -> Unit) {
+fun EventTemplateScreen(
+    onSelected: (String) -> Unit,
+    viewModel: EventTemplateViewModel = viewModel { EventTemplateViewModel() }
+) {
+    val selectedTemplate by viewModel.selectedTemplate.collectAsState()
     /**
      * @Serializable
      * data class EventTemplate(
@@ -529,7 +518,6 @@ fun EventTemplateScreen(onSelected: (String) -> Unit) {
         "Other" to Icons.Filled.Event
     )
 
-    var selectedTemplate by rememberSaveable { mutableStateOf("") }
     val isButtonEnabled by remember { derivedStateOf { selectedTemplate.isNotBlank() } }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
@@ -609,7 +597,7 @@ fun EventTemplateScreen(onSelected: (String) -> Unit) {
                         ),
                         enabled = isCardEnabled,
                         onClick = {
-                            selectedTemplate = if (isSelected) "" else template.key
+                            viewModel.selectTemplate(template.key)
                         }
                     ) {
 

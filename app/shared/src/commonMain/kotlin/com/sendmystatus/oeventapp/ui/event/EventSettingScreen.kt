@@ -46,6 +46,7 @@ import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -62,49 +63,25 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sendmystatus.oeventapp.ui.SingleChoiceSegmentedButton
 import com.sendmystatus.oeventapp.ui.StatusDropdown
+import com.sendmystatus.oeventapp.ui.viewmodel.EventSettingViewModel
 import io.ktor.client.request.invoke
 import kotlin.random.Random
 
 @Composable
-fun CreateSettingEventScreen(eventId: String, eventName: String, onBack: () -> Unit) {
+fun CreateSettingEventScreen(
+    eventId: String,
+    eventName: String,
+    onBack: () -> Unit,
+    viewModel: EventSettingViewModel = viewModel { EventSettingViewModel() }
+) {
+    val uiState by viewModel.uiState.collectAsState()
 
     val scrollState = rememberScrollState()
-    var isFree by rememberSaveable { mutableStateOf(true) }
-    var isInPerson by rememberSaveable { mutableStateOf(false) }
-    var instructionToJoin by rememberSaveable { mutableStateOf("") }
-    var currency by rememberSaveable { mutableStateOf("USD") }
-    var tokenPrefix by rememberSaveable { mutableStateOf("OPEN_") }
-    var capacity by rememberSaveable { mutableStateOf(100) }
-    var status by rememberSaveable { mutableStateOf("active") }
-    var images by rememberSaveable { mutableStateOf(listOf<String>()) }
-
-
-    var categoryPrice by rememberSaveable { mutableStateOf(mapOf<String, Double>()) }
 
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
-    var sliderPosition by rememberSaveable { mutableStateOf(0f) }
-
-    val sliderState =
-        rememberSliderState(
-            // Only allow multiples of 10. Excluding the endpoints of `valueRange`,
-            // there are 9 steps (10, 20, ..., 90).
-            steps = 1,
-            valueRange = 0f..10000f,
-            onValueChangeFinished = {
-
-                // launch some business logic update with the state you hold
-                // viewModel.updateSelectedSliderValue(sliderPosition)
-            },
-        )
-
-    /*  LaunchedEffect(sliderPosition) {
-  //        capacity = sliderState.value.toInt()
-          println("LaunchedEffect sliderPosition: $sliderPosition")
-          capacity = sliderPosition.toInt() * 100_000
-          println("LaunchedEffect sliderPosition: $capacity")
-      }*/
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -124,7 +101,7 @@ fun CreateSettingEventScreen(eventId: String, eventName: String, onBack: () -> U
         bottomBar = {
             Button(
                 onClick = {
-                    // Now do something with 'event' (e.g., save to DB or pass to callback)
+                    viewModel.saveSettings(eventId)
                     println("Event saved: $eventId")
                 },
                 enabled = true,
@@ -160,14 +137,14 @@ fun CreateSettingEventScreen(eventId: String, eventName: String, onBack: () -> U
             SingleChoiceSegmentedButton(
                 Modifier.fillMaxWidth(),
                 onSelected = { label, index ->
-
+                    viewModel.updateIsInPerson(label == "In-Person")
                 }
             )
 
 
             OutlinedTextField(
-                value = instructionToJoin,
-                onValueChange = { instructionToJoin = it },
+                value = uiState.instructionToJoin,
+                onValueChange = { viewModel.updateInstructionToJoin(it) },
                 label = { Text("Instruction") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -181,45 +158,12 @@ fun CreateSettingEventScreen(eventId: String, eventName: String, onBack: () -> U
             SingleChoiceSegmentedButton(
                 Modifier.fillMaxWidth(),
                 onSelected = { label, index ->
-                    println("label: $label, index: $index")
-                    isFree = label == "Free"
+                    viewModel.updateIsFree(label == "Free")
                 },
                 options = listOf("Free", "Paid")
             )
-            /*
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "Is this event online?",
-                                modifier = Modifier.weight(1f),
-                                style = MaterialTheme.typography.titleLarge,
-                            )
-                            Switch(checked = isOnline, onCheckedChange = { isOnline = it })
-                        }
-                        HorizontalDivider(
-                            modifier = Modifier.fillMaxWidth().padding(
-                                bottom = 16.dp,
-                                top = 16.dp
-                            ),
-                            thickness = 2.dp,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
-                        )
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "Is this event free?",
-                                modifier = Modifier.weight(1f),
-                                style = MaterialTheme.typography.titleLarge,
-                            )
-                            Switch(checked = isFree, onCheckedChange = { isFree = it })
-                        }*/
-//            if (isFree.not()) {
 
-            if (isFree.not()) {
+            if (uiState.isFree.not()) {
                 Text(
                     text = "Price by Category",
                     style = MaterialTheme.typography.titleLarge,
@@ -231,7 +175,7 @@ fun CreateSettingEventScreen(eventId: String, eventName: String, onBack: () -> U
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
                 )
             }
-            AnimatedVisibility(visible = isFree.not()) {
+            AnimatedVisibility(visible = uiState.isFree.not()) {
 
                 ElevatedCard(
                     elevation = CardDefaults.cardElevation(
@@ -252,7 +196,10 @@ fun CreateSettingEventScreen(eventId: String, eventName: String, onBack: () -> U
                     ) {
 
 
-                        DynamicPriceForm(modifier = Modifier.fillMaxWidth().padding(8.dp))
+                        DynamicPriceForm(
+                            modifier = Modifier.fillMaxWidth().padding(8.dp),
+                            viewModel = viewModel
+                        )
                         Text(
                             text = "Choose Currency",
                             modifier = Modifier.padding(bottom = 8.dp)
@@ -260,30 +207,22 @@ fun CreateSettingEventScreen(eventId: String, eventName: String, onBack: () -> U
                         )
 
                         OutlinedTextField(
-                            value = currency,
-                            onValueChange = { currency = it },
+                            value = uiState.currency,
+                            onValueChange = { viewModel.updateCurrency(it) },
                             label = { Text("Currency") },
                             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
                         )
                     }
                 }
             }
-            /* HorizontalDivider(
-                 modifier = Modifier.fillMaxWidth().padding(
-                     bottom = 16.dp,
-                     top = 16.dp
-                 ),
-                 thickness = 2.dp,
-                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
-             )*/
 
             Text(
                 text = "Choose Token Prefix",
                 modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
             )
             OutlinedTextField(
-                value = tokenPrefix,
-                onValueChange = { tokenPrefix = it },
+                value = uiState.tokenPrefix,
+                onValueChange = { viewModel.updateTokenPrefix(it) },
                 label = { Text("Token Prefix") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -321,9 +260,8 @@ fun CreateSettingEventScreen(eventId: String, eventName: String, onBack: () -> U
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
 
-                    Slider(value = sliderPosition, onValueChange = {
-                        sliderPosition = it
-                        capacity = (sliderPosition * 100_000).toInt()
+                    Slider(value = uiState.sliderPosition, onValueChange = {
+                        viewModel.updateSliderPosition(it)
                     })
                     Text(
                         text = "(Slide to set capacity or enter value)",
@@ -331,10 +269,10 @@ fun CreateSettingEventScreen(eventId: String, eventName: String, onBack: () -> U
                     )
 
                     OutlinedTextField(
-                        value = capacity.toString(),
+                        value = uiState.capacity.toString(),
                         onValueChange = {
                             val newValue = it.toIntOrNull() ?: 0
-                            capacity = newValue
+                            viewModel.updateCapacity(newValue)
 
                         },
                         label = { Text("Capacity") },
@@ -351,7 +289,7 @@ fun CreateSettingEventScreen(eventId: String, eventName: String, onBack: () -> U
 
             StatusDropdown(
                 onSelected = {
-                    status = it
+                    viewModel.updateStatus(it)
                 }
             )
 
@@ -407,15 +345,17 @@ data class PriceItem(
 )
 
 @Composable
-fun DynamicPriceForm(modifier: Modifier) {
-    // 2. Create an observable list of items, starting with one empty item
-    val priceItems = remember { mutableStateListOf(PriceItem()) }
+fun DynamicPriceForm(
+    modifier: Modifier,
+    viewModel: EventSettingViewModel
+) {
+    val uiState by viewModel.uiState.collectAsState()
 
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        priceItems.forEachIndexed { index, item ->
+        uiState.priceItems.forEachIndexed { index, item ->
             key(item.id) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -425,10 +365,7 @@ fun DynamicPriceForm(modifier: Modifier) {
                     OutlinedTextField(
                         value = item.label,
                         onValueChange = { newlabel ->
-                            println("newValue: $newlabel")
-                            val tem = item.copy(label = newlabel)
-                            println("tem: $tem")
-                            priceItems[index] = item.copy(label = newlabel)
+                            viewModel.updatePriceItemLabel(index, newlabel)
                         },
                         label = { Text("Category") },
                         modifier = Modifier.weight(2f),
@@ -438,15 +375,7 @@ fun DynamicPriceForm(modifier: Modifier) {
                     OutlinedTextField(
                         value = item.value,
                         onValueChange = { newValue ->
-                            println("newValue: $newValue")
-                            val tem = item.copy(value = newValue)
-                            println("tem: $tem")
-                            priceItems[index] = item.copy(value = newValue)
-//                                newValue ->
-//                                println("newValue: $newValue")
-//                                val tem = item.copy(value = newValue)
-//                                println("tem: $tem")
-//                                priceItems[index] = item.copy(value = newValue)
+                            viewModel.updatePriceItemValue(index, newValue)
                         },
                         label = { Text("price") },
                         modifier = Modifier.weight(1f),
@@ -454,8 +383,8 @@ fun DynamicPriceForm(modifier: Modifier) {
                         singleLine = true
                     )
 
-                    if (priceItems.size > 1) {
-                        IconButton(onClick = { priceItems.removeAt(index) }) {
+                    if (uiState.priceItems.size > 1) {
+                        IconButton(onClick = { viewModel.removePriceItem(index) }) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
                                 contentDescription = "Remove item",
@@ -471,7 +400,7 @@ fun DynamicPriceForm(modifier: Modifier) {
         // 3. Button to add a new item
         Button(
             onClick = {
-                priceItems.add(PriceItem())
+                viewModel.addPriceItem()
             },
             modifier = Modifier
 //                .fillMaxWidth()
