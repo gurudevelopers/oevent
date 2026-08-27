@@ -277,11 +277,6 @@ fun CreateSettingEventScreen(eventId: String, eventName: String, onBack: () -> U
             )
 
 
-            /* CreatePricePerPersonScreen()
-             CreatePricePerPersonScreen()
-             CreatePricePerPersonScreen()
-             CreatePricePerPersonScreen()*/
-
 
         }
     }

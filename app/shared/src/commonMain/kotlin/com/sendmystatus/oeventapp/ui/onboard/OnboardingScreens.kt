@@ -55,6 +55,7 @@ fun DemoQuickAccess(onNavigate: (Route) -> Unit) {
         "Merchant DashBoard",
         "Event Template",
         "Event creation",
+        "Event Setting",
         "Program Event creation",
         "Event Roles",
         "Event Dashboard"
@@ -68,6 +69,7 @@ fun DemoQuickAccess(onNavigate: (Route) -> Unit) {
         Route.EventTemplate,
         Route.EventTemplate,
         Route.EventCreate("Event Template 1"),
+        Route.EventSetting("Event Template 1","Event Template 1"),
         Route.EventProgramAdd,
         Route.Scanner,
         Route.Reward,
