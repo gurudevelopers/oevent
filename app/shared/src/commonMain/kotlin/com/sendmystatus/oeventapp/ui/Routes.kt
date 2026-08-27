@@ -1,12 +1,14 @@
 package com.sendmystatus.oeventapp.ui
 
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.sendmystatus.oeventapp.data.model.event.Event
 import kotlinx.serialization.Serializable
 
 @Serializable
 sealed interface Route {
     @Serializable
     data object Welcome : Route
+
     @Serializable
     data object Demo : Route
 
@@ -25,6 +27,9 @@ sealed interface Route {
 
     @Serializable
     data class EventCreate(val selectedTemplateName: String) : Route
+
+    @Serializable
+    data class EventSetting(val eventId: String, val eventName: String) : Route
 
     @Serializable
     data object Merchant : Route

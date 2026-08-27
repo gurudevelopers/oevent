@@ -48,6 +48,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -83,24 +84,25 @@ fun CreateEventScreen(
     templateName: String,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
-    eventObj: Event? = null
+    eventObj: Event? = null,
+    onEventAdded: (Event) -> Unit
 ) {
-    val currentTime = remember {
+    val currentTime = rememberSaveable {
         Clock.System.now()
             .toLocalDateTime(TimeZone.currentSystemDefault())
     }
 
-    val defaultEndTime = remember {
+    val defaultEndTime = rememberSaveable {
         (Clock.System.now().plus(1.hours)).toLocalDateTime(TimeZone.currentSystemDefault())
     }
 
-    var eventStartTime by remember { mutableStateOf(eventObj?.startDateAndTime ?: currentTime) }
-    var eventEndTime by remember { mutableStateOf(eventObj?.endDateAndTime ?: defaultEndTime) }
-    var eventLocation by remember { mutableStateOf(eventObj?.location ?: "") }
-    var eventVenue by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf(eventObj?.name ?: "") }
-    var description by remember { mutableStateOf(eventObj?.description ?: "") }
-    var isEventPublic by remember { mutableStateOf(eventObj?.isPublic ?: true) }
+    var eventStartTime by rememberSaveable { mutableStateOf(eventObj?.startDateAndTime ?: currentTime) }
+    var eventEndTime by rememberSaveable { mutableStateOf(eventObj?.endDateAndTime ?: defaultEndTime) }
+    var eventLocation by rememberSaveable { mutableStateOf(eventObj?.location ?: "") }
+    var eventVenue by rememberSaveable { mutableStateOf("") }
+    var name by rememberSaveable { mutableStateOf(eventObj?.name ?: "") }
+    var description by rememberSaveable { mutableStateOf(eventObj?.description ?: "") }
+    var isEventPublic by rememberSaveable { mutableStateOf(eventObj?.isPublic ?: true) }
 
     val isDateError by remember {
         derivedStateOf {
@@ -168,7 +170,7 @@ fun CreateEventScreen(
 
                     // Now do something with 'event' (e.g., save to DB or pass to callback)
                     println("Event saved: $event")
-
+                    onEventAdded(event)
 
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -435,7 +437,9 @@ fun CreateEventSetupScreenPreview() {
 fun CreateEventScreenPreview() {
     CreateEventScreen(
         templateName = "Conference",
-        onBack = {}
+        onBack = {},
+        eventObj = null,
+        onEventAdded = {}
     )
 }
 
@@ -468,7 +472,7 @@ fun EventTemplateScreen(onSelected: (String) -> Unit) {
         "Other" to Icons.Filled.Event
     )
 
-    var selectedTemplate by remember { mutableStateOf("") }
+    var selectedTemplate by rememberSaveable { mutableStateOf("") }
     val isButtonEnabled by remember { derivedStateOf { selectedTemplate.isNotBlank() } }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 

@@ -12,13 +12,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.EditCalendar
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -29,12 +37,14 @@ import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -446,4 +456,143 @@ fun CustomTimePickerDialog(
         },
         text = { TimePicker(state = timePickerState) }
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BetterStatusDropdown() {
+    val options = remember {
+        mutableStateListOf("Active", "Live", "Canceled", "Suspended")
+    }
+    var expanded by remember { mutableStateOf(false) }
+    var inputText by remember { mutableStateOf("") }
+
+    // 1. Get the focus manager to control the keyboard and cursor
+    val focusManager = LocalFocusManager.current
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+        modifier = Modifier.padding(16.dp)
+    ) {
+        OutlinedTextField(
+            value = inputText,
+            onValueChange = {
+                inputText = it
+                expanded = true
+            },
+            label = { Text("Status") },
+            placeholder = { Text("Select or type...") },
+            // 2. Add a leading icon for visual context
+            leadingIcon = {
+                Icon(Icons.Default.Info, contentDescription = null)
+            },
+            // 3. Dynamic Trailing Icon: Show 'X' if text exists, otherwise show arrow
+            trailingIcon = {
+                if (inputText.isNotEmpty()) {
+                    IconButton(onClick = {
+                        inputText = ""
+                        focusManager.clearFocus() // Hide keyboard when cleared
+                    }) {
+                        Icon(Icons.Default.Clear, contentDescription = "Clear text")
+                    }
+                } else {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                }
+            },
+            // Round the corners a bit more for a modern look
+            shape = RoundedCornerShape(12.dp),
+            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+            modifier = Modifier.menuAnchor().fillMaxWidth(),
+            singleLine = true
+        )
+
+        val filteredOptions = options.filter {
+            it.contains(inputText, ignoreCase = true)
+        }
+
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = {
+                expanded = false
+                focusManager.clearFocus() // Drop focus if they tap outside
+            }
+        ) {
+            filteredOptions.forEach { option ->
+                DropdownMenuItem(
+                    text = { Text(option) },
+                    onClick = {
+                        inputText = option
+                        expanded = false
+                        // 4. Clear focus and hide keyboard immediately upon selection
+                        focusManager.clearFocus()
+                    }
+                )
+            }
+
+            if (inputText.isNotBlank() && !options.any { it.equals(inputText, ignoreCase = true) }) {
+                DropdownMenuItem(
+                    text = { Text("Add \"$inputText\"", fontWeight = FontWeight.Bold) },
+                    leadingIcon = { Icon(Icons.Default.Add, contentDescription = null) },
+                    onClick = {
+                        options.add(inputText)
+                        expanded = false
+                        focusManager.clearFocus() // Hide keyboard
+                    }
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun StatusDropdown(onSelected: (String) -> Unit, modifier: Modifier = Modifier,
+                    options: List<String> = listOf("Active", "Live", "Canceled", "Suspended")
+) {
+
+    // 2. Track whether the dropdown is open (expanded) or closed
+    var expanded by remember { mutableStateOf(false) }
+
+    // 3. Track the currently selected value (default to the first item)
+    var selectedStatus by remember { mutableStateOf(options[0]) }
+
+    // 4. The main wrapper for the dropdown
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }, // Toggle open/close on click
+        modifier = modifier
+    ) {
+        // 5. The visible text field that the user clicks
+        OutlinedTextField(
+            value = selectedStatus,
+            onValueChange = {}, // Read-only, so this is empty
+            readOnly = true,    // Prevents the keyboard from popping up
+            label = { Text("Status") },
+            trailingIcon = {
+                // Adds the little down arrow icon that flips when opened
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+            },
+            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+            // The menuAnchor() modifier is CRITICAL. It tells the menu where to attach.
+            modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable,true).fillMaxWidth()
+        )
+
+        // 6. The actual popup menu containing your options
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false } // Close if user clicks outside
+        ) {
+            options.forEach { option ->
+                DropdownMenuItem(
+                    text = { Text(option) },
+                    onClick = {
+                        selectedStatus = option // Update the selected value
+                        expanded = false        // Close the menu
+                        onSelected(option)
+                    }
+                )
+            }
+        }
+    }
 }

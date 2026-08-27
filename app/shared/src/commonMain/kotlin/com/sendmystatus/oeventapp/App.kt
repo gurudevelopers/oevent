@@ -21,8 +21,11 @@ import com.sendmystatus.oeventapp.ui.onboard.WelcomeScreen
 import com.sendmystatus.oeventapp.ui.theme.OEventTheme
 
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.navigation
+import com.sendmystatus.oeventapp.data.model.event.Event
 import com.sendmystatus.oeventapp.ui.event.AddProgramScreen
 import com.sendmystatus.oeventapp.ui.event.CreateEventScreen
+import com.sendmystatus.oeventapp.ui.event.CreateSettingEventScreen
 import com.sendmystatus.oeventapp.ui.event.EventProgramScreen
 import com.sendmystatus.oeventapp.ui.event.EventTemplateScreen
 import com.sendmystatus.oeventapp.ui.onboard.CreateBusinessDetailScreen
@@ -31,6 +34,10 @@ import com.sendmystatus.oeventapp.ui.onboard.CreateMerchantAccountScreen
 import com.sendmystatus.oeventapp.ui.onboard.DemoQuickAccess
 import com.sendmystatus.oeventapp.ui.viewmodel.AuthState
 import com.sendmystatus.oeventapp.ui.viewmodel.AuthViewModel
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.uuid.Uuid
 
 @Composable
 @Preview
@@ -70,7 +77,9 @@ fun App() {
                         onNavigate = { route ->
                             try {
 
-                                navController.navigate(route)
+                                navController.navigate(route){
+                                    launchSingleTop = true
+                                }
                             } catch (e: Exception) {
                                 e.printStackTrace()
                             }
@@ -83,7 +92,9 @@ fun App() {
                     EventProgramScreen(
                         onBack = { navController.popBackStack() },
                         onEventAdded = {
-                            navController.navigate(Route.EventProgramAdd)
+                            navController.navigate(Route.EventProgramAdd){
+                                launchSingleTop = true
+                            }
                         }
                     )
                 }
@@ -92,7 +103,12 @@ fun App() {
                     AddProgramScreen(
                         onBack = { navController.popBackStack() },
                         onEventAdded = {
-                            navController.navigate(Route.EventProgramAdd)
+                            navController.navigate(Route.EventProgramAdd){
+                                popUpTo<Route.EventProgram> {
+                                    inclusive = false
+                                }
+                            }
+
                         }
                     )
                 }
@@ -142,7 +158,9 @@ fun App() {
                             navController.popBackStack()
                             return@EventTemplateScreen
                         }
-                        navController.navigate(Route.EventCreate(name))
+                        navController.navigate(Route.EventCreate(name)){
+                            launchSingleTop = true
+                        }
 
                     })
                 }
@@ -150,11 +168,61 @@ fun App() {
                 composable<Route.EventCreate> { backEntyr ->
                     val eventTemp: Route.EventCreate = backEntyr.toRoute()
 
+                  /*  val event = Event(
+                        id = Uuid.random().toString(),
+                        type = "templateName",
+                        name = "name",
+                        description = "description",
+                        location = "eventLocation",
+                        venueName = "eventVenue",
+                        startTimestamp = Clock.System.now().toEpochMilliseconds(),
+                        endTimestamp = Clock.System.now().toEpochMilliseconds()+100000,
+                        isPublic = false,
+                        icon = "default_icon" // Provide your default icon
+                    )*/
+
                     CreateEventScreen(
                         eventTemp.selectedTemplateName,
                         onBack = {
                             navController.popBackStack()
+                        },
+//                        eventObj = event,
+                        onEventAdded = {
+
+                            println("backstack: size: ${navController.currentBackStack.value.size} value ${navController.currentBackStack.value}")
+                            navController.navigate(Route.EventSetting(it.id, it.name)){
+                                popUpTo(Route.EventTemplate) {
+
+                                    // todo handling the navigation.
+                                    inclusive = true
+                                }
+                            }
                         }
+                    )
+                }
+
+                composable<Route.EventSetting> { backEntyr ->
+                    val eventTemp: Route.EventSetting = backEntyr.toRoute()
+
+                    val event = Event(
+                        id = Uuid.random().toString(),
+                        type = "templateName",
+                        name = "name",
+                        description = "description",
+                        location = "eventLocation",
+                        venueName = "eventVenue",
+                        startTimestamp = Clock.System.now().toEpochMilliseconds(),
+                        endTimestamp = Clock.System.now().toEpochMilliseconds()+100000,
+                        isPublic = false,
+                        icon = "default_icon" // Provide your default icon
+                    )
+                    CreateSettingEventScreen(
+                        eventTemp.eventId,
+                        eventTemp.eventName,
+                        onBack = {
+                            navController.popBackStack()
+//                            navController.navigateUp()
+                        },
                     )
                 }
                 composable<Route.BusinessEventSetup> {
