@@ -23,6 +23,7 @@ import com.sendmystatus.oeventapp.ui.theme.OEventTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.navigation
 import com.sendmystatus.oeventapp.data.model.event.Event
+import com.sendmystatus.oeventapp.ui.DemoQuickAccess
 import com.sendmystatus.oeventapp.ui.event.AddProgramScreen
 import com.sendmystatus.oeventapp.ui.event.CreateEventScreen
 import com.sendmystatus.oeventapp.ui.event.CreateSettingEventScreen
@@ -31,7 +32,7 @@ import com.sendmystatus.oeventapp.ui.event.EventTemplateScreen
 import com.sendmystatus.oeventapp.ui.onboard.CreateBusinessDetailScreen
 import com.sendmystatus.oeventapp.ui.onboard.CreateBusinessRegScreen
 import com.sendmystatus.oeventapp.ui.onboard.CreateMerchantAccountScreen
-import com.sendmystatus.oeventapp.ui.onboard.DemoQuickAccess
+import com.sendmystatus.oeventapp.ui.user.ProfileScreen
 import com.sendmystatus.oeventapp.ui.viewmodel.AuthState
 import com.sendmystatus.oeventapp.ui.viewmodel.AuthViewModel
 import kotlinx.datetime.TimeZone
@@ -163,6 +164,14 @@ fun App() {
                         }
 
                     })
+                }
+
+                composable<Route.Profile> {
+
+                    ProfileScreen(
+                        onSave = { navController.popBackStack() },
+                        onBack = { navController.popBackStack() }
+                    )
                 }
 
                 composable<Route.EventCreate> { backEntyr ->
