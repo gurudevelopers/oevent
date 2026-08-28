@@ -7,6 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -248,10 +251,16 @@ fun AppContent() {
                 }
 
                 composable<Route.Scanner> {
+                    var hasNavigated by remember { mutableStateOf(false) }
                     ScannerScreen(
                         onScan = { data ->
-                            println("data: $data")
-                            navController.navigate(Route.Reward(data = data))
+                            if (!hasNavigated) {
+                                hasNavigated = true
+                                println("App: Navigating to Reward with data: $data")
+                                navController.navigate(Route.Reward(data = data)) {
+                                    launchSingleTop = true
+                                }
+                            }
                         },
                         onBack = { navController.popBackStack() }
                     )

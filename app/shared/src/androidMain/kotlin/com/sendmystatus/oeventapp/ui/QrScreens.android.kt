@@ -37,23 +37,33 @@ actual fun ScannerScreen(
             )
         }
     ) { padding ->
+        var hasScanned by remember { mutableStateOf(false) }
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
             contentAlignment = Alignment.Center
         ) {
-            QrScanner(
-                modifier = Modifier.fillMaxSize(),
-                flashlightOn = false,
-                cameraLens = CameraLens.Back,
-                openImagePicker = false,
-                onCompletion = { result ->
-                    onScan(result)
-                },
-                imagePickerHandler = { /* Not used */ },
-                onFailure = { /* Handle error */ }
-            )
+            if (!hasScanned) {
+                QrScanner(
+                    modifier = Modifier.fillMaxSize(),
+                    flashlightOn = false,
+                    cameraLens = CameraLens.Back,
+                    openImagePicker = false,
+                    onCompletion = { result ->
+                        if (!hasScanned) {
+                            println("QR Scanner: Detected result: $result")
+                            hasScanned = true
+                            onScan(result)
+                        }
+                    },
+                    imagePickerHandler = { /* Not used */ },
+                    onFailure = { error ->
+                        println("QR Scanner: Failure: $error")
+                    }
+                )
+            }
             
             Text(
                 text = stringResource(Res.string.align_qr_code),
