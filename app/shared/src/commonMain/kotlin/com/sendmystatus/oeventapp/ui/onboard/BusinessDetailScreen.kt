@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.visible
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -104,7 +103,7 @@ fun CreateBusinessDetailScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     var focusRequester = remember { FocusRequester() }
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -171,15 +170,16 @@ fun CreateBusinessDetailScreen(
                         contentDescription = "Business"
                     )
                 },
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = "Business",
-                        modifier = Modifier.clickable { viewModel.updateBusinessType("") }
-                            .visible(uiState.businessType.isNotBlank())
-                    )
-                }
-
+                trailingIcon = if (uiState.businessType.isNotBlank()) {
+                    {
+                        IconButton(onClick = { viewModel.updateBusinessType("") }) {
+                            Icon(
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = "Clear"
+                            )
+                        }
+                    }
+                } else null
             )
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -196,14 +196,16 @@ fun CreateBusinessDetailScreen(
                         contentDescription = "Business"
                     )
                 },
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = "Business",
-                        modifier = Modifier.clickable { viewModel.updateAddress("") }.visible(uiState.address.isNotBlank())
-                    )
-                }
-
+                trailingIcon = if (uiState.address.isNotBlank()) {
+                    {
+                        IconButton(onClick = { viewModel.updateAddress("") }) {
+                            Icon(
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = "Clear"
+                            )
+                        }
+                    }
+                } else null
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -219,13 +221,16 @@ fun CreateBusinessDetailScreen(
                     label = { Text(stringResource(Res.string.label_business_city)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                    trailingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.Close,
-                            contentDescription = "Business",
-                            modifier = Modifier.clickable { viewModel.updateCity("") }.visible(uiState.city.isNotBlank())
-                        )
-                    }
+                    trailingIcon = if (uiState.city.isNotBlank()) {
+                        {
+                            IconButton(onClick = { viewModel.updateCity("") }) {
+                                Icon(
+                                    imageVector = Icons.Filled.Close,
+                                    contentDescription = "Clear"
+                                )
+                            }
+                        }
+                    } else null
                 )
                 OutlinedTextField(
                     value = uiState.zipCode,
@@ -234,14 +239,16 @@ fun CreateBusinessDetailScreen(
                     label = { Text(stringResource(Res.string.label_business_zip)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                    trailingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.Close,
-                            contentDescription = "Business",
-                            modifier = Modifier.clickable { viewModel.updateZipCode("") }
-                                .visible(uiState.zipCode.isNotBlank())
-                        )
-                    }
+                    trailingIcon = if (uiState.zipCode.isNotBlank()) {
+                        {
+                            IconButton(onClick = { viewModel.updateZipCode("") }) {
+                                Icon(
+                                    imageVector = Icons.Filled.Close,
+                                    contentDescription = "Clear"
+                                )
+                            }
+                        }
+                    } else null
                 )
             }
 
@@ -255,14 +262,16 @@ fun CreateBusinessDetailScreen(
                 label = { Text(stringResource(Res.string.label_business_state)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = "Business",
-                        modifier = Modifier.clickable { viewModel.updateState("") }.visible(uiState.state.isNotBlank())
-                    )
-                }
-
+                trailingIcon = if (uiState.state.isNotBlank()) {
+                    {
+                        IconButton(onClick = { viewModel.updateState("") }) {
+                            Icon(
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = "Clear"
+                            )
+                        }
+                    }
+                } else null
             )
 
 

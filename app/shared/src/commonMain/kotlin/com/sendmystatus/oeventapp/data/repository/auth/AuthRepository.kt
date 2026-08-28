@@ -1,12 +1,17 @@
-package com.sendmystatus.oeventapp.data.repository
+package com.sendmystatus.oeventapp.data.repository.auth
 
-import com.sendmystatus.oeventapp.data.model.*
+import com.sendmystatus.oeventapp.data.model.AuthResponse
+import com.sendmystatus.oeventapp.data.model.DashboardResponse
+import com.sendmystatus.oeventapp.data.model.LoginRequest
+import com.sendmystatus.oeventapp.data.model.OtpRequest
+import com.sendmystatus.oeventapp.data.model.RegistrationRequest
 import com.sendmystatus.oeventapp.data.storage.AuthTokens
 import com.sendmystatus.oeventapp.data.storage.TokenStorage
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.http.*
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import org.koin.core.annotation.Single
 
 @Single
@@ -49,7 +54,7 @@ class AuthRepository(
     suspend fun logout() {
         tokenStorage.clearTokens()
     }
-    
+
     suspend fun getTokens(): AuthTokens? {
         return tokenStorage.getTokens()
     }

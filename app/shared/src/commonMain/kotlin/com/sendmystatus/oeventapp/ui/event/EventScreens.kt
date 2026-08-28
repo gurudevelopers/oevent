@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.visible
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
@@ -131,7 +130,7 @@ fun CreateEventScreen(
 
     val scrollState = rememberScrollState()
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection),
 
         bottomBar = {
             Button(
@@ -258,15 +257,16 @@ fun CreateEventScreen(
                                 contentDescription = "Mobile"
                             )
                         },
-                        trailingIcon = {
-                            Icon(
-                                imageVector = Icons.Filled.Close,
-                                contentDescription = stringResource(Res.string.clear),
-                                modifier = Modifier.clickable { viewModel.updateName("") }
-                                    .visible(uiState.name.isNotBlank())
-
-                            )
-                        }
+                        trailingIcon = if (uiState.name.isNotBlank()) {
+                            {
+                                IconButton(onClick = { viewModel.updateName("") }) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Close,
+                                        contentDescription = stringResource(Res.string.clear)
+                                    )
+                                }
+                            }
+                        } else null
                     )
 
                     OutlinedTextField(
@@ -293,15 +293,16 @@ fun CreateEventScreen(
                                 contentDescription = "Mobile"
                             )
                         },
-                        trailingIcon = {
-                            Icon(
-                                imageVector = Icons.Filled.Close,
-                                contentDescription = stringResource(Res.string.clear),
-                                modifier = Modifier.clickable { viewModel.updateDescription("") }
-                                    .visible(uiState.description.isNotBlank())
-
-                            )
-                        }
+                        trailingIcon = if (uiState.description.isNotBlank()) {
+                            {
+                                IconButton(onClick = { viewModel.updateDescription("") }) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Close,
+                                        contentDescription = stringResource(Res.string.clear)
+                                    )
+                                }
+                            }
+                        } else null
                     )
 
                     OutlinedTextField(
@@ -326,15 +327,16 @@ fun CreateEventScreen(
                                 contentDescription = "Mobile"
                             )
                         },
-                        trailingIcon = {
-                            Icon(
-                                imageVector = Icons.Filled.Close,
-                                contentDescription = stringResource(Res.string.clear),
-                                modifier = Modifier.clickable { viewModel.updateLocation("") }
-                                    .visible(uiState.eventLocation.isNotBlank())
-
-                            )
-                        }
+                        trailingIcon = if (uiState.eventLocation.isNotBlank()) {
+                            {
+                                IconButton(onClick = { viewModel.updateLocation("") }) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Close,
+                                        contentDescription = stringResource(Res.string.clear)
+                                    )
+                                }
+                            }
+                        } else null
                     )
 
                     OutlinedTextField(
@@ -359,16 +361,16 @@ fun CreateEventScreen(
                                 contentDescription = "Mobile"
                             )
                         },
-                        trailingIcon = {
-                            Icon(
-                                imageVector = Icons.Filled.Close,
-                                contentDescription = stringResource(Res.string.clear),
-                                modifier = Modifier.clickable { viewModel.updateVenue("") }
-                                    .visible(uiState.eventVenue.isNotBlank())
-
-
-                            )
-                        }
+                        trailingIcon = if (uiState.eventVenue.isNotBlank()) {
+                            {
+                                IconButton(onClick = { viewModel.updateVenue("") }) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Close,
+                                        contentDescription = stringResource(Res.string.clear)
+                                    )
+                                }
+                            }
+                        } else null
                     )
                 }
 
@@ -522,7 +524,7 @@ fun EventTemplateScreen(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection),
         bottomBar = {
             Button(
                 onClick = {

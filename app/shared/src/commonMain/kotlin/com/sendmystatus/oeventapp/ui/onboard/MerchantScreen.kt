@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.visible
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation.Companion.keyboardOptions
@@ -116,7 +115,7 @@ fun CreateMerchantAccountScreen(
 
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -185,17 +184,16 @@ fun CreateMerchantAccountScreen(
                         contentDescription = "Business"
                     )
                 },
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = "Error",
-                        //  tint = if (isPhoneError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-
-                        modifier = Modifier.clickable { viewModel.updateBusinessName("") }
-                            .visible(uiState.businessName.isNotBlank())
-
-                    )
-                }
+                trailingIcon = if (uiState.businessName.isNotBlank()) {
+                    {
+                        IconButton(onClick = { viewModel.updateBusinessName("") }) {
+                            Icon(
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = "Clear"
+                            )
+                        }
+                    }
+                } else null
 
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -213,17 +211,16 @@ fun CreateMerchantAccountScreen(
                         contentDescription = "Person"
                     )
                 },
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = "Error",
-                        //  tint = if (isPhoneError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-
-                        modifier = Modifier.clickable { viewModel.updateContactName("") }
-                            .visible(uiState.contactName.isNotBlank())
-
-                    )
-                }
+                trailingIcon = if (uiState.contactName.isNotBlank()) {
+                    {
+                        IconButton(onClick = { viewModel.updateContactName("") }) {
+                            Icon(
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = "Clear"
+                            )
+                        }
+                    }
+                } else null
 
             )
             Spacer(modifier = Modifier.height(21.dp))
@@ -241,17 +238,16 @@ fun CreateMerchantAccountScreen(
                         contentDescription = "Phone"
                     )
                 },
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = "Error",
-                        //  tint = if (isPhoneError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-
-                        modifier = Modifier.clickable { viewModel.updateMerchantMobileNumber("") }
-                            .visible(uiState.mobileNumber.isNotBlank())
-
-                    )
-                }
+                trailingIcon = if (uiState.mobileNumber.isNotBlank()) {
+                    {
+                        IconButton(onClick = { viewModel.updateMerchantMobileNumber("") }) {
+                            Icon(
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = "Clear"
+                            )
+                        }
+                    }
+                } else null
 
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -270,17 +266,16 @@ fun CreateMerchantAccountScreen(
                     )
                 },
 
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = "Error",
-                      //  tint = if (isPhoneError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-
-                        modifier = Modifier.clickable { viewModel.updateMerchantEmail("") }
-                            .visible(uiState.email.isNotBlank())
-
-                    )
-                }
+                trailingIcon = if (uiState.email.isNotBlank()) {
+                    {
+                        IconButton(onClick = { viewModel.updateMerchantEmail("") }) {
+                            Icon(
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = "Clear"
+                            )
+                        }
+                    }
+                } else null
 
             )
             /* if (errorMessage != null) {
