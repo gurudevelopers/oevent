@@ -13,9 +13,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import androidx.compose.ui.tooling.preview.Preview
-import com.sendmystatus.oeventapp.data.model.event.Event
 import com.sendmystatus.oeventapp.di.appModules
-import com.sendmystatus.oeventapp.ui.DemoQuickAccess
+import com.sendmystatus.oeventapp.ui.splash.DemoQuickAccess
 import com.sendmystatus.oeventapp.ui.RewardScreen
 import com.sendmystatus.oeventapp.ui.Route
 import com.sendmystatus.oeventapp.ui.ScannerScreen
@@ -24,12 +23,12 @@ import com.sendmystatus.oeventapp.ui.event.CreateSettingEventScreen
 import com.sendmystatus.oeventapp.ui.event.EventTemplateScreen
 import com.sendmystatus.oeventapp.ui.event.program.AddProgramScreen
 import com.sendmystatus.oeventapp.ui.event.program.EventProgramScreen
+import com.sendmystatus.oeventapp.ui.login.LoginScreen
+import com.sendmystatus.oeventapp.ui.login.OtpVerificationScreen
 import com.sendmystatus.oeventapp.ui.onboard.CreateBusinessDetailScreen
 import com.sendmystatus.oeventapp.ui.onboard.CreateBusinessRegScreen
 import com.sendmystatus.oeventapp.ui.onboard.CreateMerchantAccountScreen
-import com.sendmystatus.oeventapp.ui.onboard.LoginScreen
-import com.sendmystatus.oeventapp.ui.onboard.OtpVerificationScreen
-import com.sendmystatus.oeventapp.ui.onboard.WelcomeScreen
+import com.sendmystatus.oeventapp.ui.splash.WelcomeScreen
 import com.sendmystatus.oeventapp.ui.theme.OEventTheme
 import com.sendmystatus.oeventapp.ui.user.ProfileScreen
 import com.sendmystatus.oeventapp.ui.viewmodel.AuthState
@@ -38,8 +37,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import org.koin.compose.KoinApplication
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
-import kotlin.time.Clock
-import kotlin.uuid.Uuid
 
 @Composable
 @Preview
@@ -75,7 +72,9 @@ fun AppContent() {
             }
 
             is AuthState.Success -> {
-                navController.navigate(Route.Scanner)
+                navController.navigate(Route.Profile){
+                    popUpTo(Route.Demo) { inclusive = true }
+                }
                 authViewModel.resetState()
             }
 
