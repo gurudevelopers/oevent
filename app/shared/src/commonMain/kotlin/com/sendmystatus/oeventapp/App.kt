@@ -33,157 +33,196 @@ import com.sendmystatus.oeventapp.ui.onboard.CreateMerchantAccountScreen
 import com.sendmystatus.oeventapp.ui.user.ProfileScreen
 import com.sendmystatus.oeventapp.ui.viewmodel.AuthState
 import com.sendmystatus.oeventapp.ui.viewmodel.AuthViewModel
-import com.sendmystatus.oeventapp.di.createComponent
+import androidx.compose.runtime.CompositionLocalProvider
+import com.sendmystatus.oeventapp.di.LocalSharedComponentViewModel
+import com.sendmystatus.oeventapp.di.NetworkComponent
+import com.sendmystatus.oeventapp.di.RepositoryComponent
+import com.sendmystatus.oeventapp.di.SharedComponentViewModel
+import com.sendmystatus.oeventapp.di.create
+import com.sendmystatus.oeventapp.network.NetworkConfig
+import com.sendmystatus.oeventapp.data.storage.createTokenStorage
 import kotlin.time.Clock
 import kotlin.uuid.Uuid
 
 @Composable
 @Preview
 fun App() {
-    val component = remember { createComponent() }
-    OEventTheme {
-        val navController = rememberNavController()
-        val authViewModel: AuthViewModel = viewModel { component.authViewModel }
-        val authState by authViewModel.state.collectAsState()
+    val tokenStorage = remember { createTokenStorage() }
+    val networkConfig = remember {
+        NetworkConfig(
+            baseUrl = "https://api.oeventapp.com",
+            wsUrl = "wss://api.oeventapp.com/ws"
+        )
+    }
+    val networkComponent = remember {
+        NetworkComponent.create(
+            networkConfig = networkConfig,
+            tokenStorage = tokenStorage
+        )
+    }
+    val repositoryComponent = remember {
+        RepositoryComponent.create(
+            httpClient = networkComponent.httpClient,
+            tokenStorage = tokenStorage
+        )
+    }
+    val sharedComponentViewModel = remember {
+        SharedComponentViewModel.create()
+    }
 
-        LaunchedEffect(authState) {
-            when (authState) {
-                is AuthState.OtpSent -> {
-                    val mobile = (authState as AuthState.OtpSent).mobileNumber
-                    navController.navigate(Route.Otp(mobileNumber = mobile))
-                    authViewModel.resetState()
+    CompositionLocalProvider(LocalSharedComponentViewModel provides sharedComponentViewModel) {
+        val currentComponent = LocalSharedComponentViewModel.current
+        OEventTheme {
+            val navController = rememberNavController()
+            val authViewModel: AuthViewModel = viewModel { currentComponent.authViewModel }
+            val authState by authViewModel.state.collectAsState()
+
+            LaunchedEffect(Unit) {
+                networkComponent.logoutFlow.collect {
+                    navController.navigate(Route.Login) {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
-
-                is AuthState.Success -> {
-                    navController.navigate(Route.Scanner)
-                    authViewModel.resetState()
-                }
-
-                else -> {}
             }
-        }
 
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            NavHost(
-                navController = navController,
-                startDestination = Route.Demo
+            LaunchedEffect(authState) {
+                when (authState) {
+                    is AuthState.OtpSent -> {
+                        val mobile = (authState as AuthState.OtpSent).mobileNumber
+                        navController.navigate(Route.Otp(mobileNumber = mobile))
+                        authViewModel.resetState()
+                    }
+
+                    is AuthState.Success -> {
+                        navController.navigate(Route.Scanner)
+                        authViewModel.resetState()
+                    }
+
+                    else -> {}
+                }
+            }
+
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.background
             ) {
-                composable<Route.Demo> {
-                    DemoQuickAccess(
-                        onNavigate = { route ->
-                            try {
+                NavHost(
+                    navController = navController,
+                    startDestination = Route.Demo
+                ) {
+                    composable<Route.Demo> {
+                        DemoQuickAccess(
+                            onNavigate = { route ->
+                                try {
 
-                                navController.navigate(route){
+                                    navController.navigate(route) {
+                                        launchSingleTop = true
+                                    }
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                            }
+
+                        )
+                    }
+
+                    composable<Route.EventProgram> {
+                        EventProgramScreen(
+                            onBack = { navController.popBackStack() },
+                            onEventAdded = {
+                                navController.navigate(Route.EventProgramAdd) {
                                     launchSingleTop = true
                                 }
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
-                        }
+                            },
+                            viewModel = viewModel { currentComponent.eventProgramViewModel }
+                        )
+                    }
 
-                    )
-                }
-
-                composable<Route.EventProgram> {
-                    EventProgramScreen(
-                        onBack = { navController.popBackStack() },
-                        onEventAdded = {
-                            navController.navigate(Route.EventProgramAdd){
-                                launchSingleTop = true
-                            }
-                        },
-                        viewModel = viewModel { component.eventProgramViewModel }
-                    )
-                }
-
-                composable<Route.EventProgramAdd> {
-                    AddProgramScreen(
-                        onBack = { navController.popBackStack() },
-                        onEventAdded = {
-                            navController.navigate(Route.EventProgramAdd){
-                                popUpTo<Route.EventProgram> {
-                                    inclusive = false
+                    composable<Route.EventProgramAdd> {
+                        AddProgramScreen(
+                            onBack = { navController.popBackStack() },
+                            onEventAdded = {
+                                navController.navigate(Route.EventProgramAdd) {
+                                    popUpTo<Route.EventProgram> {
+                                        inclusive = false
+                                    }
                                 }
-                            }
 
-                        },
-                        viewModel = viewModel { component.addProgramViewModel }
-                    )
-                }
+                            },
+                            viewModel = viewModel { currentComponent.addProgramViewModel }
+                        )
+                    }
 
-                composable<Route.Welcome> {
-                    WelcomeScreen(
-                        onAttendeeClick = { navController.navigate(Route.Login) },
-                        onMerchantClick = { navController.navigate(Route.Merchant) }
-                    )
-                }
-                composable<Route.Login> {
-                    LoginScreen(
-                        onSendOtpClick = { mobile ->
-                            authViewModel.sendOtp(mobile)
-                        },
-                        onBack = { navController.popBackStack() },
-                        isLoading = authState is AuthState.Loading,
-                        errorMessage = (authState as? AuthState.Error)?.message
-                    )
-                }
+                    composable<Route.Welcome> {
+                        WelcomeScreen(
+                            onAttendeeClick = { navController.navigate(Route.Login) },
+                            onMerchantClick = { navController.navigate(Route.Merchant) }
+                        )
+                    }
+                    composable<Route.Login> {
+                        LoginScreen(
+                            onSendOtpClick = { mobile ->
+                                authViewModel.sendOtp(mobile)
+                            },
+                            onBack = { navController.popBackStack() },
+                            isLoading = authState is AuthState.Loading,
+                            errorMessage = (authState as? AuthState.Error)?.message
+                        )
+                    }
 
-                composable<Route.Merchant> {
-                    CreateMerchantAccountScreen(
-                        onMerchantSubmitClick = {
-                            navController.navigate(Route.BusinessDetail)
-                        },
-                        onBack = { navController.popBackStack() },
-                        viewModel = viewModel { component.onboardingViewModel }
+                    composable<Route.Merchant> {
+                        CreateMerchantAccountScreen(
+                            onMerchantSubmitClick = {
+                                navController.navigate(Route.BusinessDetail)
+                            },
+                            onBack = { navController.popBackStack() },
+                            viewModel = viewModel { currentComponent.onboardingViewModel }
 //                        isLoading = authState is AuthState.Loading,
 //                        errorMessage = (authState as? AuthState.Error)?.message
-                    )
-                }
+                        )
+                    }
 
-                composable<Route.BusinessDetail> {
-                    CreateBusinessDetailScreen(
-                        onBusinessSubmitClick = {
-                            navController.navigate(Route.BusinessEventSetup)
-                        },
-                        onBack = { navController.popBackStack() },
-                        viewModel = viewModel { component.onboardingViewModel }
+                    composable<Route.BusinessDetail> {
+                        CreateBusinessDetailScreen(
+                            onBusinessSubmitClick = {
+                                navController.navigate(Route.BusinessEventSetup)
+                            },
+                            onBack = { navController.popBackStack() },
+                            viewModel = viewModel { currentComponent.onboardingViewModel }
 //                        isLoading = authState is AuthState.Loading,
 //                        errorMessage = (authState as? AuthState.Error)?.message
-                    )
-                }
-                composable<Route.EventTemplate> {
+                        )
+                    }
+                    composable<Route.EventTemplate> {
 
-                    EventTemplateScreen(
-                        onSelected = { name ->
-                            if (name.isEmpty()) {
-                                navController.popBackStack()
-                                return@EventTemplateScreen
-                            }
-                            navController.navigate(Route.EventCreate(name)) {
-                                launchSingleTop = true
-                            }
+                        EventTemplateScreen(
+                            onSelected = { name ->
+                                if (name.isEmpty()) {
+                                    navController.popBackStack()
+                                    return@EventTemplateScreen
+                                }
+                                navController.navigate(Route.EventCreate(name)) {
+                                    launchSingleTop = true
+                                }
 
-                        },
-                        viewModel = viewModel { component.eventTemplateViewModel }
-                    )
-                }
+                            },
+                            viewModel = viewModel { currentComponent.eventTemplateViewModel }
+                        )
+                    }
 
-                composable<Route.Profile> {
+                    composable<Route.Profile> {
 
-                    ProfileScreen(
-                        onSave = { navController.popBackStack() },
-                        onBack = { navController.popBackStack() },
-                        viewModel = viewModel { component.profileViewModel }
-                    )
-                }
+                        ProfileScreen(
+                            onSave = { navController.popBackStack() },
+                            onBack = { navController.popBackStack() },
+                            viewModel = viewModel { currentComponent.profileViewModel }
+                        )
+                    }
 
-                composable<Route.EventCreate> { backEntyr ->
-                    val eventTemp: Route.EventCreate = backEntyr.toRoute()
+                    composable<Route.EventCreate> { backEntyr ->
+                        val eventTemp: Route.EventCreate = backEntyr.toRoute()
 
-                  /*  val event = Event(
+                        /*  val event = Event(
                         id = Uuid.random().toString(),
                         type = "templateName",
                         name = "name",
@@ -196,89 +235,90 @@ fun App() {
                         icon = "default_icon" // Provide your default icon
                     )*/
 
-                    CreateEventScreen(
-                        eventTemp.selectedTemplateName,
-                        onBack = {
-                            navController.popBackStack()
-                        },
+                        CreateEventScreen(
+                            eventTemp.selectedTemplateName,
+                            onBack = {
+                                navController.popBackStack()
+                            },
 //                        eventObj = event,
-                        viewModel = viewModel { component.createEventViewModel },
-                        onEventAdded = {
+                            viewModel = viewModel { currentComponent.createEventViewModel },
+                            onEventAdded = {
 
-                            println("backstack: size: ${navController.currentBackStack.value.size} value ${navController.currentBackStack.value}")
-                            navController.navigate(Route.EventSetting(it.id, it.name)){
-                                popUpTo(Route.EventTemplate) {
+                                println("backstack: size: ${navController.currentBackStack.value.size} value ${navController.currentBackStack.value}")
+                                navController.navigate(Route.EventSetting(it.id, it.name)) {
+                                    popUpTo(Route.EventTemplate) {
 
-                                    // todo handling the navigation.
-                                    inclusive = true
+                                        // todo handling the navigation.
+                                        inclusive = true
+                                    }
                                 }
                             }
-                        }
-                    )
-                }
+                        )
+                    }
 
-                composable<Route.EventSetting> { backEntyr ->
-                    val eventTemp: Route.EventSetting = backEntyr.toRoute()
+                    composable<Route.EventSetting> { backEntyr ->
+                        val eventTemp: Route.EventSetting = backEntyr.toRoute()
 
-                    val event = Event(
-                        id = Uuid.random().toString(),
-                        type = "templateName",
-                        name = "name",
-                        description = "description",
-                        location = "eventLocation",
-                        venueName = "eventVenue",
-                        startTimestamp = Clock.System.now().toEpochMilliseconds(),
-                        endTimestamp = Clock.System.now().toEpochMilliseconds()+100000,
-                        isPublic = false,
-                        icon = "default_icon" // Provide your default icon
-                    )
-                    CreateSettingEventScreen(
-                        eventTemp.eventId,
-                        eventTemp.eventName,
-                        onBack = {
-                            navController.popBackStack()
+                        val event = Event(
+                            id = Uuid.random().toString(),
+                            type = "templateName",
+                            name = "name",
+                            description = "description",
+                            location = "eventLocation",
+                            venueName = "eventVenue",
+                            startTimestamp = Clock.System.now().toEpochMilliseconds(),
+                            endTimestamp = Clock.System.now().toEpochMilliseconds() + 100000,
+                            isPublic = false,
+                            icon = "default_icon" // Provide your default icon
+                        )
+                        CreateSettingEventScreen(
+                            eventTemp.eventId,
+                            eventTemp.eventName,
+                            onBack = {
+                                navController.popBackStack()
 //                            navController.navigateUp()
-                        },
-                        viewModel = viewModel { component.eventSettingViewModel }
-                    )
-                }
-                composable<Route.BusinessEventSetup> {
-                    CreateBusinessRegScreen(
-                        onBusinessSubmitClick = {
-                            navController.navigate(Route.BusinessEventSetup)
-                        },
-                        onBack = { navController.popBackStack() },
+                            },
+                            viewModel = viewModel { currentComponent.eventSettingViewModel }
+                        )
+                    }
+                    composable<Route.BusinessEventSetup> {
+                        CreateBusinessRegScreen(
+                            onBusinessSubmitClick = {
+                                navController.navigate(Route.BusinessEventSetup)
+                            },
+                            onBack = { navController.popBackStack() },
 //                        isLoading = authState is AuthState.Loading,
 //                        errorMessage = (authState as? AuthState.Error)?.message
-                    )
-                }
-                composable<Route.Otp> { backStackEntry ->
-                    val otpRoute: Route.Otp = backStackEntry.toRoute()
-                    OtpVerificationScreen(
-                        mobileNumber = otpRoute.mobileNumber,
-                        onVerifyClick = { otp ->
-                            authViewModel.verifyOtp(otpRoute.mobileNumber, otp)
-                        },
-                        onBack = { navController.popBackStack() },
-                        isLoading = authState is AuthState.Loading,
-                        errorMessage = (authState as? AuthState.Error)?.message
-                    )
-                }
-                composable<Route.Scanner> {
-                    ScannerScreen(
-                        onScan = { data ->
-                            println("data: $data")
-                            navController.navigate(Route.Reward(data = data))
-                        },
-                        onBack = { navController.popBackStack() }
-                    )
-                }
-                composable<Route.Reward> { backStackEntry ->
-                    val rewardRoute: Route.Reward = backStackEntry.toRoute()
-                    RewardScreen(
-                        rewardData = rewardRoute.data,
-                        onBack = { navController.popBackStack() }
-                    )
+                        )
+                    }
+                    composable<Route.Otp> { backStackEntry ->
+                        val otpRoute: Route.Otp = backStackEntry.toRoute()
+                        OtpVerificationScreen(
+                            mobileNumber = otpRoute.mobileNumber,
+                            onVerifyClick = { otp ->
+                                authViewModel.verifyOtp(otpRoute.mobileNumber, otp)
+                            },
+                            onBack = { navController.popBackStack() },
+                            isLoading = authState is AuthState.Loading,
+                            errorMessage = (authState as? AuthState.Error)?.message
+                        )
+                    }
+                    composable<Route.Scanner> {
+                        ScannerScreen(
+                            onScan = { data ->
+                                println("data: $data")
+                                navController.navigate(Route.Reward(data = data))
+                            },
+                            onBack = { navController.popBackStack() }
+                        )
+                    }
+                    composable<Route.Reward> { backStackEntry ->
+                        val rewardRoute: Route.Reward = backStackEntry.toRoute()
+                        RewardScreen(
+                            rewardData = rewardRoute.data,
+                            onBack = { navController.popBackStack() }
+                        )
+                    }
                 }
             }
         }

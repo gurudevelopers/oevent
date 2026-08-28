@@ -3,11 +3,13 @@ package com.sendmystatus.oeventapp.di
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import me.tatarka.inject.annotations.Scope
-import io.ktor.client.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 import com.sendmystatus.oeventapp.ui.viewmodel.*
+import com.sendmystatus.oeventapp.network.NetworkConfig
+import com.sendmystatus.oeventapp.data.storage.TokenStorage
+import com.sendmystatus.oeventapp.data.repository.AuthRepository
+import io.ktor.client.HttpClient
+import kotlinx.coroutines.flow.SharedFlow
 
 @Scope
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
@@ -15,28 +17,30 @@ annotation class AppScope
 
 @Component
 @AppScope
-abstract class SharedComponent {
+abstract class NetworkComponent(
+    @get:Provides val networkConfig: NetworkConfig,
+    @get:Provides val tokenStorage: TokenStorage
+) : NetworkModule, DataModule {
+    abstract val httpClient: HttpClient
+    abstract override val logoutFlow: SharedFlow<Unit>
     
-    abstract val authViewModel: AuthViewModel
-    abstract val profileViewModel: ProfileViewModel
-    abstract val onboardingViewModel: OnboardingViewModel
-    abstract val createEventViewModel: CreateEventViewModel
-    abstract val eventProgramViewModel: EventProgramViewModel
-    abstract val addProgramViewModel: AddProgramViewModel
-    abstract val eventSettingViewModel: EventSettingViewModel
-    abstract val eventTemplateViewModel: EventTemplateViewModel
-
-    @Provides
-    @AppScope
-    fun provideHttpClient(): HttpClient = HttpClient {
-        install(ContentNegotiation) {
-            json(Json {
-                ignoreUnknownKeys = true
-            })
-        }
-    }
-
     companion object
 }
 
-expect fun createComponent(): SharedComponent
+@Component
+@AppScope
+abstract class RepositoryComponent(
+    @get:Provides val httpClient: HttpClient,
+    @get:Provides val tokenStorage: TokenStorage
+) : StorageModule {
+    abstract val authRepository: AuthRepository
+    
+    companion object
+}
+
+@Component
+@AppScope
+abstract class SharedComponentViewModel : ViewModelModule {
+    
+    companion object
+}

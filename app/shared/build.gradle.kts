@@ -92,6 +92,8 @@ kotlin {
                 implementation(libs.ktor.clientAuth)
                 implementation(libs.ktor.clientContentNegotiation)
                 implementation(libs.ktor.clientLogging)
+                implementation(libs.ktor.clientWebsockets)
+                implementation(libs.ktor.clientEncoding)
                 implementation(libs.ktor.serializationKotlinxJson)
                 implementation(libs.kotlinx.datetime)
                 implementation(libs.kotlinx.serialization.json)

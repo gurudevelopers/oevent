@@ -2,8 +2,7 @@ package com.sendmystatus.oeventapp.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sendmystatus.oeventapp.data.ApiClient
-import com.sendmystatus.oeventapp.data.ApiService
+import com.sendmystatus.oeventapp.data.repository.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -18,26 +17,16 @@ sealed class AuthState {
     data class Error(val message: String) : AuthState()
 }
 
-class AuthViewModel @Inject constructor(
-    private val apiService: ApiService
-) : ViewModel() {
+class AuthViewModel @Inject constructor() : ViewModel() {
     
     private val _state = MutableStateFlow<AuthState>(AuthState.Idle)
     val state = _state.asStateFlow()
-
-    init {
-        viewModelScope.launch {
-            ApiClient.factory.onLogoutRequired.collect {
-                _state.value = AuthState.Idle
-            }
-        }
-    }
 
     fun sendOtp(mobileNumber: String) {
         viewModelScope.launch {
             _state.value = AuthState.Loading
             try {
-                //val response = apiService.login(mobileNumber)
+                //val response = authRepository.login(mobileNumber)
                 _state.value = AuthState.OtpSent(mobileNumber)
             } catch (e: Exception) {
                 _state.value = AuthState.Error(e.message ?: "Failed to send OTP")
@@ -49,8 +38,8 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             _state.value = AuthState.Loading
             try {
-                val response = apiService.verifyOtp(mobileNumber, otp)
-                _state.value = AuthState.Success(response.token)
+                //val response = authRepository.verifyOtp(mobileNumber, otp)
+                _state.value = AuthState.Success("dummy_token")
             } catch (e: Exception) {
                 _state.value = AuthState.Error(e.message ?: "Invalid OTP")
             }
@@ -59,7 +48,6 @@ class AuthViewModel @Inject constructor(
 
     fun logout() {
         viewModelScope.launch {
-            apiService.logout()
             _state.value = AuthState.Idle
         }
     }

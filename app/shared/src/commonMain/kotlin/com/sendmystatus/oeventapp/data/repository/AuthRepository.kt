@@ -1,40 +1,35 @@
-package com.sendmystatus.oeventapp.data
+package com.sendmystatus.oeventapp.data.repository
 
 import com.sendmystatus.oeventapp.data.model.*
 import com.sendmystatus.oeventapp.data.storage.AuthTokens
 import com.sendmystatus.oeventapp.data.storage.TokenStorage
-import com.sendmystatus.oeventapp.data.storage.createTokenStorage
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-
+import com.sendmystatus.oeventapp.di.AppScope
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class ApiService(
+@AppScope
+class AuthRepository(
     private val client: HttpClient,
-    val tokenStorage: TokenStorage = createTokenStorage()
+    private val tokenStorage: TokenStorage
 ) {
-    private val baseUrl = "https://oevent.com"
-
     suspend fun login(mobileNumber: String): AuthResponse {
-        return client.post("$baseUrl/login") {
-            contentType(ContentType.Application.Json)
+        return client.post("login") {
             setBody(LoginRequest(mobileNumber))
         }.body()
     }
 
     suspend fun register(name: String, mobile: String, email: String): AuthResponse {
-        return client.post("$baseUrl/registration") {
-            contentType(ContentType.Application.Json)
+        return client.post("registration") {
             setBody(RegistrationRequest(name, mobile, email))
         }.body()
     }
 
     suspend fun verifyOtp(mobile: String, otp: String): AuthResponse {
-        val response = client.post("$baseUrl/otp") {
-            contentType(ContentType.Application.Json)
+        val response = client.post("otp") {
             setBody(OtpRequest(mobile, otp))
         }.body<AuthResponse>()
 
@@ -49,22 +44,15 @@ class ApiService(
         return response
     }
 
-    suspend fun getDashboard(token: String? = null): DashboardResponse {
-        return client.get("$baseUrl/dashboard") {
-            if (token != null) {
-                header(HttpHeaders.Authorization, "Bearer $token")
-            }
-        }.body()
+    suspend fun getDashboard(): DashboardResponse {
+        return client.get("dashboard").body()
     }
 
     suspend fun logout() {
         tokenStorage.clearTokens()
     }
-}
-
-object ApiClient {
-    val tokenStorage = createTokenStorage()
-    val factory = HttpClientFactory(tokenStorage)
-    val client = factory.create()
-    val service = ApiService(client, tokenStorage)
+    
+    suspend fun getTokens(): AuthTokens? {
+        return tokenStorage.getTokens()
+    }
 }

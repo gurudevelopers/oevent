@@ -1,3 +1,1 @@
-package com.sendmystatus.oeventapp.di
-
-actual fun createComponent(): SharedComponent = SharedComponent.create()
+// Platform specific DI implementations if needed
