@@ -62,7 +62,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.compose.viewmodel.koinViewModel
 import com.sendmystatus.oeventapp.ui.InfoBanner
 import com.sendmystatus.oeventapp.ui.theme.AppTheme
 import com.sendmystatus.oeventapp.ui.theme.bold
@@ -97,7 +97,7 @@ fun CreateMerchantAccountScreen(
     onMerchantSubmitClick: () -> Unit,
     onBack: () -> Unit,
     isLoading: Boolean = false,
-    viewModel: OnboardingViewModel = viewModel { OnboardingViewModel() }
+    viewModel: OnboardingViewModel = koinViewModel()
 //    errorMessage: String? = null
 ) {
     val uiState by viewModel.merchantAccountState.collectAsState()

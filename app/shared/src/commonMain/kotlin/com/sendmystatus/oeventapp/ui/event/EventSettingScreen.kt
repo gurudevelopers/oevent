@@ -63,7 +63,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.compose.viewmodel.koinViewModel
 import com.sendmystatus.oeventapp.ui.SingleChoiceSegmentedButton
 import com.sendmystatus.oeventapp.ui.StatusDropdown
 import com.sendmystatus.oeventapp.ui.viewmodel.EventSettingViewModel
@@ -75,7 +75,7 @@ fun CreateSettingEventScreen(
     eventId: String,
     eventName: String,
     onBack: () -> Unit,
-    viewModel: EventSettingViewModel = viewModel { EventSettingViewModel() }
+    viewModel: EventSettingViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 

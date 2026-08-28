@@ -67,7 +67,7 @@ import oeventapp.app.shared.generated.resources.label_contact_name
 import oeventapp.app.shared.generated.resources.label_email
 import oeventapp.app.shared.generated.resources.label_mobile_number
 import org.jetbrains.compose.resources.stringResource
-import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.compose.viewmodel.koinViewModel
 import com.sendmystatus.oeventapp.ui.viewmodel.OnboardingViewModel
 
 
@@ -86,7 +86,7 @@ fun CreateBusinessDetailScreen(
     onBusinessSubmitClick: () -> Unit,
     onBack: () -> Unit,
     isLoading: Boolean = false,
-    viewModel: OnboardingViewModel = viewModel { OnboardingViewModel() }
+    viewModel: OnboardingViewModel = koinViewModel()
 //    errorMessage: String? = null
 ) {
     val uiState by viewModel.businessDetailState.collectAsState()

@@ -31,7 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.compose.viewmodel.koinViewModel
 import com.sendmystatus.oeventapp.data.model.event.EventProgram
 import com.sendmystatus.oeventapp.ui.DateAndTimeRow
 import com.sendmystatus.oeventapp.ui.SingleChoiceSegmentedButton
@@ -49,7 +49,7 @@ import org.jetbrains.compose.resources.stringResource
 fun EventProgramScreen(
     onBack: () -> Unit,
     onEventAdded: (List<EventProgram>) -> Unit,
-    viewModel: EventProgramViewModel = viewModel { EventProgramViewModel() }
+    viewModel: EventProgramViewModel = koinViewModel()
 ) {
 
     val listOfPrograms by viewModel.listOfPrograms.collectAsState()
@@ -100,7 +100,7 @@ fun AddProgramScreen(
     onEventAdded: (EventProgram) -> Unit,
     eventProgram: EventProgram? = null,// is user want to view the program or edit it
     modifier: Modifier = Modifier,
-    viewModel: AddProgramViewModel = viewModel { AddProgramViewModel() }
+    viewModel: AddProgramViewModel = koinViewModel()
 ) {
 
     val uiState by viewModel.uiState.collectAsState()

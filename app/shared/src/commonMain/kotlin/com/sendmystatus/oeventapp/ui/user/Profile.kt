@@ -37,7 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.compose.viewmodel.koinViewModel
 import com.sendmystatus.oeventapp.ui.viewmodel.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,7 +45,7 @@ import com.sendmystatus.oeventapp.ui.viewmodel.ProfileViewModel
 fun ProfileScreen(
     onSave: () -> Unit,
     onBack: () -> Unit,
-    viewModel: ProfileViewModel = viewModel { ProfileViewModel() }
+    viewModel: ProfileViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 

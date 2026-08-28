@@ -65,7 +65,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.compose.viewmodel.koinViewModel
 import com.sendmystatus.oeventapp.data.model.event.Event
 import com.sendmystatus.oeventapp.ui.DateAndTimeRow
 import com.sendmystatus.oeventapp.ui.SingleChoiceSegmentedButton
@@ -99,7 +99,7 @@ fun CreateEventScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     eventObj: Event? = null,
-    viewModel: CreateEventViewModel = viewModel { CreateEventViewModel() },
+    viewModel: CreateEventViewModel = koinViewModel(),
     onEventAdded: (Event) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -496,7 +496,7 @@ fun EventTemplateScreenPreview() {
 @Composable
 fun EventTemplateScreen(
     onSelected: (String) -> Unit,
-    viewModel: EventTemplateViewModel = viewModel { EventTemplateViewModel() }
+    viewModel: EventTemplateViewModel = koinViewModel()
 ) {
     val selectedTemplate by viewModel.selectedTemplate.collectAsState()
     /**
