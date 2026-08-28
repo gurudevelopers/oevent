@@ -11,10 +11,6 @@ plugins {
     alias(libs.plugins.androidx.room)
 }
 
-ksp {
-    arg("me.tatarka.inject.generateCompanionExtensions", "true")
-}
-
 // Required for Room schema export configuration
 room {
     schemaDirectory("$projectDir/schemas")
@@ -75,7 +71,9 @@ kotlin {
         commonMain.apply {
             dependencies {
                 api(project(":core"))
-                implementation(libs.kotlin.inject.runtime)
+                implementation(libs.koin.core)
+                implementation(libs.koin.compose)
+                implementation(libs.koin.compose.viewmodel)
                 implementation(libs.compose.runtime)
                 implementation(libs.compose.foundation)
                 implementation(libs.compose.material3)
@@ -106,6 +104,7 @@ kotlin {
                 implementation(libs.compose.uiTooling)
                 implementation(libs.qr.kit)
                 implementation(libs.ktor.clientOkHttp)
+                implementation(libs.koin.android)
             }
         }
         val iosMain = create("iosMain") {
@@ -153,6 +152,5 @@ tasks.configureEach {
 }
 
 dependencies {
-    add("kspCommonMainMetadata", libs.kotlin.inject.compiler)
     androidRuntimeClasspath(libs.compose.uiTooling)
 }

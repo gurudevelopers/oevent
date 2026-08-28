@@ -7,8 +7,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-import me.tatarka.inject.annotations.Inject
-
 sealed class AuthState {
     object Idle : AuthState()
     object Loading : AuthState()
@@ -17,7 +15,7 @@ sealed class AuthState {
     data class Error(val message: String) : AuthState()
 }
 
-class AuthViewModel @Inject constructor() : ViewModel() {
+class AuthViewModel : ViewModel() {
     
     private val _state = MutableStateFlow<AuthState>(AuthState.Idle)
     val state = _state.asStateFlow()

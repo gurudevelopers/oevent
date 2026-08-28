@@ -7,11 +7,7 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import com.sendmystatus.oeventapp.di.AppScope
-import me.tatarka.inject.annotations.Inject
 
-@Inject
-@AppScope
 class AuthRepository(
     private val client: HttpClient,
     private val tokenStorage: TokenStorage

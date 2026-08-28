@@ -5,8 +5,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-import me.tatarka.inject.annotations.Inject
-
 data class ProfileUiState(
     val firstName: String = "",
     val lastName: String = "",
@@ -15,7 +13,7 @@ data class ProfileUiState(
     val canContact: Boolean = true
 )
 
-class ProfileViewModel @Inject constructor() : ViewModel() {
+class ProfileViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState = _uiState.asStateFlow()
 

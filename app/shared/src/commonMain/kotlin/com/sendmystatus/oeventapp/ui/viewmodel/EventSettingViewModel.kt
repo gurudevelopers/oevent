@@ -6,8 +6,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-import me.tatarka.inject.annotations.Inject
-
 data class EventSettingUiState(
     val isFree: Boolean = true,
     val isInPerson: Boolean = false,
@@ -20,7 +18,7 @@ data class EventSettingUiState(
     val priceItems: List<PriceItem> = listOf(PriceItem())
 )
 
-class EventSettingViewModel @Inject constructor() : ViewModel() {
+class EventSettingViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(EventSettingUiState())
     val uiState = _uiState.asStateFlow()
 

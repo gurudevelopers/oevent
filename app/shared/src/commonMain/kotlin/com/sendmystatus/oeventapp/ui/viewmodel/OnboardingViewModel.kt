@@ -5,8 +5,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-import me.tatarka.inject.annotations.Inject
-
 data class BusinessDetailUiState(
     val businessType: String = "",
     val address: String = "",
@@ -22,7 +20,7 @@ data class MerchantAccountUiState(
     val businessName: String = ""
 )
 
-class OnboardingViewModel @Inject constructor() : ViewModel() {
+class OnboardingViewModel : ViewModel() {
     private val _businessDetailState = MutableStateFlow(BusinessDetailUiState())
     val businessDetailState = _businessDetailState.asStateFlow()
 

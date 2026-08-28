@@ -1,17 +1,17 @@
 package com.sendmystatus.oeventapp.di
 
 import com.sendmystatus.oeventapp.ui.viewmodel.*
+import org.koin.core.module.dsl.viewModel
+import org.koin.core.module.dsl.viewModelOf
+import org.koin.dsl.module
 
-interface ViewModelModule {
-    
-    val authViewModel: AuthViewModel
-    val profileViewModel: ProfileViewModel
-    val onboardingViewModel: OnboardingViewModel
-    val createEventViewModel: CreateEventViewModel
-    val eventProgramViewModel: EventProgramViewModel
-    val addProgramViewModel: AddProgramViewModel
-    val eventSettingViewModel: EventSettingViewModel
-    val eventTemplateViewModel: EventTemplateViewModel
-
-    companion object
+val viewModelModule = module {
+    viewModelOf(::AuthViewModel)
+    viewModelOf(::ProfileViewModel)
+    viewModelOf(::OnboardingViewModel)
+    viewModelOf(::CreateEventViewModel)
+    viewModelOf(::EventProgramViewModel)
+    viewModelOf(::AddProgramViewModel)
+    viewModelOf(::EventSettingViewModel)
+    viewModelOf(::EventTemplateViewModel)
 }
