@@ -130,6 +130,9 @@ kotlin {
             dependsOn(nonWebMain)
             dependencies {
                 implementation(libs.qr.kit)
+                implementation(libs.opencv)
+                implementation(libs.zxing.core)
+                implementation(libs.zxing.javase)
                 implementation(libs.ktor.clientJava)
             }
         }

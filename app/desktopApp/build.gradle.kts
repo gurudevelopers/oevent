@@ -27,6 +27,17 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.sendmystatus.oeventapp"
             packageVersion = "1.0.0"
+            macOS {
+                bundleID = "com.sendmystatus.oeventapp"
+                infoPlist {
+                    extraKeysRawXml = """
+                        <key>NSCameraUsageDescription</key>
+                        <string>This app requires access to the camera to scan QR codes.</string>
+                    """.trimIndent()
+                }
+                // If using App Sandbox / Hardened Runtime, include camera entitlement
+                entitlementsFile.set(project.file("entitlements.plist"))
+            }
         }
     }
 }
