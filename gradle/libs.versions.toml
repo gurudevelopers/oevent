@@ -23,7 +23,8 @@ qrkit = "3.1.3"
 dateTime ="0.8.0"
 room = "2.8.4"
 sqlite = "2.7.0"
-ksp = "2.3.6" # match your Kotlin version
+ksp = "2.3.11" # match your Kotlin version
+kotlin-inject = "0.9.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -68,6 +69,8 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
+kotlin-inject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", version.ref = "kotlin-inject" }
+kotlin-inject-compiler = { module = "me.tatarka.inject:kotlin-inject-compiler-ksp", version.ref = "kotlin-inject" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

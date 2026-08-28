@@ -12,6 +12,8 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 
+import me.tatarka.inject.annotations.Inject
+
 data class CreateEventUiState(
     val name: String = "",
     val description: String = "",
@@ -22,7 +24,7 @@ data class CreateEventUiState(
     val isEventPublic: Boolean = true
 )
 
-class CreateEventViewModel : ViewModel() {
+class CreateEventViewModel @Inject constructor() : ViewModel() {
     private val _uiState = MutableStateFlow(CreateEventUiState())
     val uiState = _uiState.asStateFlow()
 

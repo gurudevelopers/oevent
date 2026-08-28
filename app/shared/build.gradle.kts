@@ -7,9 +7,14 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinx.serialization)
-    alias(libs.plugins.ksp)                  // <-- Add KSP plugin here for Room
+    alias(libs.plugins.ksp)
     alias(libs.plugins.androidx.room)
 }
+
+ksp {
+    arg("me.tatarka.inject.generateCompanionExtensions", "true")
+}
+
 // Required for Room schema export configuration
 room {
     schemaDirectory("$projectDir/schemas")
@@ -67,27 +72,30 @@ kotlin {
             }
         }
 
-        commonMain.dependencies {
-            api(project(":core"))
-            implementation(libs.compose.runtime)
-            implementation(libs.compose.foundation)
-            implementation(libs.compose.material3)
-            implementation(libs.compose.materialIconsExtended)
-            implementation(libs.compose.ui)
-            implementation(libs.compose.components.resources)
-            implementation(libs.compose.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodelCompose)
-            implementation(libs.androidx.lifecycle.runtimeCompose)
-            implementation(libs.androidx.navigation.compose)
-            implementation(libs.kotlinx.serialization.json)
-            
-            implementation(libs.ktor.clientCore)
-            implementation(libs.ktor.clientAuth)
-            implementation(libs.ktor.clientContentNegotiation)
-            implementation(libs.ktor.clientLogging)
-            implementation(libs.ktor.serializationKotlinxJson)
-            implementation(libs.kotlinx.datetime)
-            implementation(libs.kotlinx.serialization.json)
+        commonMain.apply {
+            dependencies {
+                api(project(":core"))
+                implementation(libs.kotlin.inject.runtime)
+                implementation(libs.compose.runtime)
+                implementation(libs.compose.foundation)
+                implementation(libs.compose.material3)
+                implementation(libs.compose.materialIconsExtended)
+                implementation(libs.compose.ui)
+                implementation(libs.compose.components.resources)
+                implementation(libs.compose.uiToolingPreview)
+                implementation(libs.androidx.lifecycle.viewmodelCompose)
+                implementation(libs.androidx.lifecycle.runtimeCompose)
+                implementation(libs.androidx.navigation.compose)
+                implementation(libs.kotlinx.serialization.json)
+                
+                implementation(libs.ktor.clientCore)
+                implementation(libs.ktor.clientAuth)
+                implementation(libs.ktor.clientContentNegotiation)
+                implementation(libs.ktor.clientLogging)
+                implementation(libs.ktor.serializationKotlinxJson)
+                implementation(libs.kotlinx.datetime)
+                implementation(libs.kotlinx.serialization.json)
+            }
         }
         androidMain.apply {
             get().dependsOn(nonWebMain)
@@ -129,6 +137,20 @@ kotlin {
     }
 }
 
+// Link KSP generated sources for commonMain
+kotlin.sourceSets.commonMain {
+    kotlin.srcDir(layout.buildDirectory.dir("generated/ksp/metadata/commonMain/kotlin"))
+}
+
+// Ensure all tasks that use common KSP output depend on it explicitly to avoid implicit dependency warnings.
+val kspCommonMainTask = tasks.matching { it.name == "kspCommonMainKotlinMetadata" }
+tasks.configureEach {
+    if (name != "kspCommonMainKotlinMetadata" && (name.contains("Kotlin") || name.startsWith("ksp"))) {
+        dependsOn(kspCommonMainTask)
+    }
+}
+
 dependencies {
+    add("kspCommonMainMetadata", libs.kotlin.inject.compiler)
     androidRuntimeClasspath(libs.compose.uiTooling)
 }

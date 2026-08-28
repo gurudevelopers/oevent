@@ -6,7 +6,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class EventProgramViewModel : ViewModel() {
+import me.tatarka.inject.annotations.Inject
+
+class EventProgramViewModel @Inject constructor() : ViewModel() {
     private val _listOfPrograms = MutableStateFlow<List<EventProgram>>(emptyList())
     val listOfPrograms = _listOfPrograms.asStateFlow()
 
@@ -25,7 +27,7 @@ data class AddProgramUiState(
     val price: String = ""
 )
 
-class AddProgramViewModel : ViewModel() {
+class AddProgramViewModel @Inject constructor() : ViewModel() {
     private val _uiState = MutableStateFlow(AddProgramUiState())
     val uiState = _uiState.asStateFlow()
 

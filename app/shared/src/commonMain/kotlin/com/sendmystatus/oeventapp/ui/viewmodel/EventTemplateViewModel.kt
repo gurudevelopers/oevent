@@ -5,7 +5,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class EventTemplateViewModel : ViewModel() {
+import me.tatarka.inject.annotations.Inject
+
+class EventTemplateViewModel @Inject constructor() : ViewModel() {
     private val _selectedTemplate = MutableStateFlow("")
     val selectedTemplate = _selectedTemplate.asStateFlow()
 

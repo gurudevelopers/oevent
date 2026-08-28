@@ -33,15 +33,17 @@ import com.sendmystatus.oeventapp.ui.onboard.CreateMerchantAccountScreen
 import com.sendmystatus.oeventapp.ui.user.ProfileScreen
 import com.sendmystatus.oeventapp.ui.viewmodel.AuthState
 import com.sendmystatus.oeventapp.ui.viewmodel.AuthViewModel
+import com.sendmystatus.oeventapp.di.createComponent
 import kotlin.time.Clock
 import kotlin.uuid.Uuid
 
 @Composable
 @Preview
 fun App() {
+    val component = remember { createComponent() }
     OEventTheme {
         val navController = rememberNavController()
-        val authViewModel: AuthViewModel = viewModel { AuthViewModel() }
+        val authViewModel: AuthViewModel = viewModel { component.authViewModel }
         val authState by authViewModel.state.collectAsState()
 
         LaunchedEffect(authState) {
@@ -92,7 +94,8 @@ fun App() {
                             navController.navigate(Route.EventProgramAdd){
                                 launchSingleTop = true
                             }
-                        }
+                        },
+                        viewModel = viewModel { component.eventProgramViewModel }
                     )
                 }
 
@@ -106,7 +109,8 @@ fun App() {
                                 }
                             }
 
-                        }
+                        },
+                        viewModel = viewModel { component.addProgramViewModel }
                     )
                 }
 
@@ -133,6 +137,7 @@ fun App() {
                             navController.navigate(Route.BusinessDetail)
                         },
                         onBack = { navController.popBackStack() },
+                        viewModel = viewModel { component.onboardingViewModel }
 //                        isLoading = authState is AuthState.Loading,
 //                        errorMessage = (authState as? AuthState.Error)?.message
                     )
@@ -144,29 +149,34 @@ fun App() {
                             navController.navigate(Route.BusinessEventSetup)
                         },
                         onBack = { navController.popBackStack() },
+                        viewModel = viewModel { component.onboardingViewModel }
 //                        isLoading = authState is AuthState.Loading,
 //                        errorMessage = (authState as? AuthState.Error)?.message
                     )
                 }
                 composable<Route.EventTemplate> {
 
-                    EventTemplateScreen(onSelected = { name ->
-                        if (name.isEmpty()) {
-                            navController.popBackStack()
-                            return@EventTemplateScreen
-                        }
-                        navController.navigate(Route.EventCreate(name)){
-                            launchSingleTop = true
-                        }
+                    EventTemplateScreen(
+                        onSelected = { name ->
+                            if (name.isEmpty()) {
+                                navController.popBackStack()
+                                return@EventTemplateScreen
+                            }
+                            navController.navigate(Route.EventCreate(name)) {
+                                launchSingleTop = true
+                            }
 
-                    })
+                        },
+                        viewModel = viewModel { component.eventTemplateViewModel }
+                    )
                 }
 
                 composable<Route.Profile> {
 
                     ProfileScreen(
                         onSave = { navController.popBackStack() },
-                        onBack = { navController.popBackStack() }
+                        onBack = { navController.popBackStack() },
+                        viewModel = viewModel { component.profileViewModel }
                     )
                 }
 
@@ -192,6 +202,7 @@ fun App() {
                             navController.popBackStack()
                         },
 //                        eventObj = event,
+                        viewModel = viewModel { component.createEventViewModel },
                         onEventAdded = {
 
                             println("backstack: size: ${navController.currentBackStack.value.size} value ${navController.currentBackStack.value}")
@@ -228,6 +239,7 @@ fun App() {
                             navController.popBackStack()
 //                            navController.navigateUp()
                         },
+                        viewModel = viewModel { component.eventSettingViewModel }
                     )
                 }
                 composable<Route.BusinessEventSetup> {
