@@ -5,6 +5,7 @@ import com.sendmystatus.oeventapp.ui.event.PriceItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import org.koin.android.annotation.KoinViewModel
 
 data class EventSettingUiState(
     val isFree: Boolean = true,
@@ -18,6 +19,7 @@ data class EventSettingUiState(
     val priceItems: List<PriceItem> = listOf(PriceItem())
 )
 
+@KoinViewModel
 class EventSettingViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(EventSettingUiState())
     val uiState = _uiState.asStateFlow()

@@ -11,6 +11,7 @@ import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
+import org.koin.android.annotation.KoinViewModel
 
 data class CreateEventUiState(
     val name: String = "",
@@ -22,6 +23,7 @@ data class CreateEventUiState(
     val isEventPublic: Boolean = true
 )
 
+@KoinViewModel
 class CreateEventViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(CreateEventUiState())
     val uiState = _uiState.asStateFlow()

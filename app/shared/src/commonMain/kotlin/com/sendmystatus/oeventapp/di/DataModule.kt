@@ -1,42 +1,34 @@
 package com.sendmystatus.oeventapp.di
 
-import com.sendmystatus.oeventapp.data.repository.AuthRepository
 import com.sendmystatus.oeventapp.data.storage.TokenStorage
 import com.sendmystatus.oeventapp.data.storage.createTokenStorage
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.serialization.json.Json
-import org.koin.dsl.module
+import org.koin.core.annotation.Module
+import org.koin.core.annotation.Single
 
-val dataModule = module {
-    single<Json> {
-        Json {
-            ignoreUnknownKeys = true
-            isLenient = true
-            encodeDefaults = true
-            prettyPrint = true
-        }
+@Module
+class DataModule {
+
+    @Single
+    fun provideJson(): Json = Json {
+        ignoreUnknownKeys = true
+        isLenient = true
+        encodeDefaults = true
+        prettyPrint = true
     }
 
-    single<MutableSharedFlow<Unit>> {
+    @Single
+    fun provideMutableLogoutFlow(): MutableSharedFlow<Unit> =
         MutableSharedFlow(extraBufferCapacity = 1)
-    }
 
-    single<SharedFlow<Unit>> {
-        get<MutableSharedFlow<Unit>>().asSharedFlow()
-    }
+    @Single
+    fun provideLogoutFlow(mutableFlow: MutableSharedFlow<Unit>): SharedFlow<Unit> =
+        mutableFlow.asSharedFlow()
 
-    single<TokenStorage> {
+    @Single
+    fun provideTokenStorage(): TokenStorage =
         createTokenStorage()
-    }
-}
-
-val repositoryModule = module {
-    single {
-        AuthRepository(
-            client = get(),
-            tokenStorage = get()
-        )
-    }
 }

@@ -17,7 +17,8 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.Serializable
 import kotlinx.coroutines.flow.MutableSharedFlow
-import org.koin.dsl.module
+import org.koin.core.annotation.Module
+import org.koin.core.annotation.Single
 import com.sendmystatus.oeventapp.network.NetworkConfig
 import com.sendmystatus.oeventapp.data.storage.TokenStorage
 import com.sendmystatus.oeventapp.data.storage.AuthTokens
@@ -31,22 +32,27 @@ data class GraphQLRequest(
     val operationName: String? = null
 )
 
-val networkModule = module {
-    single<NetworkConfig> {
-        NetworkConfig(
-            baseUrl = "https://api.oeventapp.com",
-            wsUrl = "wss://api.oeventapp.com/ws"
-        )
-    }
+@Module
+class NetworkModule {
 
-    single<HttpClient> {
-        provideHttpClient(
-            config = get(),
-            json = get(),
-            tokenStorage = get(),
-            logoutFlow = get()
-        )
-    }
+    @Single
+    fun provideNetworkConfig(): NetworkConfig = NetworkConfig(
+        baseUrl = "https://api.oeventapp.com",
+        wsUrl = "wss://api.oeventapp.com/ws"
+    )
+
+    @Single
+    fun provideHttpClient(
+        config: NetworkConfig,
+        json: Json,
+        tokenStorage: TokenStorage,
+        logoutFlow: MutableSharedFlow<Unit>
+    ): HttpClient = com.sendmystatus.oeventapp.di.provideHttpClient(
+        config = config,
+        json = json,
+        tokenStorage = tokenStorage,
+        logoutFlow = logoutFlow
+    )
 }
 
 fun provideHttpClient(

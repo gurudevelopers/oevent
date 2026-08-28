@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import org.koin.android.annotation.KoinViewModel
 
 data class ProfileUiState(
     val firstName: String = "",
@@ -13,6 +14,7 @@ data class ProfileUiState(
     val canContact: Boolean = true
 )
 
+@KoinViewModel
 class ProfileViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState = _uiState.asStateFlow()

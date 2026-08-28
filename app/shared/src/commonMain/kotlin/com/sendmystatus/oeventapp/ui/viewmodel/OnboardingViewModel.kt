@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import org.koin.android.annotation.KoinViewModel
 
 data class BusinessDetailUiState(
     val businessType: String = "",
@@ -20,6 +21,7 @@ data class MerchantAccountUiState(
     val businessName: String = ""
 )
 
+@KoinViewModel
 class OnboardingViewModel : ViewModel() {
     private val _businessDetailState = MutableStateFlow(BusinessDetailUiState())
     val businessDetailState = _businessDetailState.asStateFlow()

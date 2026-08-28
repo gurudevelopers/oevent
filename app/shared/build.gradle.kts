@@ -11,6 +11,11 @@ plugins {
     alias(libs.plugins.androidx.room)
 }
 
+ksp {
+    arg("KOIN_DEFAULT_MODULE", "false")
+    arg("KOIN_USE_COMPOSE_VIEWMODEL", "true")
+}
+
 // Required for Room schema export configuration
 room {
     schemaDirectory("$projectDir/schemas")
@@ -72,6 +77,7 @@ kotlin {
             dependencies {
                 api(project(":core"))
                 implementation(libs.koin.core)
+                implementation(libs.koin.annotations)
                 implementation(libs.koin.compose)
                 implementation(libs.koin.compose.viewmodel)
                 implementation(libs.compose.runtime)
@@ -152,5 +158,6 @@ tasks.configureEach {
 }
 
 dependencies {
+    add("kspCommonMainMetadata", libs.koin.ksp.compiler)
     androidRuntimeClasspath(libs.compose.uiTooling)
 }

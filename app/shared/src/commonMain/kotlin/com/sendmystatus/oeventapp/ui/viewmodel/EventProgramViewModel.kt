@@ -5,7 +5,9 @@ import com.sendmystatus.oeventapp.data.model.event.EventProgram
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import org.koin.android.annotation.KoinViewModel
 
+@KoinViewModel
 class EventProgramViewModel : ViewModel() {
     private val _listOfPrograms = MutableStateFlow<List<EventProgram>>(emptyList())
     val listOfPrograms = _listOfPrograms.asStateFlow()
@@ -25,6 +27,7 @@ data class AddProgramUiState(
     val price: String = ""
 )
 
+@KoinViewModel
 class AddProgramViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(AddProgramUiState())
     val uiState = _uiState.asStateFlow()

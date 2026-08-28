@@ -6,6 +6,7 @@ import com.sendmystatus.oeventapp.data.repository.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.koin.android.annotation.KoinViewModel
 
 sealed class AuthState {
     object Idle : AuthState()
@@ -15,6 +16,7 @@ sealed class AuthState {
     data class Error(val message: String) : AuthState()
 }
 
+@KoinViewModel
 class AuthViewModel : ViewModel() {
     
     private val _state = MutableStateFlow<AuthState>(AuthState.Idle)
