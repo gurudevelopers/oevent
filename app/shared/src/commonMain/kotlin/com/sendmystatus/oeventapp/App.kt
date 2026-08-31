@@ -40,13 +40,14 @@ import kotlinx.coroutines.flow.SharedFlow
 import org.koin.compose.KoinApplication
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.dsl.koinConfiguration
 
 @Composable
 @Preview
 fun App() {
-    KoinApplication(application = {
-        modules(appModules())
-    }) {
+    KoinApplication(
+        configuration = koinConfiguration(declaration = { modules(appModules()) }),
+    )   {
         AppContent()
     }
 }
@@ -75,7 +76,7 @@ fun AppContent() {
             }
 
             is AuthState.Success -> {
-                navController.navigate(Route.Profile){
+                navController.navigate(Route.Profile) {
                     popUpTo(Route.Demo) { inclusive = true }
                 }
                 authViewModel.resetState()
