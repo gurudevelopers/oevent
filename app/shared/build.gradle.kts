@@ -86,6 +86,8 @@ kotlin {
                 implementation(libs.compose.material3)
                 implementation(libs.compose.materialIconsExtended)
                 implementation(libs.compose.ui)
+                implementation(libs.compose.uiBackhandler)
+                implementation(libs.androidx.navigationevent.compose)
                 implementation(libs.compose.components.resources)
                 implementation(libs.compose.uiToolingPreview)
                 implementation(libs.androidx.lifecycle.viewmodel)

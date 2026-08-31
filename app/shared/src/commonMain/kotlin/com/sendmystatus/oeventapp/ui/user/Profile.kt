@@ -157,7 +157,9 @@ fun ProfileScreen(
                     modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.bodyLarge
                 )
-                Switch(checked = uiState.canContact, onCheckedChange = { viewModel.updateCanContact(it) })
+                Switch(
+                    checked = uiState.canContact,
+                    onCheckedChange = { viewModel.updateCanContact(it) })
             }
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -174,3 +176,90 @@ fun ProfileScreen(
         }
     }
 }
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ShortProfileScreen(
+    onSave: () -> Unit,
+    onBack: () -> Unit,
+    viewModel: ProfileViewModel = koinViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    val scrollState = rememberScrollState()
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Profile") },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        },
+        bottomBar = {
+            Button(
+                onClick = {
+                    viewModel.saveShortProfile()
+                    onSave()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .imePadding()
+                    .navigationBarsPadding()
+                    .padding(16.dp)
+                    .height(56.dp)
+            ) {
+                Text("Save")
+            }
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .verticalScroll(scrollState)
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // 1. First Name
+            OutlinedTextField(
+                value = uiState.firstName,
+                onValueChange = { viewModel.updateFirstName(it) },
+                label = { Text("First Name") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // 2. Last Name
+            OutlinedTextField(
+                value = uiState.lastName,
+                onValueChange = { viewModel.updateLastName(it) },
+                label = { Text("Last Name") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+
+
+
+
+
+        }
+    }
+}
+
+
+
+

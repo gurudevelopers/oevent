@@ -42,4 +42,9 @@ class ProfileViewModel : ViewModel() {
     fun saveProfile() {
         // Handle save logic
     }
+
+    fun saveShortProfile() {
+        // Handle save logic
+    }
+
 }

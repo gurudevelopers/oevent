@@ -50,6 +50,9 @@ sealed interface Route {
     data object Profile : Route
 
     @Serializable
+    data object ShortProfile : Route
+
+    @Serializable
     data object Settings : Route
 
     @Serializable

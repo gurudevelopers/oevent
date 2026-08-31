@@ -10,7 +10,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.navigationevent.NavigationEventInfo
+import androidx.navigationevent.compose.NavigationEventHandler
+import androidx.navigationevent.compose.rememberNavigationEventState
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -34,6 +38,7 @@ import com.sendmystatus.oeventapp.ui.onboard.CreateMerchantAccountScreen
 import com.sendmystatus.oeventapp.ui.splash.WelcomeScreen
 import com.sendmystatus.oeventapp.ui.theme.OEventTheme
 import com.sendmystatus.oeventapp.ui.user.ProfileScreen
+import com.sendmystatus.oeventapp.ui.user.ShortProfileScreen
 import com.sendmystatus.oeventapp.ui.viewmodel.AuthState
 import com.sendmystatus.oeventapp.ui.viewmodel.AuthViewModel
 import kotlinx.coroutines.flow.SharedFlow
@@ -43,17 +48,17 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.dsl.koinConfiguration
 
 @Composable
-@Preview
-fun App() {
+fun App(onAppClose: () -> Unit) {
     KoinApplication(
         configuration = koinConfiguration(declaration = { modules(appModules()) }),
-    )   {
-        AppContent()
+    ) {
+        AppContent(onAppClose)
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun AppContent() {
+fun AppContent(onAppClose: () -> Unit) {
     val logoutFlow = koinInject<SharedFlow<Unit>>()
     val authViewModel = koinViewModel<AuthViewModel>()
     val authState by authViewModel.state.collectAsState()
@@ -76,7 +81,7 @@ fun AppContent() {
             }
 
             is AuthState.Success -> {
-                navController.navigate(Route.Profile) {
+                navController.navigate(Route.ShortProfile) {
                     popUpTo(Route.Demo) { inclusive = true }
                 }
                 authViewModel.resetState()
@@ -91,10 +96,18 @@ fun AppContent() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
+            NavigationEventHandler(
+                state = rememberNavigationEventState(NavigationEventInfo.None)
+            ) {
+                if (!navController.popBackStack()) {
+                    onAppClose()
+                }
+            }
             NavHost(
                 navController = navController,
                 startDestination = Route.Demo
             ) {
+
                 composable<Route.Demo> {
                     DemoQuickAccess(
                         onNavigate = { route ->
@@ -191,7 +204,27 @@ fun AppContent() {
                 composable<Route.Profile> {
                     ProfileScreen(
                         onSave = { navController.popBackStack() },
-                        onBack = { navController.popBackStack() },
+                        onBack = {
+                            if (!navController.popBackStack()) {
+                            onAppClose()
+                        } },
+                        viewModel = koinViewModel()
+                    )
+                }
+
+                composable<Route.ShortProfile> {
+
+                    ShortProfileScreen(
+                        onSave = {
+                            if (!navController.popBackStack()) {
+                                onAppClose()
+                            }
+                        },
+                        onBack = {
+                            if (!navController.popBackStack()) {
+                                onAppClose()
+                            }
+                        },
                         viewModel = koinViewModel()
                     )
                 }

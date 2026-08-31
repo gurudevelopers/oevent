@@ -13,7 +13,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            App()
+            App(
+                onAppClose = { finish() }
+            )
         }
     }
 }
@@ -21,5 +23,5 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun AppAndroidPreview() {
-    App()
+    App( onAppClose = {  })
 }

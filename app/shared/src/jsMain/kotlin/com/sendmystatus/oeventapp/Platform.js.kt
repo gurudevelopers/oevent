@@ -12,3 +12,6 @@ class JsPlatform: Platform {
 }
 
 actual fun getPlatform(): Platform = JsPlatform()
+
+actual fun closeApp() {
+}
