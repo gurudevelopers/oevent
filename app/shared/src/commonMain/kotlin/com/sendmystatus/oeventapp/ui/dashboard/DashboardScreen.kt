@@ -1,5 +1,6 @@
 package com.sendmystatus.oeventapp.ui.dashboard
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,7 +23,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.AddBox
 import androidx.compose.material.icons.outlined.BarChart
 import androidx.compose.material.icons.outlined.ChevronRight
@@ -36,7 +40,12 @@ import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Badge
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FlexibleBottomAppBar
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -50,6 +59,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.key.Key.Companion.Home
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -74,43 +84,61 @@ fun DashBoardPreview() {
     DashBoardScreen()
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashBoardScreen(outerNavController: NavController? = null) {
     val navController = rememberNavController()
 
     Scaffold(
-        bottomBar = {
+       /* bottomBar = {
             DashboardBottomNavigation(navController)
-        },
+        },*/
         containerColor = Color.White
     ) { padding ->
-        NavHost(
-            navController = navController,
-            startDestination = Route.Dashboard,
-            modifier = Modifier.fillMaxSize().padding(padding)
-        ) {
-            composable<Route.Dashboard> {
-                Home()
-            }
-            composable<Route.Events> {
-                EventsScreen(
-                    onCreateEvent = {
-                        outerNavController?.navigate(Route.EventTemplate)
-                    },
-                    viewModel = koinViewModel()
-                )
-            }
-            composable<Route.EventTemplate> {
-                EventTemplateScreen(
-                    onSelected = {},
-                )
-            }
-            composable<Route.Invitations> {
-                InvitationScreen(
-                    onBack = { navController.popBackStack() },
-                    viewModel = koinViewModel()
-                )
-            }
+        Box(modifier = Modifier.fillMaxSize()) {
+           /* Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 20.dp)
+            ) {*/
+                NavHost(
+                    navController = navController,
+                    startDestination = Route.Dashboard,
+                    modifier = Modifier.fillMaxSize().padding(padding)
+                ) {
+                    composable<Route.Dashboard> {
+                        Home()
+                    }
+                    composable<Route.Events> {
+                        EventsScreen(
+                            onCreateEvent = {
+                                outerNavController?.navigate(Route.EventTemplate)
+                            },
+                            viewModel = koinViewModel()
+                        )
+                    }
+                    composable<Route.EventTemplate> {
+                        EventTemplateScreen(
+                            onSelected = {},
+                        )
+                    }
+                    composable<Route.Invitations> {
+                        InvitationScreen(
+                            onBack = { navController.popBackStack() },
+                            viewModel = koinViewModel()
+                        )
+                    }
+                }
+
+
+//            }
+            DashboardBottomNavigation(
+                // modifier = Modifier.align(Alignment.BottomCenter)
+                modifier = Modifier.align(Alignment.BottomCenter),
+                navController = navController
+
+            )
         }
     }
 }
@@ -525,3 +553,150 @@ fun DashboardBottomNavigation(navController: NavController) {
         }
     }
 }
+
+@Composable
+fun DashboardBottomNavigation(modifier: Modifier = Modifier,navController: NavController) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .navigationBarsPadding()
+            .padding(bottom = 24.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Surface(
+            shape = CircleShape,
+            color = Color.White.copy(alpha = 0.8f),
+            shadowElevation = 12.dp,
+            tonalElevation = 8.dp,
+            border = BorderStroke(1.dp, Color(0xFFF0F0F0)),
+            modifier = Modifier.height(68.dp).fillMaxWidth().padding(horizontal = 24.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                //    .fillMaxHeight()
+                ,
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                ToolbarItem(
+                    icon = Icons.Filled.Home,
+                    isSelected = currentDestination?.hasRoute<Route.Dashboard>() == true,
+                    onClick = {
+                        navController.navigate(Route.Dashboard) {
+                            popUpTo<Route.Dashboard> {
+                                inclusive = false
+                            }
+                            launchSingleTop = true
+                        }
+                    },
+                    name = "Home"
+                )
+                ToolbarItem(
+                    icon = Icons.Outlined.Event,
+                    isSelected = currentDestination?.hasRoute<Route.Events>() == true,
+                    onClick = { navController.navigate(Route.Events) {
+                        popUpTo<Route.Dashboard> {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }}
+                    , name = "Events"
+                )
+                ToolbarItem(
+                    icon = Icons.Outlined.MailOutline,
+                    isSelected = currentDestination?.hasRoute<Route.Invitations>() == true,
+                    hasBadge = false,
+                    badgeCount = 2,
+                    onClick = { navController.navigate(Route.Invitations) {
+                        popUpTo<Route.Dashboard> {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }},
+                    name = "Messages"
+                )
+                ToolbarItem(
+                    icon = Icons.Outlined.Person,
+                    isSelected = false,
+                    onClick = {},
+                    name = "Profile"
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ToolbarItem(
+    icon: ImageVector,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    hasBadge: Boolean = false,
+    badgeCount: Int = 0,
+    name: String = ""
+) {
+    Box(
+        modifier = Modifier
+            .size(width = 72.dp, height = 56.dp)
+            .clip(CircleShape)
+            .background(if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent)
+
+//            .background(if (isSelected) Color.White.copy(alpha = 0.15f) else Color.Transparent)
+            .clickable { onClick() },
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+
+        ) {
+            BadgedBox(
+                badge = {
+                    if (hasBadge) {
+                        Badge(
+                            containerColor = Color(0xFFD93025),
+                            contentColor = Color.White,
+                            modifier = Modifier.offset(x = (-2).dp, y = 2.dp)
+                        ) {
+                            Text(badgeCount.toString(), fontSize = 10.sp)
+                        }
+                    }
+                }
+            ) {
+                /*
+                 colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
+                    selectedIconColor = Color(0xFF1A73E8),
+                    selectedTextColor = Color(0xFF1A73E8),
+                    unselectedIconColor = Color.Gray,
+                    unselectedTextColor = Color.Gray,
+                    indicatorColor = Color.Transparent
+                 */
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = if (isSelected) Color(0xFF1A73E8) else Color.Gray,
+                    modifier = Modifier.size(26.dp)
+                )
+            }
+            if (isSelected) {
+                Spacer(modifier = Modifier.height(4.dp))
+               /* Box(
+                    modifier = Modifier
+                        .size(4.dp)
+                        .background(MaterialTheme.colorScheme.primaryContainer, CircleShape)
+                )*/
+            }
+            Text(
+                text = name,
+                style = MaterialTheme.typography.labelSmall,
+                color = if (isSelected) Color(0xFF1A73E8) else Color.Gray
+            )
+        }
+    }
+}
+
