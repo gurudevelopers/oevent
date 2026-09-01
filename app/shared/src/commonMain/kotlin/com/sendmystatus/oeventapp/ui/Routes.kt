@@ -47,6 +47,9 @@ sealed interface Route {
     data object Dashboard: Route
 
     @Serializable
+    data object Invitations : Route
+
+    @Serializable
     data object Profile : Route
 
     @Serializable

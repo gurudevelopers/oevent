@@ -85,13 +85,21 @@ fun EventProgramScreen(
 @Composable
 @Preview
 fun EventProgramScreenPreview() {
-    EventProgramScreen(onBack = {}, onEventAdded = {})
+    EventProgramScreen(
+        onBack = {}, 
+        onEventAdded = {},
+        viewModel = EventProgramViewModel()
+    )
 }
 
 @Composable
 @Preview
 fun AddProgramScreenPreview() {
-    AddProgramScreen(onBack = {}, onEventAdded = {})
+    AddProgramScreen(
+        onBack = {}, 
+        onEventAdded = {},
+        viewModel = AddProgramViewModel()
+    )
 }
 
 @Composable

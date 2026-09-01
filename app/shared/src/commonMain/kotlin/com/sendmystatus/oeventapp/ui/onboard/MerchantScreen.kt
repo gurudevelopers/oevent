@@ -86,7 +86,8 @@ import org.jetbrains.compose.resources.stringResource
 fun CreateMerchantAccountScreenPreview() {
     CreateMerchantAccountScreen(
         onMerchantSubmitClick = {},
-        onBack = {}
+        onBack = {},
+        viewModel = OnboardingViewModel()
     )
 }
 

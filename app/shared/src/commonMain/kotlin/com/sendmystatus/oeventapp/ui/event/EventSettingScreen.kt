@@ -301,7 +301,12 @@ fun CreateSettingEventScreen(
 @Composable
 @Preview
 fun CreateSettingEventScreenPreview() {
-    CreateSettingEventScreen(eventId = "1", eventName = "Event Name", onBack = {})
+    CreateSettingEventScreen(
+        eventId = "1", 
+        eventName = "Event Name", 
+        onBack = {},
+        viewModel = EventSettingViewModel()
+    )
 }
 
 @Composable

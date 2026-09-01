@@ -75,7 +75,8 @@ import com.sendmystatus.oeventapp.ui.viewmodel.OnboardingViewModel
 fun BusinessDetailScreenPreview() {
     CreateBusinessDetailScreen(
         onBusinessSubmitClick = {},
-        onBack = {}
+        onBack = {},
+        viewModel = OnboardingViewModel()
     )
 }
 

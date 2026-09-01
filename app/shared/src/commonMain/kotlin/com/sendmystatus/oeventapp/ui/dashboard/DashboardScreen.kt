@@ -44,6 +44,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,6 +55,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.sendmystatus.oeventapp.ui.invitation.InvitationScreen
+import com.sendmystatus.oeventapp.ui.Route
+import com.sendmystatus.oeventapp.ui.event.EventTemplateScreen
+import com.sendmystatus.oeventapp.ui.theme.OEventTheme
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 @Preview
@@ -62,89 +74,114 @@ fun DashBoardPreview() {
 }
 
 @Composable
-fun DashBoardScreen() {
+fun DashBoardScreen(outerNavController: NavController? = null) {
+    val navController = rememberNavController()
+
     Scaffold(
         bottomBar = {
-            DashboardBottomNavigation()
+            DashboardBottomNavigation(navController)
         },
         containerColor = Color.White
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp)
+        NavHost(
+            navController = navController,
+            startDestination = Route.Dashboard,
+            modifier = Modifier.fillMaxSize().padding(padding)
         ) {
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            DashboardHeader(name = "Dibyajyoti")
-            
-            Spacer(modifier = Modifier.height(32.dp))
-            
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                ActionCard(
-                    modifier = Modifier.weight(1f),
-                    title = "Create an Event",
-                    description = "Organize your own event\nin minutes",
-                    icon = Icons.Outlined.AddBox,
-                    iconTint = Color(0xFF1A73E8),
-                    backgroundColor = Color(0xFFE8F1FF),
-                    onClick = {}
-                )
-                ActionCard(
-                    modifier = Modifier.weight(1f),
-                    title = "Join an Event",
-                    description = "Enter event code\nor scan QR",
-                    icon = Icons.Outlined.PersonAdd,
-                    iconTint = Color(0xFF188038),
-                    backgroundColor = Color(0xFFEAF7EE),
-                    onClick = {}
+            composable<Route.Dashboard> {
+                Home()
+            }
+            composable<Route.EventTemplate> {
+                EventTemplateScreen(
+                    onSelected = {},
                 )
             }
-            
-            Spacer(modifier = Modifier.height(48.dp))
-            
-            EmptyStateSection()
-            
-            Spacer(modifier = Modifier.height(48.dp))
-            
-            FeatureHighlightsCard(
-                features = listOf(
-                    FeatureHighlight(
-                        title = "Create & manage\nevents",
-                        icon = Icons.Outlined.Event,
-                        iconColor = Color(0xFF1976D2),
-                        backgroundColor = Color(0xFFE8F1FF)
-                    ),
-                    FeatureHighlight(
-                        title = "Invite & manage\nattendees",
-                        icon = Icons.Outlined.GroupAdd,
-                        iconColor = Color(0xFF2E9B4B),
-                        backgroundColor = Color(0xFFEAF7EE)
-                    ),
-                    FeatureHighlight(
-                        title = "Onboard\nmerchants",
-                        icon = Icons.Outlined.Storefront,
-                        iconColor = Color(0xFF8E44AD),
-                        backgroundColor = Color(0xFFF3E8FA)
-                    ),
-                    FeatureHighlight(
-                        title = "Track & analyze\nactivity",
-                        icon = Icons.Outlined.BarChart,
-                        iconColor = Color(0xFFE86A17),
-                        backgroundColor = Color(0xFFFFEFE5)
-                    )
-                ),
-                onHighlightClick = {},
-                title = "With SendMyStatus you can"
-            )
-            
-            Spacer(modifier = Modifier.height(32.dp))
+            composable<Route.Invitations> {
+                InvitationScreen(
+                    onBack = { navController.popBackStack() },
+                    viewModel = koinViewModel()
+                )
+            }
         }
+    }
+}
+
+@Composable
+fun Home() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 20.dp)
+    ) {
+        Spacer(modifier = Modifier.height(24.dp))
+
+    DashboardHeader(name = "Dibyajyoti")
+
+    Spacer(modifier = Modifier.height(32.dp))
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        ActionCard(
+            modifier = Modifier.weight(1f),
+            title = "Create an Event",
+            description = "Organize your own event\nin minutes",
+            icon = Icons.Outlined.AddBox,
+            iconTint = Color(0xFF1A73E8),
+            backgroundColor = Color(0xFFE8F1FF),
+            onClick = {}
+        )
+        ActionCard(
+            modifier = Modifier.weight(1f),
+            title = "Join an Event",
+            description = "Enter event code\nor scan QR",
+            icon = Icons.Outlined.PersonAdd,
+            iconTint = Color(0xFF188038),
+            backgroundColor = Color(0xFFEAF7EE),
+            onClick = {}
+        )
+    }
+
+    Spacer(modifier = Modifier.height(48.dp))
+
+    EmptyStateSection()
+
+    Spacer(modifier = Modifier.height(48.dp))
+
+    FeatureHighlightsCard(
+        features = listOf(
+            FeatureHighlight(
+                title = "Create & manage\nevents",
+                icon = Icons.Outlined.Event,
+                iconColor = Color(0xFF1976D2),
+                backgroundColor = Color(0xFFE8F1FF)
+            ),
+            FeatureHighlight(
+                title = "Invite & manage\nattendees",
+                icon = Icons.Outlined.GroupAdd,
+                iconColor = Color(0xFF2E9B4B),
+                backgroundColor = Color(0xFFEAF7EE)
+            ),
+            FeatureHighlight(
+                title = "Onboard\nmerchants",
+                icon = Icons.Outlined.Storefront,
+                iconColor = Color(0xFF8E44AD),
+                backgroundColor = Color(0xFFF3E8FA)
+            ),
+            FeatureHighlight(
+                title = "Track & analyze\nactivity",
+                icon = Icons.Outlined.BarChart,
+                iconColor = Color(0xFFE86A17),
+                backgroundColor = Color(0xFFFFEFE5)
+            )
+        ),
+        onHighlightClick = {},
+        title = "With SendMyStatus you can"
+    )
+
+    Spacer(modifier = Modifier.height(32.dp))
     }
 }
 
@@ -382,7 +419,10 @@ fun EmptyStateSection() {
 }
 
 @Composable
-fun DashboardBottomNavigation() {
+fun DashboardBottomNavigation(navController: NavController) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+    
     Surface(
         modifier = Modifier
             .padding(horizontal = 24.dp, vertical = 16.dp)
@@ -398,8 +438,15 @@ fun DashboardBottomNavigation() {
             NavigationBarItem(
                 icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
                 label = { Text("Home") },
-                selected = true,
-                onClick = {},
+                selected = currentDestination?.hasRoute<Route.Dashboard>() == true,
+                onClick = {
+                    navController.navigate(Route.Dashboard) {
+                        popUpTo<Route.Dashboard> {
+                            inclusive = false
+                        }
+                        launchSingleTop = true
+                    }
+                },
                 colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
                     selectedIconColor = Color(0xFF1A73E8),
                     selectedTextColor = Color(0xFF1A73E8),
@@ -411,15 +458,19 @@ fun DashboardBottomNavigation() {
             NavigationBarItem(
                 icon = { Icon(Icons.Outlined.Event, contentDescription = "Events") },
                 label = { Text("Events") },
-                selected = false,
-                onClick = {}
+                selected = currentDestination?.hasRoute<Route.EventTemplate>() == true,
+                onClick = {
+                    navController.navigate(Route.EventTemplate) {
+                        launchSingleTop = true
+                    }
+                }
             )
             NavigationBarItem(
                 icon = {
                     BadgedBox(
                         badge = {
                             Badge(containerColor = Color(0xFFD93025)) {
-                                Text("2")
+                                Text("3")
                             }
                         }
                     ) {
@@ -427,8 +478,23 @@ fun DashboardBottomNavigation() {
                     }
                 },
                 label = { Text("Invitations") },
-                selected = false,
-                onClick = {}
+                selected = currentDestination?.hasRoute<Route.Invitations>() == true,
+                onClick = {
+                    navController.navigate(Route.Invitations) {
+                        popUpTo<Route.Dashboard> {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+                colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
+                    selectedIconColor = Color(0xFF1A73E8),
+                    selectedTextColor = Color(0xFF1A73E8),
+                    unselectedIconColor = Color.Gray,
+                    unselectedTextColor = Color.Gray,
+                    indicatorColor = Color.Transparent
+                )
             )
             NavigationBarItem(
                 icon = { Icon(Icons.Outlined.Person, contentDescription = "Profile") },
