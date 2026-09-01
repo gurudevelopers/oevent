@@ -1,6 +1,5 @@
 package com.sendmystatus.oeventapp.ui.dashboard
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -389,12 +388,12 @@ fun DashboardBottomNavigation() {
             .padding(horizontal = 24.dp, vertical = 16.dp)
             .navigationBarsPadding(), // Ensures it stays safe from system navigation bars
         shape = CircleShape,
-        border = BorderStroke(1.dp, Color(0xFFF0F0F0)),
+        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF0F0F0)),
         tonalElevation = 8.dp // Gives it the Material 3 dimensional look
     ) {
         NavigationBar(
             containerColor = Color.White,
-            tonalElevation = 8.dp
+            tonalElevation = 2.dp
         ) {
             NavigationBarItem(
                 icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
@@ -413,13 +412,6 @@ fun DashboardBottomNavigation() {
                 icon = { Icon(Icons.Outlined.Event, contentDescription = "Events") },
                 label = { Text("Events") },
                 selected = false,
-                colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
-                    selectedIconColor = Color(0xFF1A73E8),
-                    selectedTextColor = Color(0xFF1A73E8),
-                    unselectedIconColor = Color.Gray,
-                    unselectedTextColor = Color.Gray,
-                    indicatorColor = Color.Transparent
-                ),
                 onClick = {}
             )
             NavigationBarItem(
