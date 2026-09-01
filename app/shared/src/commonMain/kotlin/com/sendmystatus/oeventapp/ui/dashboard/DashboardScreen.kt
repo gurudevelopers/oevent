@@ -387,14 +387,17 @@ fun DashboardBottomNavigation() {
     Surface(
         modifier = Modifier
             .padding(horizontal = 24.dp, vertical = 16.dp)
-            .navigationBarsPadding(), // Ensures it stays safe from system navigation bars
+            .navigationBarsPadding(),
         shape = CircleShape,
+        color = Color.Black,
         border = BorderStroke(1.dp, Color(0xFFF0F0F0)),
-        tonalElevation = 8.dp // Gives it the Material 3 dimensional look
+        shadowElevation = 8.dp,
+        tonalElevation = 0.dp
     ) {
         NavigationBar(
             containerColor = Color.White,
-            tonalElevation = 8.dp
+            tonalElevation = 0.dp,
+            modifier = Modifier.height(64.dp)
         ) {
             NavigationBarItem(
                 icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
@@ -436,12 +439,26 @@ fun DashboardBottomNavigation() {
                 },
                 label = { Text("Invitations") },
                 selected = false,
+                colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
+                    selectedIconColor = Color(0xFF1A73E8),
+                    selectedTextColor = Color(0xFF1A73E8),
+                    unselectedIconColor = Color.Gray,
+                    unselectedTextColor = Color.Gray,
+                    indicatorColor = Color.Transparent
+                ),
                 onClick = {}
             )
             NavigationBarItem(
                 icon = { Icon(Icons.Outlined.Person, contentDescription = "Profile") },
                 label = { Text("Profile") },
                 selected = false,
+                colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
+                    selectedIconColor = Color(0xFF1A73E8),
+                    selectedTextColor = Color(0xFF1A73E8),
+                    unselectedIconColor = Color.Gray,
+                    unselectedTextColor = Color.Gray,
+                    indicatorColor = Color.Transparent
+                ),
                 onClick = {}
             )
         }

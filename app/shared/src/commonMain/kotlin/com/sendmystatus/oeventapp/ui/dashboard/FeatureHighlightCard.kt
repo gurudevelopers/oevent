@@ -20,6 +20,7 @@ import androidx.compose.material.icons.outlined.GroupAdd
 import androidx.compose.material.icons.outlined.Storefront
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -85,14 +86,15 @@ fun FeatureHighlightsCard(
     onHighlightClick: (FeatureHighlight) -> Unit,
     title: String,
 ) {
-    Card(
+    ElevatedCard (
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFFBFBFB)
+            containerColor = MaterialTheme.colorScheme.surface
         ),
-        border = BorderStroke(1.dp, Color(0xFFF0F0F0))
+
+        //border = BorderStroke(1.dp, Color(0xFFF0F0F0))
     ) {
         Column(
             modifier = Modifier
