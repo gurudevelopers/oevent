@@ -124,7 +124,7 @@ fun AppContent(onAppClose: () -> Unit) {
                 }
                 composable<Route.Dashboard> {
                     DashBoardScreen(
-
+                        outerNavController = navController
                     )
                 }
                 composable<Route.EventProgram> {

@@ -62,6 +62,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.sendmystatus.oeventapp.ui.invitation.InvitationScreen
+import com.sendmystatus.oeventapp.ui.event.EventsScreen
 import com.sendmystatus.oeventapp.ui.Route
 import com.sendmystatus.oeventapp.ui.event.EventTemplateScreen
 import com.sendmystatus.oeventapp.ui.theme.OEventTheme
@@ -90,6 +91,14 @@ fun DashBoardScreen(outerNavController: NavController? = null) {
         ) {
             composable<Route.Dashboard> {
                 Home()
+            }
+            composable<Route.Events> {
+                EventsScreen(
+                    onCreateEvent = {
+                        outerNavController?.navigate(Route.EventTemplate)
+                    },
+                    viewModel = koinViewModel()
+                )
             }
             composable<Route.EventTemplate> {
                 EventTemplateScreen(
@@ -458,12 +467,23 @@ fun DashboardBottomNavigation(navController: NavController) {
             NavigationBarItem(
                 icon = { Icon(Icons.Outlined.Event, contentDescription = "Events") },
                 label = { Text("Events") },
-                selected = currentDestination?.hasRoute<Route.EventTemplate>() == true,
+                selected = currentDestination?.hasRoute<Route.Events>() == true,
                 onClick = {
-                    navController.navigate(Route.EventTemplate) {
+                    navController.navigate(Route.Events) {
+                        popUpTo<Route.Dashboard> {
+                            saveState = true
+                        }
                         launchSingleTop = true
+                        restoreState = true
                     }
-                }
+                },
+                colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
+                    selectedIconColor = Color(0xFF1A73E8),
+                    selectedTextColor = Color(0xFF1A73E8),
+                    unselectedIconColor = Color.Gray,
+                    unselectedTextColor = Color.Gray,
+                    indicatorColor = Color.Transparent
+                )
             )
             NavigationBarItem(
                 icon = {
