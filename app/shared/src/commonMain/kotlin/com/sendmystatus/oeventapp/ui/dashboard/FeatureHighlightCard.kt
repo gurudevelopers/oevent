@@ -87,7 +87,7 @@ fun FeatureHighlightsCard(
     title: String,
 ) {
     ElevatedCard (
-        modifier = modifier.fillMaxWidth() .padding(bottom = 20.dp),
+        modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.cardColors(

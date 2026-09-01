@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -40,21 +39,17 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -69,115 +64,87 @@ fun DashBoardPreview() {
 
 @Composable
 fun DashBoardScreen() {
-
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     Scaffold(
-
+        bottomBar = {
+            DashboardBottomNavigation()
+        },
+        containerColor = Color.White
     ) { padding ->
-        Box(modifier = Modifier.fillMaxSize()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 20.dp)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp)
+        ) {
+            Spacer(modifier = Modifier.height(24.dp))
+            
+            DashboardHeader(name = "Dibyajyoti")
+            
+            Spacer(modifier = Modifier.height(32.dp))
+            
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Spacer(modifier = Modifier.height(24.dp))
-
-
-                DashboardHeader(name = "Dibyajyoti")
-                Spacer(modifier = Modifier.height(32.dp))
-                
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    ActionCard(
-                        modifier = Modifier.weight(1f),
-                        title = "Create an Event",
-                        description = "Organize your own event\nin minutes",
-                        icon = Icons.Outlined.AddBox,
-                        iconTint = Color(0xFF1A73E8),
-                        backgroundColor = Color(0xFFE8F1FF),
-                        onClick = {}
-                    )
-                    ActionCard(
-                        modifier = Modifier.weight(1f),
-                        title = "Join an Event",
-                        description = "Enter event code\nor scan QR",
-                        icon = Icons.Outlined.PersonAdd,
-                        iconTint = Color(0xFF188038),
-                        backgroundColor = Color(0xFFEAF7EE),
-                        onClick = {}
-                    )
-                }
-                
-                Spacer(modifier = Modifier.height(48.dp))
-                
-                EmptyStateSection()
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    ActionCard(
-                        modifier = Modifier.weight(1f),
-                        title = "Create an Event",
-                        description = "Organize your own event\nin minutes",
-                        icon = Icons.Outlined.AddBox,
-                        iconTint = Color(0xFF1A73E8),
-                        backgroundColor = Color(0xFFE8F1FF),
-                        onClick = {}
-                    )
-                    ActionCard(
-                        modifier = Modifier.weight(1f),
-                        title = "Join an Event",
-                        description = "Enter event code\nor scan QR",
-                        icon = Icons.Outlined.PersonAdd,
-                        iconTint = Color(0xFF188038),
-                        backgroundColor = Color(0xFFEAF7EE),
-                        onClick = {}
-                    )
-                }
-                Spacer(modifier = Modifier.height(48.dp))
-                
-                FeatureHighlightsCard(
-                    features = listOf(
-                        FeatureHighlight(
-                            title = "Create & manage\nevents",
-                            icon = Icons.Outlined.Event,
-                            iconColor = Color(0xFF1976D2),
-                            backgroundColor = Color(0xFFE8F1FF)
-                        ),
-                        FeatureHighlight(
-                            title = "Invite & manage\nattendees",
-                            icon = Icons.Outlined.GroupAdd,
-                            iconColor = Color(0xFF2E9B4B),
-                            backgroundColor = Color(0xFFEAF7EE)
-                        ),
-                        FeatureHighlight(
-                            title = "Onboard\nmerchants",
-                            icon = Icons.Outlined.Storefront,
-                            iconColor = Color(0xFF8E44AD),
-                            backgroundColor = Color(0xFFF3E8FA)
-                        ),
-                        FeatureHighlight(
-                            title = "Track & analyze\nactivity",
-                            icon = Icons.Outlined.BarChart,
-                            iconColor = Color(0xFFE86A17),
-                            backgroundColor = Color(0xFFFFEFE5)
-                        )
-                    ),
-                    onHighlightClick = {},
-                    title = "With SendMyStatus you can"
+                ActionCard(
+                    modifier = Modifier.weight(1f),
+                    title = "Create an Event",
+                    description = "Organize your own event\nin minutes",
+                    icon = Icons.Outlined.AddBox,
+                    iconTint = Color(0xFF1A73E8),
+                    backgroundColor = Color(0xFFE8F1FF),
+                    onClick = {}
                 )
-                
-                Spacer(modifier = Modifier.height(120.dp))
+                ActionCard(
+                    modifier = Modifier.weight(1f),
+                    title = "Join an Event",
+                    description = "Enter event code\nor scan QR",
+                    icon = Icons.Outlined.PersonAdd,
+                    iconTint = Color(0xFF188038),
+                    backgroundColor = Color(0xFFEAF7EE),
+                    onClick = {}
+                )
             }
-
-            DashboardBottomNavigation(
-                modifier = Modifier.align(Alignment.BottomCenter)
-
+            
+            Spacer(modifier = Modifier.height(48.dp))
+            
+            EmptyStateSection()
+            
+            Spacer(modifier = Modifier.height(48.dp))
+            
+            FeatureHighlightsCard(
+                features = listOf(
+                    FeatureHighlight(
+                        title = "Create & manage\nevents",
+                        icon = Icons.Outlined.Event,
+                        iconColor = Color(0xFF1976D2),
+                        backgroundColor = Color(0xFFE8F1FF)
+                    ),
+                    FeatureHighlight(
+                        title = "Invite & manage\nattendees",
+                        icon = Icons.Outlined.GroupAdd,
+                        iconColor = Color(0xFF2E9B4B),
+                        backgroundColor = Color(0xFFEAF7EE)
+                    ),
+                    FeatureHighlight(
+                        title = "Onboard\nmerchants",
+                        icon = Icons.Outlined.Storefront,
+                        iconColor = Color(0xFF8E44AD),
+                        backgroundColor = Color(0xFFF3E8FA)
+                    ),
+                    FeatureHighlight(
+                        title = "Track & analyze\nactivity",
+                        icon = Icons.Outlined.BarChart,
+                        iconColor = Color(0xFFE86A17),
+                        backgroundColor = Color(0xFFFFEFE5)
+                    )
+                ),
+                onHighlightClick = {},
+                title = "With SendMyStatus you can"
             )
+            
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
@@ -416,122 +383,83 @@ fun EmptyStateSection() {
 }
 
 @Composable
-fun DashboardBottomNavigation(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .navigationBarsPadding()
-            .padding(bottom = 24.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Surface(
-            shape = CircleShape,
-            color = Color.White.copy(alpha = 0.8f),
-            shadowElevation = 12.dp,
-            tonalElevation = 0.dp,
-            border = BorderStroke(1.dp, Color(0xFFF0F0F0)),
-            modifier = Modifier.height(68.dp).fillMaxWidth().padding(horizontal = 24.dp)
-        ) {
-            Row(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxHeight(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                ToolbarItem(
-                    icon = Icons.Filled.Home,
-                    isSelected = true,
-                    onClick = {},
-                    name = "Home"
-                )
-                ToolbarItem(
-                    icon = Icons.Outlined.Event,
-                    isSelected = false,
-                    onClick = {}
-                    , name = "Events"
-                )
-                ToolbarItem(
-                    icon = Icons.Outlined.MailOutline,
-                    isSelected = false,
-                    hasBadge = true,
-                    badgeCount = 2,
-                    onClick = {},
-                    name = "Messages"
-                )
-                ToolbarItem(
-                    icon = Icons.Outlined.Person,
-                    isSelected = false,
-                    onClick = {},
-                    name = "Profile"
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun ToolbarItem(
-    icon: ImageVector,
-    isSelected: Boolean,
-    onClick: () -> Unit,
-    hasBadge: Boolean = false,
-    badgeCount: Int = 0,
-    name: String = ""
-) {
-    Box(
+fun DashboardBottomNavigation() {
+    Surface(
         modifier = Modifier
-            .size(56.dp)
-            .clip(CircleShape)
-            .background(if (isSelected) Color.White.copy(alpha = 0.15f) else Color.Transparent)
-            .clickable { onClick() },
-        contentAlignment = Alignment.Center
+            .padding(horizontal = 24.dp, vertical = 16.dp)
+            .navigationBarsPadding(),
+        shape = CircleShape,
+        color = Color.Black,
+        border = BorderStroke(1.dp, Color(0xFFF0F0F0)),
+        shadowElevation = 8.dp,
+        tonalElevation = 0.dp
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-
+        NavigationBar(
+            containerColor = Color.White,
+            tonalElevation = 0.dp,
+            modifier = Modifier.height(64.dp)
         ) {
-            BadgedBox(
-                badge = {
-                    if (hasBadge) {
-                        Badge(
-                            containerColor = Color(0xFFD93025),
-                            contentColor = Color.White,
-                            modifier = Modifier.offset(x = (-2).dp, y = 2.dp)
-                        ) {
-                            Text(badgeCount.toString(), fontSize = 10.sp)
-                        }
-                    }
-                }
-            ) {
-                /*
-                 colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
+            NavigationBarItem(
+                icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
+                label = { Text("Home") },
+                selected = true,
+                onClick = {},
+                colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
                     selectedIconColor = Color(0xFF1A73E8),
                     selectedTextColor = Color(0xFF1A73E8),
                     unselectedIconColor = Color.Gray,
                     unselectedTextColor = Color.Gray,
                     indicatorColor = Color.Transparent
-                 */
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = if (isSelected) Color(0xFF1A73E8) else Color.Gray,
-                    modifier = Modifier.size(26.dp)
                 )
-            }
-            if (isSelected) {
-                Spacer(modifier = Modifier.height(4.dp))
-                Box(
-                    modifier = Modifier
-                        .size(4.dp)
-                        .background(Color.White, CircleShape)
-                )
-            }
-            Text(
-                text = name,
-                style = MaterialTheme.typography.labelSmall,
-                color = if (isSelected) Color(0xFF1A73E8) else Color.Gray
+            )
+            NavigationBarItem(
+                icon = { Icon(Icons.Outlined.Event, contentDescription = "Events") },
+                label = { Text("Events") },
+                selected = false,
+                colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
+                    selectedIconColor = Color(0xFF1A73E8),
+                    selectedTextColor = Color(0xFF1A73E8),
+                    unselectedIconColor = Color.Gray,
+                    unselectedTextColor = Color.Gray,
+                    indicatorColor = Color.Transparent
+                ),
+                onClick = {}
+            )
+            NavigationBarItem(
+                icon = {
+                    BadgedBox(
+                        badge = {
+                            Badge(containerColor = Color(0xFFD93025)) {
+                                Text("2")
+                            }
+                        }
+                    ) {
+                        Icon(Icons.Outlined.MailOutline, contentDescription = "Invitations")
+                    }
+                },
+                label = { Text("Invitations") },
+                selected = false,
+                colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
+                    selectedIconColor = Color(0xFF1A73E8),
+                    selectedTextColor = Color(0xFF1A73E8),
+                    unselectedIconColor = Color.Gray,
+                    unselectedTextColor = Color.Gray,
+                    indicatorColor = Color.Transparent
+                ),
+                onClick = {}
+            )
+            NavigationBarItem(
+                icon = { Icon(Icons.Outlined.Person, contentDescription = "Profile") },
+                label = { Text("Profile") },
+                selected = false,
+                colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
+                    selectedIconColor = Color(0xFF1A73E8),
+                    selectedTextColor = Color(0xFF1A73E8),
+                    unselectedIconColor = Color.Gray,
+                    unselectedTextColor = Color.Gray,
+                    indicatorColor = Color.Transparent
+                ),
+                onClick = {}
             )
         }
     }
