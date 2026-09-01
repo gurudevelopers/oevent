@@ -44,7 +44,7 @@ sealed interface Route {
     data class Otp(val mobileNumber: String) : Route
 
     @Serializable
-    data class Dashboard(val userType: UserType) : Route
+    data object Dashboard: Route
 
     @Serializable
     data object Profile : Route

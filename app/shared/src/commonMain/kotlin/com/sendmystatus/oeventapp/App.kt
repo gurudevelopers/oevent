@@ -25,6 +25,7 @@ import com.sendmystatus.oeventapp.ui.splash.DemoQuickAccess
 import com.sendmystatus.oeventapp.ui.RewardScreen
 import com.sendmystatus.oeventapp.ui.Route
 import com.sendmystatus.oeventapp.ui.ScannerScreen
+import com.sendmystatus.oeventapp.ui.dashboard.DashBoardScreen
 import com.sendmystatus.oeventapp.ui.event.CreateEventScreen
 import com.sendmystatus.oeventapp.ui.event.CreateSettingEventScreen
 import com.sendmystatus.oeventapp.ui.event.EventTemplateScreen
@@ -121,7 +122,11 @@ fun AppContent(onAppClose: () -> Unit) {
                         }
                     )
                 }
+                composable<Route.Dashboard> {
+                    DashBoardScreen(
 
+                    )
+                }
                 composable<Route.EventProgram> {
                     EventProgramScreen(
                         onBack = { navController.popBackStack() },

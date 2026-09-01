@@ -33,6 +33,7 @@ fun DemoQuickAccess(onNavigate: (Route) -> Unit) {
 
     val list = listOf(
         "Guest Login",
+        "Dashboard",
         "Merchant Login",
         "Merchant Create Account",
         "Business Details",
@@ -44,14 +45,14 @@ fun DemoQuickAccess(onNavigate: (Route) -> Unit) {
         "Profile",
         "Program Event creation",
         "Event Roles",
-        "Event Dashboard"
+        "Track Event"
     )
     val navigationList = listOf(
         Route.Login,
+        Route.Dashboard,
         Route.Merchant,
         Route.BusinessDetail,
         Route.BusinessEventSetup,
-        Route.Dashboard(UserType.MERCHANT),
         Route.EventTemplate,
         Route.EventTemplate,
         Route.EventCreate("Event Template 1"),
