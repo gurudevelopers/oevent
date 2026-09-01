@@ -1,4 +1,4 @@
-package com.sendmystatus.oeventapp.ui.dashboard
+package com.sendmystatus.oeventapp.ui.dashboardv1
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
