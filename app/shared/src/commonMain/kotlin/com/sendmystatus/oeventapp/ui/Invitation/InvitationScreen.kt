@@ -78,7 +78,7 @@ fun InvitationScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
+              //  .padding(padding)
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -221,6 +221,8 @@ fun InvitationScreen(
                         )
                     }
                     Spacer(modifier = Modifier.width(16.dp))
+
+
                     Column {
                         Text(
                             text = "Tip",
@@ -236,8 +238,8 @@ fun InvitationScreen(
                     }
                 }
             }
-            
-            Spacer(modifier = Modifier.height(40.dp))
+
+            Spacer(modifier = Modifier.height(120.dp))
         }
     }
 }

@@ -79,21 +79,13 @@ fun EventsScreen(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
             )
         },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = onCreateEvent,
-                containerColor = Color(0xFF5E35B1),
-                contentColor = Color.White
-            ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Create Event")
-            }
-        }
-    ) { padding ->
+
+        ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .background(Color.White)
+//                .padding(padding)
+//                .background(Color.White)
         ) {
             LazyRow(
                 modifier = Modifier
@@ -130,7 +122,8 @@ fun EventsScreen(
                     .verticalScroll(rememberScrollState())
                     .padding(horizontal = 20.dp)
             ) {
-                val currentEvents = if (uiState.selectedTabIndex == 0) uiState.upcomingEvents else uiState.pastEvents
+                val currentEvents =
+                    if (uiState.selectedTabIndex == 0) uiState.upcomingEvents else uiState.pastEvents
 
                 if (currentEvents.isEmpty()) {
                     EmptyEventsSection(onCreateEvent)
@@ -140,8 +133,8 @@ fun EventsScreen(
                         Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
-                
-                Spacer(modifier = Modifier.height(32.dp))
+
+                Spacer(modifier = Modifier.height(120.dp))
             }
         }
     }
@@ -154,7 +147,7 @@ fun EmptyEventsSection(onCreateEvent: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(24.dp))
-        
+
         // Illustration: Calendar with Magnifying Glass
         Box(
             modifier = Modifier.size(280.dp, 200.dp),
@@ -168,23 +161,38 @@ fun EmptyEventsSection(onCreateEvent: () -> Unit) {
                 border = androidx.compose.foundation.BorderStroke(2.dp, Color(0xFFF0F0F0))
             ) {
                 Column {
-                    Box(modifier = Modifier.fillMaxWidth().height(18.dp).background(Color(0xFFE8EAF6)))
-                    Column(modifier = Modifier.fillMaxSize().padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth().height(18.dp)
+                            .background(Color(0xFFE8EAF6))
+                    )
+                    Column(
+                        modifier = Modifier.fillMaxSize().padding(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
                         repeat(4) {
                             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                                 repeat(3) {
-                                    Box(modifier = Modifier.size(14.dp).background(Color(0xFFF5F5F5), RoundedCornerShape(4.dp)))
+                                    Box(
+                                        modifier = Modifier.size(14.dp)
+                                            .background(Color(0xFFF5F5F5), RoundedCornerShape(4.dp))
+                                    )
                                 }
                             }
                         }
                     }
                 }
             }
-            
+
             // Decorative elements
-            Box(modifier = Modifier.size(30.dp).offset(x = (-80).dp, y = (-20).dp).background(Color(0xFFEDE7F6), CircleShape))
-            Box(modifier = Modifier.size(40.dp).offset(x = 90.dp, y = (-40).dp).background(Color(0xFFF3E5F5), CircleShape))
-            
+            Box(
+                modifier = Modifier.size(30.dp).offset(x = (-80).dp, y = (-20).dp)
+                    .background(Color(0xFFEDE7F6), CircleShape)
+            )
+            Box(
+                modifier = Modifier.size(40.dp).offset(x = 90.dp, y = (-40).dp)
+                    .background(Color(0xFFF3E5F5), CircleShape)
+            )
+
             // Magnifying Glass
             Icon(
                 imageVector = Icons.Default.Search,
@@ -239,46 +247,57 @@ fun EmptyEventsSection(onCreateEvent: () -> Unit) {
         )
 
         Spacer(modifier = Modifier.height(32.dp))
-        
-        // Get Started Section
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-                .background(Color(0xFFFAFAFA), RoundedCornerShape(24.dp))
-                .padding(20.dp)
+
+        ElevatedCard(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
-            Text(
-                text = "Get Started",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
-            
-            Spacer(modifier = Modifier.height(20.dp))
-            
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+
+
+            // Get Started Section
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+                    //.background(Color(0xFFFAFAFA), RoundedCornerShape(24.dp))
+                    .padding(20.dp)
             ) {
-                SmallGetStartedItem(
-                    modifier = Modifier.weight(1f),
-                    title = "Invite People",
-                    description = "Invite friends to\ncollaborate on events",
-                    icon = Icons.Default.Groups,
-                    onClick = {}
+                Text(
+                    text = "Get Started",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
                 )
-                
-                // Vertical divider
-                Box(modifier = Modifier.width(1.dp).height(60.dp).background(Color(0xFFEEEEEE)).align(Alignment.CenterVertically))
-                
-                SmallGetStartedItem(
-                    modifier = Modifier.weight(1f),
-                    title = "My Businesses",
-                    description = "Manage your\nbusiness profiles",
-                    icon = Icons.Default.Storefront,
-                    onClick = {}
-                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    SmallGetStartedItem(
+                        modifier = Modifier.weight(1f),
+                        title = "Invite People",
+                        description = "Invite friends to\ncollaborate on events",
+                        icon = Icons.Default.Groups,
+                        onClick = {}
+                    )
+
+                    // Vertical divider
+                    Box(
+                        modifier = Modifier.width(1.dp).height(60.dp).background(Color(0xFFEEEEEE))
+                            .align(Alignment.CenterVertically)
+                    )
+
+                    SmallGetStartedItem(
+                        modifier = Modifier.weight(1f),
+                        title = "My Businesses",
+                        description = "Manage your\nbusiness profiles",
+                        icon = Icons.Default.Storefront,
+                        onClick = {}
+                    )
+                }
             }
         }
     }
@@ -319,9 +338,9 @@ fun ActionCardSimple(
                     modifier = Modifier.size(28.dp)
                 )
             }
-            
+
             Spacer(modifier = Modifier.width(16.dp))
-            
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
@@ -336,7 +355,7 @@ fun ActionCardSimple(
                     lineHeight = 18.sp
                 )
             }
-            
+
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                 contentDescription = null,
@@ -372,9 +391,9 @@ fun SmallGetStartedItem(
                 modifier = Modifier.size(22.dp)
             )
         }
-        
+
         Spacer(modifier = Modifier.width(12.dp))
-        
+
         Column {
             Text(
                 text = title,
@@ -423,7 +442,7 @@ fun EventListItem(event: Event) {
                         color = Color.Gray
                     )
                 }
-                
+
                 Surface(
                     shape = RoundedCornerShape(8.dp),
                     color = Color(0xFFF0E7FF),
@@ -440,22 +459,34 @@ fun EventListItem(event: Event) {
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.CalendarMonth, contentDescription = null, modifier = Modifier.size(16.dp), tint = Color.Gray)
+                Icon(
+                    Icons.Default.CalendarMonth,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                    tint = Color.Gray
+                )
                 Spacer(modifier = Modifier.width(8.dp))
                 val date = event.startDateAndTime
                 Text(
-                    text = "${date.day} ${date.month.name.take(3)}, ${date.year} • ${date.hour}:${date.minute.toString().padStart(2, '0')}",
+                    text = "${date.day} ${date.month.name.take(3)}, ${date.year} • ${date.hour}:${
+                        date.minute.toString().padStart(2, '0')
+                    }",
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.DarkGray
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(8.dp))
-            
+
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.LocationOn, contentDescription = null, modifier = Modifier.size(16.dp), tint = Color.Gray)
+                Icon(
+                    Icons.Default.LocationOn,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                    tint = Color.Gray
+                )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "${event.venueName}, ${event.location}",
