@@ -69,6 +69,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -114,53 +115,99 @@ fun DashBoardScreen(outerNavController: NavController? = null) {
     val navController = rememberNavController()
 
     Scaffold(
+        topBar = {
+
+            TopAppBar(
+                title = {
+                    DashboardHeader(name = "Dibyajyoti")
+                },
+               /* navigationIcon = {
+                    IconButton(onClick = { *//* Handle navigation icon click *//* }) {
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = "Menu"
+                        )
+                    }
+                },*/
+                /*actions = {
+                    Box(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clip(CircleShape)
+                            .background(Color.LightGray),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Person,
+                            contentDescription = "Profile",
+                            modifier = Modifier.size(32.dp),
+                            tint = Color.White
+                        )
+                    }
+                    IconButton(onClick = { *//* Handle action icon click *//* }) {
+                        Icon(
+                            imageVector = Icons.Default.Download,
+                            contentDescription = "Download"
+                        )
+                    }
+                }*/
+            )
+        },
         /* bottomBar = {
-             DashboardBottomNavigation(navController)
+             DashboardBottomFloatingNavigation(
+               //  modifier = Modifier.align(Alignment.BottomCenter),
+                 navController = navController,
+               //  modifier = Modifier.align(Alignment.BottomCenter)
+             )
+
          },*/
         containerColor = Color.White
     ) { padding ->
-        Box(modifier = Modifier.fillMaxSize()) {
-            /* Column(
-                 modifier = Modifier
-                     .fillMaxSize()
-                     .verticalScroll(rememberScrollState())
-                     .padding(horizontal = 20.dp)
-             ) {*/
-            NavHost(
-                navController = navController,
-                startDestination = Route.Dashboard,
-                modifier = Modifier.fillMaxSize().padding(padding)
-            ) {
-                composable<Route.Dashboard> {
-                    Home()
-                }
-                composable<Route.Events> {
-                    EventsScreen(
-                        onCreateEvent = {
-                            outerNavController?.navigate(Route.EventTemplate)
-                        },
-                        viewModel = koinViewModel()
-                    )
-                }
-                composable<Route.EventTemplate> {
-                    EventTemplateScreen(
-                        onSelected = {},
-                    )
-                }
-                composable<Route.Invitations> {
-                    InvitationScreen(
-                        onBack = { navController.popBackStack() },
-                        viewModel = koinViewModel()
-                    )
-                }
+          Box(modifier = Modifier.fillMaxSize()) {
+        /* Column(
+             modifier = Modifier
+                 .fillMaxSize()
+                 .verticalScroll(rememberScrollState())
+                 .padding(horizontal = 20.dp)
+         ) {*/
+        NavHost(
+            navController = navController,
+            startDestination = Route.Dashboard,
+            modifier = Modifier.fillMaxSize().padding(padding)
+        ) {
+            composable<Route.Dashboard> {
+                Home()
             }
+            composable<Route.Events> {
+                EventsScreen(
+                    onCreateEvent = {
+                        outerNavController?.navigate(Route.EventTemplate)
+                    },
+                    viewModel = koinViewModel()
+                )
+            }
+            composable<Route.EventTemplate> {
+                EventTemplateScreen(
+                    onSelected = {},
+                )
+            }
+            composable<Route.Invitations> {
+                InvitationScreen(
+                    onBack = { navController.popBackStack() },
+                    viewModel = koinViewModel()
+                )
+            }
+        }
 
 
 //            }
-            DashboardBottomFloatingNavigation(
-                modifier = Modifier.align(Alignment.BottomCenter),
-                navController = navController
-            )
+
+//            DashboardBottomFloatingNavigation( navController = navController)
+        DashboardBottomFloatingNavigation(
+           // modifier = Modifier.align(Alignment.BottomCenter),
+            modifier = Modifier.align(Alignment.BottomCenter),
+            navController = navController
+        )
         }
     }
 }
@@ -176,9 +223,9 @@ fun Home() {
     ) {
         Spacer(modifier = Modifier.height(24.dp))
 
-        DashboardHeader(name = "Dibyajyoti")
+//        DashboardHeader(name = "Dibyajyoti")
 
-        Spacer(modifier = Modifier.height(32.dp))
+//        Spacer(modifier = Modifier.height(32.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -510,11 +557,14 @@ fun DashboardBottomFloatingNavigation(
     ) {
         val hasFab = currentDestination?.hasRoute<Route.Events>() == true
 
-        AnimatedVisibility (hasFab,
+        AnimatedVisibility(
+            hasFab,
         ) {
 
             HorizontalFloatingToolbar(
                 expanded = true,
+                expandedShadowElevation = 14.dp,
+                collapsedShadowElevation = 8.dp,
                 floatingActionButton = {
                     FloatingToolbarDefaults.StandardFloatingActionButton(
                         onClick = {
@@ -552,17 +602,22 @@ fun DashboardBottomFloatingNavigation(
                 }
             }
         }
-        AnimatedVisibility(!hasFab,
-            ) {
+        AnimatedVisibility(
+            !hasFab,
+        ) {
             HorizontalFloatingToolbar(
                 expanded = true,
+                expandedShadowElevation = 14.dp,
+                collapsedShadowElevation = 8.dp,
                 colors = FloatingToolbarDefaults.standardFloatingToolbarColors(
                     toolbarContainerColor = Color.Transparent
                 ),
                 modifier = Modifier.align(Alignment.BottomCenter),
                 contentPadding = PaddingValues(0.dp),
                 scrollBehavior = exitAlwaysScrollBehavior,
-            ) {
+
+
+                ) {
                 Surface(
                     modifier = Modifier.border(
                         width = 1.dp,
